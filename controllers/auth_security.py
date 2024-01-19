@@ -54,7 +54,7 @@ def auth_signup_post():
     login = request.form.get('login')
     password = request.form.get('password')
     tuple_select = (login, email)
-    sql = " requete_auth_security_2  "
+    sql = "SELECT * FROM utilisateur WHERE login=%s OR email=%s"
     retour = mycursor.execute(sql, tuple_select)
     user = mycursor.fetchone()
     if user:
