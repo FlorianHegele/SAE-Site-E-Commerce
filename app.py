@@ -22,7 +22,7 @@ from controllers.admin_commentaire import *
 from controllers.client_liste_envies import *
 
 app = Flask(__name__)
-app.secret_key = 'une cle(token) : grain de sel(any random string)'
+app.secret_key = 'fgePF7G6aERPGp4GKEv46c6GK5Zfg?ekFOEKf2ezamdvbn'
 
 
 @app.teardown_appcontext
