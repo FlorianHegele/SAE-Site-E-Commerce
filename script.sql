@@ -2,15 +2,15 @@ DROP TABLE IF EXISTS utilisateur;
 
 CREATE TABLE utilisateur (
   id_utilisateur INT NOT NULL AUTO_INCREMENT,
-  login VARCHAR(50),
-  email VARCHAR(50),
-  password VARCHAR(150),
-  role VARCHAR(50),
-  nom VARCHAR(50),
-  est_actif BOOLEAN,
+  login VARCHAR(255),
+  email VARCHAR(255),
+  password VARCHAR(255),
+  role VARCHAR(255),
+  nom VARCHAR(255),
+  est_actif TINYINT,
 
   PRIMARY KEY (id_utilisateur)
-);
+) ;
 
 INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom,est_actif) VALUES
 (1,'admin','admin@admin.fr',
