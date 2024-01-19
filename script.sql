@@ -10,7 +10,7 @@ CREATE TABLE utilisateur (
   est_actif TINYINT,
 
   PRIMARY KEY (id_utilisateur)
-) ;
+);
 
 INSERT INTO utilisateur(id_utilisateur,login,email,password,role,nom,est_actif) VALUES
 (1,'admin','admin@admin.fr',

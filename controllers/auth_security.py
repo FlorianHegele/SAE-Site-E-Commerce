@@ -64,7 +64,8 @@ def auth_signup_post():
     # ajouter un nouveau user
     password = generate_password_hash(password, method='sha256')
     tuple_insert = (login, email, password, 'ROLE_client')
-    sql = """  requete_auth_security_3  """
+    # TODO FINIR LES REQUETES ICI
+    sql = """INSERT INTO utilisateur VALUES (%s, %s)"""
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
     sql = """  requete_auth_security_4  """
