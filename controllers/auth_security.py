@@ -18,13 +18,13 @@ def auth_login():
 @auth_security.route('/login', methods=['POST'])
 def auth_login_post():
     mycursor = get_db().cursor()
-    # login = request.form.get('login')
+    login = request.form.get('login')
     password = request.form.get('password')
-    # TODO FINIR LES REQUETES ICI
-    # tuple_select = (login)
-    # sql = """"""
-    # retour = mycursor.execute(sql, (login))
+    tuple_select = (login)
+    sql = """SELECT login, password, role, id_utilisateur FROM utilisateur WHERE login = %s"""
+    retour = mycursor.execute(sql, (login))
     user = mycursor.fetchone()
+    print(user, retour)
     if user:
         mdp_ok = check_password_hash(user['password'], password)
         if not mdp_ok:
@@ -32,9 +32,9 @@ def auth_login_post():
             return redirect('/login')
         else:
             session['login'] = user['login']
+            print(user['login'], user['role'])
             session['role'] = user['role']
             session['id_user'] = user['id_utilisateur']
-            print(user['login'], user['role'])
             if user['role'] == 'ROLE_admin':
                 return redirect('/admin/commande/index')
             else:
@@ -54,9 +54,9 @@ def auth_signup_post():
     email = request.form.get('email')
     login = request.form.get('login')
     password = request.form.get('password')
-    # tuple_select = (login, email)
-    # sql = "SELECT * FROM utilisateur WHERE login=%s OR email=%s"
-    # retour = mycursor.execute(sql, tuple_select)
+    tuple_select = (login, email)
+    sql = "SELECT * FROM utilisateur WHERE login=%s OR email=%s"
+    retour = mycursor.execute(sql, tuple_select)
     user = mycursor.fetchone()
     if user:
         flash(u'votre adresse Email ou  votre Login existe déjà', 'alert-warning')
