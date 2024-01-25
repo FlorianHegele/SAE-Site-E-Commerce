@@ -32,7 +32,6 @@ def auth_login_post():
             return redirect('/login')
         else:
             session['login'] = user['login']
-            print(user['login'], user['role'])
             session['role'] = user['role']
             session['id_user'] = user['id_utilisateur']
             if user['role'] == 'ROLE_admin':
