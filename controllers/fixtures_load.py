@@ -11,80 +11,13 @@ fixtures_load = Blueprint('fixtures_load', __name__,
 @fixtures_load.route('/base/init')
 def fct_fixtures_load():
     mycursor = get_db().cursor()
-    sql='''DROP TABLE IF EXISTS   '''
 
-    mycursor.execute(sql)
-    sql='''
-    CREATE TABLE utilisateur(
-  
-    )  DEFAULT CHARSET utf8;  
-    '''
-    mycursor.execute(sql)
-    sql=''' 
-    INSERT INTO utilisateur
-    '''
-    mycursor.execute(sql)
+    with open('sae_sql.sql', 'r') as sql_file:
+        result_iterator = mycursor.execute(sql_file.read(), multi=True)
+        for res in result_iterator:
+            print("Running query: ", res)
+            print(f"Affected {res.rowcount} rows")
 
-    sql=''' 
-    CREATE TABLE type_article(
-    
-    )  DEFAULT CHARSET utf8;  
-    '''
-    mycursor.execute(sql)
-    sql=''' 
-INSERT INTO type_article
-    '''
-    mycursor.execute(sql)
+        get_db().commit()
 
-
-    sql=''' 
-    CREATE TABLE etat (
-    )  DEFAULT CHARSET=utf8;  
-    '''
-    mycursor.execute(sql)
-    sql = ''' 
-INSERT INTO etat
-     '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-    CREATE TABLE article (
-    )  DEFAULT CHARSET=utf8;  
-     '''
-    mycursor.execute(sql)
-    sql = ''' 
-    INSERT INTO article (
-
-         '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-    CREATE TABLE commande (
-    ) DEFAULT CHARSET=utf8;  
-     '''
-    mycursor.execute(sql)
-    sql = ''' 
-    INSERT INTO commande 
-                 '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-    CREATE TABLE ligne_commande(
-    );
-         '''
-    mycursor.execute(sql)
-    sql = ''' 
-    INSERT INTO ligne_commande 
-         '''
-    mycursor.execute(sql)
-
-
-    sql = ''' 
-    CREATE TABLE ligne_panier (
-    );  
-         '''
-    mycursor.execute(sql)
-
-
-    get_db().commit()
     return redirect('/')
