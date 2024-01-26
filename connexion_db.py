@@ -3,8 +3,7 @@ import os
 from flask import g
 from dotenv import load_dotenv
 
-path = os.path.expanduser('./sae_s2.env')
-load_dotenv(path)
+load_dotenv("./sae_s2.env")
 
 
 def get_db():
