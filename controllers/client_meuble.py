@@ -21,7 +21,7 @@ def client_meuble_show():  # remplace client_index
     # utilisation du filtre
     sql3 = '''requete'''
     mycursor.execute(sql)
-    meubles = mycursor.fetchone()
+    meubles = mycursor.fetchall()
 
     # pour le filtre
     types_meuble = []
@@ -34,6 +34,9 @@ def client_meuble_show():  # remplace client_index
         prix_total = None
     else:
         prix_total = None
+
+
+    print(meubles)
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
                            , meubles_panier=meubles_panier
