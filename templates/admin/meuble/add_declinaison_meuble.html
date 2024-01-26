@@ -5,16 +5,16 @@
 {% endblock %}
 
 {% block body %}
-    <h2>ajouter une déclinaison d'un article</h2>
+    <h2>ajouter une déclinaison d'un meuble</h2>
     <div class="row mt-5">
-        {% if article.image is defined and article.image is not none %}
+        {% if meuble.image is defined and meuble.image is not none %}
             <img class="card-img-top rounded mx-4 d-block"
                  style="width:200px; height:200px; border: 1px solid black; padding: 25px;" id="output"
-                 src="{{ url_for('static', filename = 'images/') }}{{ article.image }}" alt="">
+                 src="{{ url_for('static', filename = 'images/') }}{{ meuble.image }}" alt="">
         {% endif %}
         <div class="w-25">
-            <form class="w-190" method="post" action="/admin/declinaison_article/add">
-                <input id="id_article" type="hidden" name="id_article" value="{{ article.id_article }}">
+            <form class="w-190" method="post" action="/admin/declinaison_meuble/add">
+                <input id="id_meuble" type="hidden" name="id_meuble" value="{{ meuble.id_meuble }}">
                 <label for="stock">stock :
                     <input name="stock" id="stock" type="number" class="form-control" required>
                 </label>
@@ -51,7 +51,7 @@
                 </label>
 
             </form>
-            <a href="/admin/article/edit?id_article={{ article.id_article }}">
+            <a href="/admin/meuble/edit?id_meuble={{ meuble.id_meuble }}">
                 <button class="btn btn-secondary mt-2">annuler</button>
             </a>
         </div>

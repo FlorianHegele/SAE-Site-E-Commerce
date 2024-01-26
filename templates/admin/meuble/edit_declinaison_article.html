@@ -4,25 +4,25 @@
 {% endblock %}
 
 {% block body %}
-    <h2>modifier la déclinaison d'un article </h2>
+    <h2>modifier la déclinaison d'un meuble </h2>
     <div class="row mt-5">
-        article : <strong>{{ declinaison_article.nom }}</strong><br>
-        {% if declinaison_article.image_article is defined and declinaison_article.image_article is not none %}
+        meuble : <strong>{{ declinaison_meuble.nom }}</strong><br>
+        {% if declinaison_meuble.image_meuble is defined and declinaison_meuble.image_meuble is not none %}
             <img class="card-img-top rounded mx-4 d-block"
                  style="width:200px; height:200px; border: 1px solid black; padding: 25px;"
-                 src="{{ url_for('static', filename = 'images/') }}{{ declinaison_article.image_article }}"
-                 alt="image  de {{ declinaison_article["libelle"] }}">
+                 src="{{ url_for('static', filename = 'images/') }}{{ declinaison_meuble.image_meuble }}"
+                 alt="image  de {{ declinaison_meuble["libelle"] }}">
         {% else %}
-            <i class="card-img-top rounded mx-4 d-block">pas de photo</i>{#{{ declinaison_article|pprint }}#}
+            <i class="card-img-top rounded mx-4 d-block">pas de photo</i>{#{{ declinaison_meuble|pprint }}#}
         {% endif %}
 
         <div class="w-25">
-            <form class="w-190" method="post" action="/admin/declinaison_article/edit" enctype="multipart/form-data">
-                <input type="hidden" value="{{ declinaison_article.id_declinaison_article }}"
-                       name="id_declinaison_article">
-                <input type="hidden" value="{{ declinaison_article.article_id }}" name="id_article">
+            <form class="w-190" method="post" action="/admin/declinaison_meuble/edit" enctype="multipart/form-data">
+                <input type="hidden" value="{{ declinaison_meuble.id_declinaison_meuble }}"
+                       name="id_declinaison_meuble">
+                <input type="hidden" value="{{ declinaison_meuble.meuble_id }}" name="id_meuble">
                 <label for="stock">Stock :
-                    <input name="stock" type="number" min="0.0" step="0.01" value="{{ declinaison_article.stock }}"
+                    <input name="stock" type="number" min="0.0" step="0.01" value="{{ declinaison_meuble.stock }}"
                            class="form-control">
                 </label>
                 {% if  d_taille_uniq is defined and  d_taille_uniq==1 %}
@@ -35,7 +35,7 @@
                         <select name="id_taille" class="form-select">
                             {% for taille in tailles %}
                                 <option value="{{ taille.id_taille }}"
-                                        {% if taille.id_taille == declinaison_article.taille_id %} selected {% endif %}
+                                        {% if taille.id_taille == declinaison_meuble.taille_id %} selected {% endif %}
                                 > {{ taille.libelle }}</option>
                             {% endfor %}
                         </select>
@@ -51,7 +51,7 @@
                         <select name="id_couleur" class="form-select">
                             {% for couleur in couleurs %}
                                 <option value="{{ couleur.id_couleur }}"
-                                        {% if couleur.id_couleur == declinaison_article.couleur_id %}
+                                        {% if couleur.id_couleur == declinaison_meuble.couleur_id %}
                                         selected {% endif %}
                                 > {{ couleur.libelle }}</option>
                             {% endfor %}
@@ -63,7 +63,7 @@
                     <input name="submit" type="submit" value="Modifier" class="btn btn-primary mt-2">
                 </label>
             </form>
-            <a href="/admin/article/edit?id_article={{ declinaison_article.article_id }}">
+            <a href="/admin/meuble/edit?id_meuble={{ declinaison_meuble.meuble_id }}">
                 <button class="btn btn-secondary  mt-4">annuler</button>
             </a>
         </div>

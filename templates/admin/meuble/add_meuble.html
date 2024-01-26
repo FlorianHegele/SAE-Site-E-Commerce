@@ -1,17 +1,17 @@
 {% extends 'admin/layout_admin.html' %}
 
 {% block title %}
-    <title>ajouter un article</title>
+    <title>ajouter un meuble</title>
 {% endblock %}
 
 {% block body %}
-    <h2>ajouter un article</h2>
+    <h2>ajouter un meuble</h2>
     <div class="row mt-5">
         <img class="card-img-top rounded mx-4 d-block"
              style="width:200px; height:200px; border: 1px solid black; padding: 5px;" id="img_output"
              src="{{ url_for('static', filename = 'images/') }}no_photo.jpeg" alt="">
         <div class="w-25">
-            <form class="w-190" method="post" action="/admin/article/add" enctype="multipart/form-data">
+            <form class="w-190" method="post" action="/admin/meuble/add" enctype="multipart/form-data">
                 <label for="nom">Nom :
                     <input name="nom" type="text" value="" class="form-control" required>
                 </label>
@@ -23,11 +23,11 @@
                     <input name="image" type="file" onchange="loadFile(event)" class="form-control">
                 </label>
 
-                <label for="type_article_id">Type de l'article :
-                    <select name="type_article_id" required class="form-select">
-                        <option value="">Sélectionner un type d'article</option>
-                        {% for type in types_article %}
-                            <option value="{{ type.id_type_article }}"> {{ type.libelle }}</option>
+                <label for="type_meuble_id">Type de l'meuble :
+                    <select name="type_meuble_id" required class="form-select">
+                        <option value="">Sélectionner un type d'meuble</option>
+                        {% for type in types_meuble %}
+                            <option value="{{ type.id_type_meuble }}"> {{ type.libelle }}</option>
                         {% endfor %}
                     </select>
                 </label>
@@ -38,7 +38,7 @@
                     <input name="submit" type="submit" value="Ajouter" class="btn btn-primary mt-2">
                 </label>
             </form>
-            <a href="/admin/article/show">
+            <a href="/admin/meuble/show">
                 <button class="btn btn-secondary mt-2">annuler</button>
             </a>
         </div>

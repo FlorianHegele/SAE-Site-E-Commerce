@@ -27,13 +27,13 @@ def fct_fixtures_load():
     mycursor.execute(sql)
 
     sql=''' 
-    CREATE TABLE type_article(
+    CREATE TABLE type_meuble(
     
     )  DEFAULT CHARSET utf8;  
     '''
     mycursor.execute(sql)
     sql=''' 
-INSERT INTO type_article
+INSERT INTO type_meuble
     '''
     mycursor.execute(sql)
 
@@ -49,12 +49,12 @@ INSERT INTO etat
     mycursor.execute(sql)
 
     sql = ''' 
-    CREATE TABLE article (
+    CREATE TABLE meuble (
     )  DEFAULT CHARSET=utf8;  
      '''
     mycursor.execute(sql)
     sql = ''' 
-    INSERT INTO article (
+    INSERT INTO meuble (
 
          '''
     mycursor.execute(sql)
