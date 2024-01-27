@@ -28,9 +28,9 @@ def fct_fixtures_load():
 
     sql = ''' 
     CREATE TABLE type_meuble (
-                                           id_type INT AUTO_INCREMENT,
-                                           libelle_type VARCHAR(255),
-                                           PRIMARY KEY(id_type)
+                                           id_type_meuble INT AUTO_INCREMENT,
+                                           libelle_type_meuble VARCHAR(255),
+                                           PRIMARY KEY(id_type_meuble)
    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
@@ -106,7 +106,7 @@ def fct_fixtures_load():
                                       CONSTRAINT fk_meuble_materiau FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
                                       CONSTRAINT fk_meuble_fournisseur FOREIGN KEY(fournisseur_id) REFERENCES fournisseur(id_fournisseur),
                                       CONSTRAINT fk_meuble_marque FOREIGN KEY(marque_id) REFERENCES marque(id_marque),
-                                      CONSTRAINT fk_meuble_type_meuble FOREIGN KEY(type_id) REFERENCES type_meuble(id_type)
+                                      CONSTRAINT fk_meuble_type_meuble FOREIGN KEY(type_id) REFERENCES type_meuble(id_type_meuble)
    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
@@ -179,7 +179,7 @@ def fct_fixtures_load():
     mycursor.execute(sql)
 
     sql = ''' 
-        INSERT INTO type_meuble (libelle_type) VALUES
+        INSERT INTO type_meuble (libelle_type_meuble) VALUES
                                                ('Étagère'),
                                                ('Table'),
                                                ('Buffet'),
