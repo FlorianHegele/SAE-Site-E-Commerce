@@ -10,7 +10,7 @@
 
             <div class="card-body">
                 <h4>{{ meuble.description }}</h4>
-                {% if meuble.image is not none %}
+                {% if meuble.image_meuble is not none %}
                     <img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                          src="{{ url_for('static', filename = 'images/' + meuble['image']) }}"
                          alt="image  de {{ meuble.nom_meuble }}">

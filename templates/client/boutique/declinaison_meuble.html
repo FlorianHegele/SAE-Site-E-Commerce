@@ -12,9 +12,9 @@
                             {{ meuble.prix }}
                             €
                         </h2>
-                        {% if meuble.image is not none %}
+                        {% if meuble.image_meuble is not none %}
                             <img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
-                                 src="{{ url_for('static', filename = 'images/') }}{{ meuble.image }}"
+                                 src="{{ url_for('static', filename = 'images/') }}{{ meuble.image_meuble }}"
                                  alt="image  de {{ meuble.nom_meuble }}">
                         {% else %}<img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                                        src="{{ url_for('static', filename='images/no_photo.jpeg') }}"

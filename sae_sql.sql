@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS meuble (
                                       largeur INT,
                                       hauteur INT,
                                       prix_meuble DECIMAL(10, 2),
-                                      image VARCHAR(255),
+                                      image_meuble VARCHAR(255),
                                       materiau_id INT,
                                       fournisseur_id INT NOT NULL,
                                       marque_id INT NOT NULL,
@@ -150,7 +150,7 @@ INSERT INTO fournisseur (libelle_fournisseur) VALUES
                                                   ('NKL'),
                                                   ('Alvero');
 
-INSERT INTO meuble (nom_meuble, largeur, hauteur, prix_meuble, image, materiau_id, fournisseur_id, marque_id, type_id) VALUES
+INSERT INTO meuble (nom_meuble, largeur, hauteur, prix_meuble, image_meuble, materiau_id, fournisseur_id, marque_id, type_id) VALUES
                                                                                                                             ('Etagère déstructuré',110,195,819,'1.jpg',1,1,1,1),
                                                                                                                             ('Table en sheesham',130,78,419,'2.jpg',1,1,1,2),
                                                                                                                             ('Buffet 2 portes 3 tiroirs',160,85,799,'3.jpg',1,1,1,3),
