@@ -35,8 +35,6 @@ def client_meuble_show():  # remplace client_index
     else:
         prix_total = None
 
-
-    print(meubles)
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
                            , meubles_panier=meubles_panier

@@ -6,7 +6,7 @@
 {% block body %}
     <h2>modifier la déclinaison d'un meuble </h2>
     <div class="row mt-5">
-        meuble : <strong>{{ declinaison_meuble.nom }}</strong><br>
+        meuble : <strong>{{ declinaison_meuble.nom_meuble }}</strong><br>
         {% if declinaison_meuble.image_meuble is defined and declinaison_meuble.image_meuble is not none %}
             <img class="card-img-top rounded mx-4 d-block"
                  style="width:200px; height:200px; border: 1px solid black; padding: 25px;"

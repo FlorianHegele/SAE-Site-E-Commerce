@@ -13,10 +13,10 @@
                 {% if meuble.image is not none %}
                     <img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                          src="{{ url_for('static', filename = 'images/' + meuble['image']) }}"
-                         alt="image  de {{ meuble.nom }}">
+                         alt="image  de {{ meuble.nom_meuble }}">
                 {% else %}<img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                                src="{{ url_for('static', filename='images/no_photo.jpeg') }}"
-                               alt="image  de {{ meuble.nom }}">
+                               alt="image  de {{ meuble.nom_meuble }}">
                 {% endif %}
 
             </div>

@@ -25,17 +25,17 @@
                     <div class="card-body border-dark rounded p-1">
                         <a href="/client/meuble/details?id_meuble={{ meuble.id_meuble }}">
                             <h3 class="card-title">
-                                <span style="color: #0b2e13">{{ meuble.nom }}</span><br>
+                                <span style="color: #0b2e13">{{ meuble.nom_meuble }}</span><br>
                                 {{ meuble.prix_meuble }}
                                 €
                             </h3>
                             {% if meuble.image is not none %}
                                 <img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
-                                     src="{{ url_for('static', filename = 'images/') }}{{ meuble.jpg }}"
-                                     alt="image  de {{ meuble.nom }}">
+                                     src="{{ url_for('static', filename = 'images/') }}{{ meuble.image }}"
+                                     alt="image  de {{ meuble.nom_meuble }}">
                             {% else %}<img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                                            src="{{ url_for('static', filename='images/no_photo.jpeg') }}"
-                                           alt="image  de {{ meuble.nom }}">
+                                           alt="image  de {{ meuble.nom_meuble }}">
                             {% endif %}
                             <hr>
                         </a>
