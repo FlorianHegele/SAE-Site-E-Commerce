@@ -25,7 +25,7 @@
 
                 <label for="type_meuble_id">Type de l'meuble :
                     <select name="type_meuble_id" required class="form-select">
-                        <option value="">Sélectionner un type d'meuble</option>
+                        <option value="">Sélectionner un type de meuble</option>
                         {% for type in types_meuble %}
                             <option value="{{ type.id_type_meuble }}"> {{ type.libelle }}</option>
                         {% endfor %}

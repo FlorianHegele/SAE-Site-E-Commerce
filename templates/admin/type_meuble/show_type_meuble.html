@@ -1,12 +1,12 @@
 {% extends 'admin/layout_admin.html' %}
 
 {% block title %}
-    <title>afficher les types d'meuble</title>
+    <title>afficher les types de meuble</title>
 {% endblock %}
 
 {% block body %}
-    <h3>Déclinaison et/ou type d'meuble (catégorie)</h3>
-    <a class="btn btn-outline-success" href="/admin/type-meuble/add">ajouter un type d'meuble</a>
+    <h3>Déclinaison et/ou type de meuble (catégorie)</h3>
+    <a class="btn btn-outline-success" href="/admin/type-meuble/add">ajouter un type de meuble</a>
     <br><br>
 
     <table class="table">
@@ -14,7 +14,7 @@
         <tr>
             <th>designation</th>
             <th>(id_type_meuble)</th>
-            <th>nombre d'meubles</th>
+            <th>nombre de meubles</th>
             <th>opération</th>
         </tr>
         </thead>
@@ -36,7 +36,7 @@
         {% else %}
             <tr>
                 <td>
-                    pas de type d'meuble
+                    pas de type de meuble
                 </td>
             </tr>
         {% endif %}
