@@ -24,7 +24,9 @@ def client_meuble_show():  # remplace client_index
     meubles = mycursor.fetchall()
 
     # pour le filtre
-    types_meuble = []
+    sql = '''SELECT * FROM type_meuble'''
+    mycursor.execute(sql)
+    types_meuble = mycursor.fetchall()
 
     meubles_panier = []
     print(meubles_panier)
@@ -37,6 +39,7 @@ def client_meuble_show():  # remplace client_index
 
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
+                           , types_meuble=types_meuble
                            , meubles_panier=meubles_panier
                            # , prix_total=prix_total
                            , items_filtre=types_meuble
