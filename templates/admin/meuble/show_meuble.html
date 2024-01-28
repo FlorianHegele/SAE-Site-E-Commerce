@@ -36,9 +36,9 @@ meubles (tableau de dictionnaires)
         {% if meubles | length >= 1 %}
             {% for ligne in meubles %}
                 <tr>
-                    <td>{{ ligne.nom }}</td>
+                    <td>{{ ligne.nom_meuble }}</td>
                     <td>{{ ligne.id_meuble }}</td>
-                    <td><span style="color: red">{{ ligne.libelle }}</span> ({{ ligne.type_meuble_id }})</td>
+                    <td><span style="color: red">{{ ligne.libelle_type_meuble }}</span> ({{ ligne.type_id }})</td>
                     <td>{#{ ligne.prix_meuble }#} {{ "{:,.2f} €".format(ligne.prix_meuble) }}</td>
                     <td>
                         {% if ligne.stock is defined %}

@@ -19,35 +19,30 @@ def show_meuble():
     mycursor = get_db().cursor()
     id_admin = session['id_user']
 
-    sql = '''SELECT * FROM meuble'''
-    list_param = []
-    condition_and = ""
-    if "filter_word" in session or  "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
-        sql = sql + " WHERE "
-    if 'filter_word' in session:
-        sql = sql + " nom_meuble Like %s "
-        recherche = "%" + session['filter_word'] + "%"
-        list_param.append(recherche)
-        condition_and = " AND "
-    if 'filter_prix_min' in session or 'filter_prix_max' in session:
-        sql = sql + condition_and + 'prix_meuble BETWEEN %s AND %s'
-        list_param.append(session['filter_prix_min'])
-        list_param.append(session['filter_prix_max'])
-        condition_and = " AND "
-    if 'filter_types' in session:
-        sql = sql + condition_and + "("
-        last_item = session['filter_types'][-1]
-        for item in session['filter_types']:
-            sql = sql + "type_id=%s"
-            if item != last_item:
-                sql = sql + " OR "
-            list_param.append(item)
-        sql = sql + ")"
-    tuple_sql = tuple(list_param)
-    print(sql)
-    mycursor.execute(sql, tuple_sql)
-    print(tuple_sql)
+    sql = '''
+SELECT 
+    m.id_meuble, 
+    m.nom_meuble, 
+    m.type_id, 
+    tm.libelle_type_meuble,
+    (COALESCE(lc.quantite, 0) - COALESCE(lp.quantite, 0)) AS stock,
+    m.prix_meuble, 
+    m.image_meuble
+FROM 
+    meuble m
+LEFT JOIN 
+    type_meuble tm ON m.type_id = tm.id_type_meuble
+LEFT JOIN 
+    (SELECT lc.meuble_id, SUM(lc.quantite) as quantite 
+     FROM ligne_commande lc
+     INNER JOIN commande c ON c.id_commande = lc.commande_id
+     WHERE c.etat_id = 4
+     GROUP BY lc.meuble_id) lc ON m.id_meuble = lc.meuble_id
+LEFT JOIN 
+    (SELECT meuble_id, SUM(quantite) as quantite FROM ligne_panier GROUP BY meuble_id) lp ON m.id_meuble = lp.meuble_id; '''
+    mycursor.execute(sql)
     meubles = mycursor.fetchall()
+    print(meubles)
 
     return render_template('admin/meuble/show_meuble.html', meubles=meubles)
 
