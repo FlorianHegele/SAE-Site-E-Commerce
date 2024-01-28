@@ -18,9 +18,31 @@ def client_meuble_show():  # remplace client_index
     sql = '''SELECT * FROM meuble'''
     list_param = []
     condition_and = ""
-    # utilisation du filtre
-    sql3 = '''requete'''
-    mycursor.execute(sql)
+    if "filter_word" in session or  "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
+        sql = sql + " WHERE "
+    if 'filter_word' in session:
+        sql = sql + " nom_meuble Like %s "
+        recherche = "%" + session['filter_word'] + "%"
+        list_param.append(recherche)
+        condition_and = " AND "
+    if 'filter_prix_min' in session or 'filter_prix_max' in session:
+        sql = sql + condition_and + 'prix_meuble BETWEEN %s AND %s'
+        list_param.append(session['filter_prix_min'])
+        list_param.append(session['filter_prix_max'])
+        condition_and = " AND "
+    if 'filter_types' in session:
+        sql = sql + condition_and + "("
+        last_item = session['filter_types'][-1]
+        for item in session['filter_types']:
+            sql = sql + "type_id=%s"
+            if item != last_item:
+                sql = sql + " OR "
+            list_param.append(item)
+        sql = sql + ")"
+    tuple_sql = tuple(list_param)
+    print(sql)
+    mycursor.execute(sql, tuple_sql)
+    print(tuple_sql)
     meubles = mycursor.fetchall()
 
     # pour le filtre
