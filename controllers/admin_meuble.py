@@ -5,7 +5,7 @@ import os.path
 from random import random
 
 from flask import Blueprint
-from flask import request, render_template, redirect, flash
+from flask import request, render_template, redirect, flash, session
 #from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
@@ -17,10 +17,38 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  requête admin_meuble_1
-    '''
-    mycursor.execute(sql)
+    id_admin = session['id_user']
+
+    sql = '''SELECT * FROM meuble'''
+    list_param = []
+    condition_and = ""
+    if "filter_word" in session or  "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
+        sql = sql + " WHERE "
+    if 'filter_word' in session:
+        sql = sql + " nom_meuble Like %s "
+        recherche = "%" + session['filter_word'] + "%"
+        list_param.append(recherche)
+        condition_and = " AND "
+    if 'filter_prix_min' in session or 'filter_prix_max' in session:
+        sql = sql + condition_and + 'prix_meuble BETWEEN %s AND %s'
+        list_param.append(session['filter_prix_min'])
+        list_param.append(session['filter_prix_max'])
+        condition_and = " AND "
+    if 'filter_types' in session:
+        sql = sql + condition_and + "("
+        last_item = session['filter_types'][-1]
+        for item in session['filter_types']:
+            sql = sql + "type_id=%s"
+            if item != last_item:
+                sql = sql + " OR "
+            list_param.append(item)
+        sql = sql + ")"
+    tuple_sql = tuple(list_param)
+    print(sql)
+    mycursor.execute(sql, tuple_sql)
+    print(tuple_sql)
     meubles = mycursor.fetchall()
+
     return render_template('admin/meuble/show_meuble.html', meubles=meubles)
 
 

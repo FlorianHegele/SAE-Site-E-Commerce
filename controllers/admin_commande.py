@@ -18,7 +18,7 @@ def admin_index():
 def admin_commande_show():
     mycursor = get_db().cursor()
     admin_id = session['id_user']
-    sql = '''      '''
+    sql = '''    '''
 
     commandes=[]
 
@@ -30,10 +30,10 @@ def admin_commande_show():
         sql = '''    '''
         commande_adresses = []
     return render_template('admin/commandes/show.html'
-                           , commandes=commandes
-                           , meubles_commande=meubles_commande
-                           , commande_adresses=commande_adresses
-                           )
+                            , commandes=commandes
+                            , meubles_commande=meubles_commande
+                            , commande_adresses=commande_adresses
+                            )
 
 
 @admin_commande.route('/admin/commande/valider', methods=['get','post'])
