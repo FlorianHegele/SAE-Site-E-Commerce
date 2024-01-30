@@ -25,21 +25,13 @@ SELECT
     m.nom_meuble, 
     m.type_id, 
     tm.libelle_type_meuble,
-    (COALESCE(lc.quantite, 0) - COALESCE(lp.quantite, 0)) AS stock,
+    m.stock_meuble AS stock,
     m.prix_meuble, 
     m.image_meuble
 FROM 
     meuble m
 LEFT JOIN 
-    type_meuble tm ON m.type_id = tm.id_type_meuble
-LEFT JOIN 
-    (SELECT lc.meuble_id, SUM(lc.quantite) as quantite 
-     FROM ligne_commande lc
-     INNER JOIN commande c ON c.id_commande = lc.commande_id
-     WHERE c.etat_id = 4
-     GROUP BY lc.meuble_id) lc ON m.id_meuble = lc.meuble_id
-LEFT JOIN 
-    (SELECT meuble_id, SUM(quantite) as quantite FROM ligne_panier GROUP BY meuble_id) lp ON m.id_meuble = lp.meuble_id; '''
+    type_meuble tm ON m.type_id = tm.id_type_meuble '''
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
     print(meubles)
