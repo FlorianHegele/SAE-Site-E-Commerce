@@ -5,8 +5,7 @@ import datetime
 from decimal import *
 from connexion_db import get_db
 
-fixtures_load = Blueprint('fixtures_load', __name__,
-                          template_folder='templates')
+fixtures_load = Blueprint('fixtures_load', __name__, template_folder='templates')
 
 
 @fixtures_load.route('/base/init')
@@ -19,122 +18,122 @@ def fct_fixtures_load():
     mycursor.execute(sql)
     sql = '''
     CREATE TABLE materiau (
-                                        id_materiau INT AUTO_INCREMENT,
-                                        libelle_materiau VARCHAR(255),
-                                        PRIMARY KEY(id_materiau)
-   )  DEFAULT CHARSET utf8;
+                            id_materiau INT AUTO_INCREMENT,
+                            libelle_materiau VARCHAR(255),
+                            PRIMARY KEY(id_materiau)
+    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE type_meuble (
-                                           id_type_meuble INT AUTO_INCREMENT,
-                                           libelle_type_meuble VARCHAR(255),
-                                           PRIMARY KEY(id_type_meuble)
-   )  DEFAULT CHARSET utf8;
+                                id_type_meuble INT AUTO_INCREMENT,
+                                libelle_type_meuble VARCHAR(255),
+                                PRIMARY KEY(id_type_meuble)
+    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE fournisseur (
-                                           id_fournisseur INT AUTO_INCREMENT,
-                                           libelle_fournisseur VARCHAR(255),
-                                           PRIMARY KEY(id_fournisseur)
-   )  DEFAULT CHARSET utf8; 
+                                id_fournisseur INT AUTO_INCREMENT,
+                                libelle_fournisseur VARCHAR(255),
+                                PRIMARY KEY(id_fournisseur)
+    )  DEFAULT CHARSET utf8; 
     '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE marque (
-                                      id_marque INT AUTO_INCREMENT,
-                                      libelle_marque VARCHAR(255),
-                                      PRIMARY KEY(id_marque)
-   )  DEFAULT CHARSET utf8;
+                                    id_marque INT AUTO_INCREMENT,
+                                    libelle_marque VARCHAR(255),
+                                    PRIMARY KEY(id_marque)
+    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE utilisateur (
-                                           id_utilisateur INT AUTO_INCREMENT,
-                                           login VARCHAR(255),
-                                           email VARCHAR(255),
-                                           nom VARCHAR(255),
-                                           password VARCHAR(255) NOT NULL,
-                                           role VARCHAR(255),
-                                           est_actif TINYINT,
-                                           PRIMARY KEY(id_utilisateur)
-   )  DEFAULT CHARSET utf8; 
+                                id_utilisateur INT AUTO_INCREMENT,
+                                login VARCHAR(255),
+                                email VARCHAR(255),
+                                nom VARCHAR(255),
+                                password VARCHAR(255) NOT NULL,
+                                role VARCHAR(255),
+                                est_actif TINYINT,
+                                PRIMARY KEY(id_utilisateur)
+    )  DEFAULT CHARSET utf8; 
     '''
     mycursor.execute(sql)
 
     sql = '''
     CREATE TABLE etat (
-                                    id_etat INT AUTO_INCREMENT,
-                                    libelle_etat VARCHAR(255),
-                                    PRIMARY KEY(id_etat)
+                        id_etat INT AUTO_INCREMENT,
+                        libelle_etat VARCHAR(255),
+                        PRIMARY KEY(id_etat)
 
-   )  DEFAULT CHARSET utf8;
-     '''
+    )  DEFAULT CHARSET utf8;
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE commande (
-                                        id_commande INT AUTO_INCREMENT,
-                                        date_achat DATE,
-                                        utilisateur_id INT NOT NULL,
-                                        etat_id INT,
-                                        PRIMARY KEY(id_commande),
-                                        CONSTRAINT fk_commande_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-                                        CONSTRAINT fk_commande_etat FOREIGN KEY(etat_id) REFERENCES etat(id_etat)
-   )  DEFAULT CHARSET utf8;  
-     '''
+                            id_commande INT AUTO_INCREMENT,
+                            date_achat DATE,
+                            utilisateur_id INT NOT NULL,
+                            etat_id INT,
+                            PRIMARY KEY(id_commande),
+                            CONSTRAINT fk_commande_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+                            CONSTRAINT fk_commande_etat FOREIGN KEY(etat_id) REFERENCES etat(id_etat)
+    )  DEFAULT CHARSET utf8;  
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE meuble (
-                                      id_meuble INT AUTO_INCREMENT,
-                                      nom_meuble VARCHAR(255),
-                                      largeur INT,
-                                      hauteur INT,
-                                      prix_meuble DECIMAL(10, 2),
-                                      image_meuble VARCHAR(255),
-                                      materiau_id INT,
-                                      fournisseur_id INT NOT NULL,
-                                      marque_id INT NOT NULL,
-                                      type_id INT NOT NULL,
-                                      PRIMARY KEY(id_meuble),
-                                      CONSTRAINT fk_meuble_materiau FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
-                                      CONSTRAINT fk_meuble_fournisseur FOREIGN KEY(fournisseur_id) REFERENCES fournisseur(id_fournisseur),
-                                      CONSTRAINT fk_meuble_marque FOREIGN KEY(marque_id) REFERENCES marque(id_marque),
-                                      CONSTRAINT fk_meuble_type_meuble FOREIGN KEY(type_id) REFERENCES type_meuble(id_type_meuble)
-   )  DEFAULT CHARSET utf8;
+                        id_meuble INT AUTO_INCREMENT,
+                        nom_meuble VARCHAR(255),
+                        largeur INT,
+                        hauteur INT,
+                        prix_meuble DECIMAL(10, 2),
+                        image_meuble VARCHAR(255),
+                        materiau_id INT,
+                        fournisseur_id INT NOT NULL,
+                        marque_id INT NOT NULL,
+                        type_id INT NOT NULL,
+                        PRIMARY KEY(id_meuble),
+                        CONSTRAINT fk_meuble_materiau FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
+                        CONSTRAINT fk_meuble_fournisseur FOREIGN KEY(fournisseur_id) REFERENCES fournisseur(id_fournisseur),
+                        CONSTRAINT fk_meuble_marque FOREIGN KEY(marque_id) REFERENCES marque(id_marque),
+                        CONSTRAINT fk_meuble_type_meuble FOREIGN KEY(type_id) REFERENCES type_meuble(id_type_meuble)
+    )  DEFAULT CHARSET utf8;
     '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE ligne_panier (
-                                            meuble_id INT,
-                                            utilisateur_id INT,
-                                            quantite INT,
-                                            prix DECIMAL(15, 2),
-                                            PRIMARY KEY(meuble_id, utilisateur_id),
-                                            CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
-                                            CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
+                                meuble_id INT,
+                                utilisateur_id INT,
+                                quantite INT,
+                                prix DECIMAL(15, 2),
+                                PRIMARY KEY(meuble_id, utilisateur_id),
+                                CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
+                                CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
    )  DEFAULT CHARSET utf8;  
      '''
     mycursor.execute(sql)
 
     sql = ''' 
     CREATE TABLE ligne_commande (
-                                              meuble_id INT,
-                                              commande_id INT,
-                                              quantite INT,
-                                              date_ajout DATE,
-                                              PRIMARY KEY(meuble_id, commande_id),
-                                              CONSTRAINT fk_ligne_commande_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
-                                              CONSTRAINT fk_ligne_commande_commande FOREIGN KEY(commande_id) REFERENCES commande(id_commande)
-   )  DEFAULT CHARSET utf8;
-   '''
+                                meuble_id INT,
+                                commande_id INT,
+                                quantite INT,
+                                date_ajout DATE,
+                                PRIMARY KEY(meuble_id, commande_id),
+                                CONSTRAINT fk_ligne_commande_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
+                                CONSTRAINT fk_ligne_commande_commande FOREIGN KEY(commande_id) REFERENCES commande(id_commande)
+    )  DEFAULT CHARSET utf8;
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
@@ -175,19 +174,19 @@ def fct_fixtures_load():
                                             ('Eucalyptus'),
                                             ('Chêne clair'),
                                             ('Chêne foncé');
-         '''
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
         INSERT INTO type_meuble (libelle_type_meuble) VALUES
-                                               ('Étagère'),
-                                               ('Table'),
-                                               ('Buffet'),
-                                               ('Bibliothèque'),
-                                               ('Vitrine'),
-                                               ('Chaise'),
-                                               ('Pouf');
-        '''
+                                                ('Étagère'),
+                                                ('Table'),
+                                                ('Buffet'),
+                                                ('Bibliothèque'),
+                                                ('Vitrine'),
+                                                ('Chaise'),
+                                                ('Pouf');
+    '''
     mycursor.execute(sql)
 
     sql = ''' 
@@ -202,10 +201,10 @@ def fct_fixtures_load():
 
     sql = ''' 
         INSERT INTO fournisseur (libelle_fournisseur) VALUES
-                                                  ('Tikamoon'),
-                                                  ('Ikea'),
-                                                  ('NKL'),
-                                                  ('Alvero');
+                                                    ('Tikamoon'),
+                                                    ('Ikea'),
+                                                    ('NKL'),
+                                                    ('Alvero');
         '''
     mycursor.execute(sql)
 
@@ -263,10 +262,10 @@ def fct_fixtures_load():
 
     sql = ''' 
         INSERT INTO fournisseur (libelle_fournisseur) VALUES
-                                                  ('Tikamoon'),
-                                                  ('Ikea'),
-                                                  ('NKL'),
-                                                  ('Alvero');
+                                                ('Tikamoon'),
+                                                ('Ikea'),
+                                                ('NKL'),
+                                                ('Alvero');
         '''
     mycursor.execute(sql)
 
@@ -282,28 +281,72 @@ def fct_fixtures_load():
 
     sql = ''' 
         INSERT INTO commande (date_achat, utilisateur_id, etat_id) VALUES
-                                                               ('2024-01-01', 1, 1),
-                                                               ('2024-01-02', 2, 1),
-                                                               ('2024-01-03', 3, 2),
-                                                               ('2024-01-04', 1, 3);
+                                                            ('2024-01-01', 1, 1),
+                                                            ('2024-01-02', 2, 1),
+                                                            ('2024-01-03', 3, 2),
+                                                            ('2024-01-04', 1, 3);
         '''
     mycursor.execute(sql)
 
     sql = ''' 
             INSERT INTO ligne_commande (meuble_id, commande_id, quantite, date_ajout) VALUES
-                                                                                  (1, 1, 2, '2024-01-01'),
-                                                                                  (2, 1, 1, '2024-01-01'),
-                                                                                  (3, 2, 3, '2024-01-02'),
-                                                                                  (1, 3, 1, '2024-01-03');
-            '''
+                                                                                (1, 1, 2, '2024-01-01'),
+                                                                            (2, 1, 1, '2024-01-01'),
+                                                                            (3, 2, 3, '2024-01-02'),
+                                                                            (1, 3, 1, '2024-01-03'),
+                                                                            (1, 4, 11, '2024-01-04'),
+                                                                            (2, 4, 5, '2024-01-04'),
+                                                                            (3, 4, 4, '2024-01-04'),
+                                                                            (4, 4, 12, '2024-01-04'),
+                                                                            (5, 4, 6, '2024-01-04'),
+                                                                            (6, 4, 6, '2024-01-04'),
+                                                                            (7, 4, 1, '2024-01-04'),
+                                                                            (8, 4, 2, '2024-01-04'),
+                                                                            (9, 4, 2, '2024-01-04'),
+                                                                            (10, 4, 6, '2024-01-04'),
+                                                                            (11, 4, 9, '2024-01-04'),
+                                                                            (12, 4, 13, '2024-01-04'),
+                                                                            (13, 4, 13, '2024-01-04'),
+                                                                            (14, 4, 12, '2024-01-04'),
+                                                                            (15, 4, 2, '2024-01-04'),
+                                                                            (16, 4, 2, '2024-01-04'),
+                                                                            (17, 4, 5, '2024-01-04'),
+                                                                            (18, 4, 3, '2024-01-04'),
+                                                                            (19, 4, 25, '2024-01-04'),
+                                                                            (20, 4, 16, '2024-01-04'),
+                                                                            (21, 4, 11, '2024-01-04'),
+                                                                            (22, 4, 7, '2024-01-04'),
+                                                                            (23, 4, 7, '2024-01-04'),
+                                                                            (24, 4, 4, '2024-01-04'),
+                                                                            (25, 4, 2, '2024-01-04'),
+                                                                            (26, 4, 1, '2024-01-04'),
+                                                                            (27, 4, 5, '2024-01-04'),
+                                                                            (28, 4, 6, '2024-01-04'),
+                                                                            (29, 4, 21, '2024-01-04'),
+                                                                            (30, 4, 2, '2024-01-04'),
+                                                                            (31, 4, 5, '2024-01-04'),
+                                                                            (32, 4, 6, '2024-01-04'),
+                                                                            (33, 4, 7, '2024-01-04'),
+                                                                            (34, 4, 16, '2024-01-04'),
+                                                                            (35, 4, 23, '2024-01-04'),
+                                                                            (36, 4, 2, '2024-01-04'),
+                                                                            (38, 4, 5, '2024-01-04'),
+                                                                            (39, 4, 6, '2024-01-04'),
+                                                                            (41, 4, 12, '2024-01-04'),
+                                                                            (42, 4, 11, '2024-01-04'),
+                                                                            (43, 4, 8, '2024-01-04'),
+                                                                            (44, 4, 9, '2024-01-04'),
+                                                                            (45, 4, 19, '2024-01-04'),
+                                                                            (46, 4, 27, '2024-01-04');
+        '''
     mycursor.execute(sql)
 
     sql = ''' 
 INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix) VALUES
-                                                                                     (1, 1, 2, 300.00),
-                                                                                     (3, 1, 1, 800.00),
-                                                                                     (2, 2, 3, 500.00),
-                                                                                     (1, 3, 1, 150.00);
+                                                                            (1, 1, 2, 300.00),
+                                                                            (3, 1, 1, 800.00),
+                                                                            (2, 2, 3, 500.00),
+                                                                            (1, 3, 1, 150.00);
         '''
     mycursor.execute(sql)
 
