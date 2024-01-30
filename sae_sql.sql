@@ -61,6 +61,7 @@ CREATE TABLE meuble (
                                       hauteur INT,
                                       prix_meuble DECIMAL(10, 2),
                                       image_meuble VARCHAR(255),
+                                      stock_meuble INT,
                                       materiau_id INT,
                                       fournisseur_id INT NOT NULL,
                                       marque_id INT NOT NULL,
@@ -151,53 +152,53 @@ INSERT INTO fournisseur (libelle_fournisseur) VALUES
                                                   ('NKL'),
                                                   ('Alvero');
 
-INSERT INTO meuble (nom_meuble, largeur, hauteur, prix_meuble, image_meuble, materiau_id, fournisseur_id, marque_id, type_id) VALUES
-                                                                                                                            ('Etagère déstructuré',110,195,819,'1.jpg',1,1,1,1),
-                                                                                                                            ('Table en sheesham',130,78,419,'2.jpg',1,1,1,2),
-                                                                                                                            ('Buffet 2 portes 3 tiroirs',160,85,799,'3.jpg',1,1,1,3),
-                                                                                                                            ('Bibliothèque personnalisable',138,138,976,'4.jpg',2,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',172,138,1182,'5.jpg',2,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',206,138,1389,'6.jpg',2,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',138,138,1427,'7.jpg',16,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',172,138,1737,'8.jpg',16,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',206,138,2047,'9.jpg',16,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',138,138,1725,'10.jpg',17,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',172,138,2104,'11.jpg',17,2,2,4),
-                                                                                                                            ('Bibliothèque personnalisable',206,138,2485,'12.jpg',17,2,2,4),
-                                                                                                                            ('Vitrine en verre',95,72,700,'13.jpg',3,2,2,5),
-                                                                                                                            ('Banc TV',80,40,345,'14.jpg',3,2,2,2),
-                                                                                                                            ('Vitrine figurine',62,200,518,'15.jpg',3,2,2,5),
-                                                                                                                            ('Chaise Venus',58,76,159,'16.jpg',17,1,3,6),
-                                                                                                                            ('Chaise Venus',58,76,159,'17.jpg',18,1,3,6),
-                                                                                                                            ('Chaise en rotin',70,72,226,'18.jpg',4,1,3,6),
-                                                                                                                            ('Chaise simple',52,79,56,'19.jpg',5,1,3,6),
-                                                                                                                            ('Chaise simple',52,79,56,'20.jpg',6,1,3,6),
-                                                                                                                            ('Chaise simple',52,79,56,'21.jpg',8,1,3,6),
-                                                                                                                            ('Chaise simple',52,79,56,'22.jpg',9,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'23.jpg',8,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'24.jpg',9,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'25.jpg',10,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'26.jpg',11,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'27.jpg',12,1,3,6),
-                                                                                                                            ('Chaise jardin',55,75,65,'28.jpg',13,1,3,6),
-                                                                                                                            ('Table longue',240,135,895,'29.jpg',17,1,3,2),
-                                                                                                                            ('Table à manger',210,70,950,'30.jpg',17,1,3,2),
-                                                                                                                            ('Table rustique',220,70,1450,'31.jpg',19,1,3,2),
-                                                                                                                            ('Table ronde',110,110,425,'32.jpg',19,3,4,2),
-                                                                                                                            ('Table en dur',250,60,2250,'33.jpg',20,3,4,2),
-                                                                                                                            ('Table bar',100,100,1400,'34.jpg',20,3,4,2),
-                                                                                                                            ('Bibliothèque escalier',150,130,750,'35.jpg',17,3,4,4),
-                                                                                                                            ('Bibliothèque escalier',150,130,750,'36.jpg',17,3,4,4),
-                                                                                                                            ('Pouf plastique',50,50,75,'38.jpg',12,4,5,7),
-                                                                                                                            ('Pouf plastique',50,50,75,'39.jpg',11,4,5,7),
-                                                                                                                            ('Pouf plastique',50,50,75,'41.jpg',7,4,5,7),
-                                                                                                                            ('Pouf plastique',50,50,75,'42.jpg',9,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'43.jpg',10,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'44.jpg',9,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'45.jpg',14,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'46.jpg',15,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'47.jpg',8,4,5,7),
-                                                                                                                            ('Pouf Velour',60,60,150,'48.jpg',6,4,5,7);
+INSERT INTO meuble (nom_meuble, largeur, hauteur, prix_meuble, image_meuble, stock_meuble, materiau_id, fournisseur_id, marque_id, type_id) VALUES
+                                                                                                                            ('Etagère déstructuré',110,195,819,'1.jpg',8,1,1,1,1),
+                                                                                                                            ('Table en sheesham',130,78,419,'2.jpg',2,1,1,1,2),
+                                                                                                                            ('Buffet 2 portes 3 tiroirs',160,85,799,'3.jpg',3,1,1,1,3),
+                                                                                                                            ('Bibliothèque personnalisable',138,138,976,'4.jpg',12,2,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',172,138,1182,'5.jpg',6,2,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',206,138,1389,'6.jpg',6,2,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',138,138,1427,'7.jpg',1,16,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',172,138,1737,'8.jpg',2,16,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',206,138,2047,'9.jpg',2,16,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',138,138,1725,'10.jpg',6,17,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',172,138,2104,'11.jpg',9,17,2,2,4),
+                                                                                                                            ('Bibliothèque personnalisable',206,138,2485,'12.jpg',13,17,2,2,4),
+                                                                                                                            ('Vitrine en verre',95,72,700,'13.jpg',13,3,2,2,5),
+                                                                                                                            ('Banc TV',80,40,345,'14.jpg',12,3,2,2,2),
+                                                                                                                            ('Vitrine figurine',62,200,518,'15.jpg',2,3,2,2,5),
+                                                                                                                            ('Chaise Venus',58,76,159,'16.jpg',2,17,1,3,6),
+                                                                                                                            ('Chaise Venus',58,76,159,'17.jpg',5,18,1,3,6),
+                                                                                                                            ('Chaise en rotin',70,72,226,'18.jpg',3,4,1,3,6),
+                                                                                                                            ('Chaise simple',52,79,56,'19.jpg',25,5,1,3,6),
+                                                                                                                            ('Chaise simple',52,79,56,'20.jpg',16,6,1,3,6),
+                                                                                                                            ('Chaise simple',52,79,56,'21.jpg',11,8,1,3,6),
+                                                                                                                            ('Chaise simple',52,79,56,'22.jpg',7,9,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'23.jpg',7,8,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'24.jpg',4,9,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'25.jpg',2,10,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'26.jpg',1,11,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'27.jpg',5,12,1,3,6),
+                                                                                                                            ('Chaise jardin',55,75,65,'28.jpg',6,13,1,3,6),
+                                                                                                                            ('Table longue',240,135,895,'29.jpg',21,17,1,3,2),
+                                                                                                                            ('Table à manger',210,70,950,'30.jpg',2,17,1,3,2),
+                                                                                                                            ('Table rustique',220,70,1450,'31.jpg',5,19,1,3,2),
+                                                                                                                            ('Table ronde',110,110,425,'32.jpg',6,19,3,4,2),
+                                                                                                                            ('Table en dur',250,60,2250,'33.jpg',7,20,3,4,2),
+                                                                                                                            ('Table bar',100,100,1400,'34.jpg',16,20,3,4,2),
+                                                                                                                            ('Bibliothèque escalier',150,130,750,'35.jpg',23,17,3,4,4),
+                                                                                                                            ('Bibliothèque escalier',150,130,750,'36.jpg',2,17,3,4,4),
+                                                                                                                            ('Pouf plastique',50,50,75,'38.jpg',0,12,4,5,7),
+                                                                                                                            ('Pouf plastique',50,50,75,'39.jpg',5,11,4,5,7),
+                                                                                                                            ('Pouf plastique',50,50,75,'41.jpg',6,7,4,5,7),
+                                                                                                                            ('Pouf plastique',50,50,75,'42.jpg',0,9,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'43.jpg',12,10,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'44.jpg',11,9,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'45.jpg',8,14,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'46.jpg',9,15,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'47.jpg',19,8,4,5,7),
+                                                                                                                            ('Pouf Velour',60,60,150,'48.jpg',27,6,4,5,7);
 
 INSERT INTO etat (libelle_etat) VALUES
                                                 ('En attente'),
@@ -268,3 +269,26 @@ INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix) VALUES
                                                                                     (3, 1, 1, 800.00),
                                                                                     (2, 2, 3, 500.00),
                                                                                     (1, 3, 1, 150.00);
+
+---
+
+SELECT 
+    m.id_meuble, 
+    m.nom_meuble, 
+    m.type_id, 
+    tm.libelle_type_meuble,
+    (COALESCE(lc.quantite, 0) - COALESCE(lp.quantite, 0)) AS stock,
+    m.prix_meuble, 
+    m.image_meuble
+FROM 
+    meuble m
+LEFT JOIN 
+    type_meuble tm ON m.type_id = tm.id_type_meuble
+LEFT JOIN 
+    (SELECT lc.meuble_id, SUM(lc.quantite) as quantite 
+     FROM ligne_commande lc
+     INNER JOIN commande c ON c.id_commande = lc.commande_id
+     WHERE c.etat_id = 4
+     GROUP BY lc.meuble_id) lc ON m.id_meuble = lc.meuble_id
+LEFT JOIN 
+    (SELECT meuble_id, SUM(quantite) as quantite FROM ligne_panier GROUP BY meuble_id) lp ON m.id_meuble = lp.meuble_id;
