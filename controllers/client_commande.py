@@ -66,9 +66,15 @@ def client_commande_add():
 def client_commande_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = '''  selection des commandes ordonnées par état puis par date d'achat descendant '''
-    commandes = []
-
+    # Just testing to see if the parameters are passed correctly, need to do the proper sql code
+    sql = '''SELECT id_commande AS nbr_meubles, date_achat, etat_id, utilisateur_id AS prix_total
+            FROM commande
+            WHERE utilisateur_id = %s 
+            ORDER BY etat_id, date_achat DESC;
+            '''
+    mycursor.execute(sql, str(id_client))
+    commandes = mycursor.fetchall()
+    
     meubles_commande = None
     commande_adresses = None
     id_commande = request.args.get('id_commande', None)
