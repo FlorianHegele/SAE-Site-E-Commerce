@@ -94,6 +94,7 @@ CREATE TABLE adresse(
     code_postal VARCHAR(255),
     ville VARCHAR(255),
     rue VARCHAR(255),
+    valide INT,
     PRIMARY KEY(id_adresse)
 );
     '''
@@ -219,19 +220,29 @@ VALUES (
         'Maison',
         '75000',
         'Paris',
-        'Rue des Fleurs'
+        'Rue des Fleurs',
+        1
     ),
     (
         'Travail',
         '06400',
         'Cannes',
-        'Boulevard Carnot'
+        'Boulevard Carnot',
+        1
+    ),
+    (
+        'Fausse adresse',
+        '06401',
+        'Cdds',
+        'Boulevard not',
+        0
     ),
     (
         'Maison',
         '68720',
         'Zillisheim',
-        'Rue du Chateau'
+        'Rue du Chateau',
+        1
     );
     '''
 
@@ -241,7 +252,8 @@ VALUES (
 INSERT INTO habite (utilisateur_id, adresse_id)
 VALUES (1, 1),
     (2, 2),
-    (3, 3);
+    (2, 3),
+    (3, 4);
     '''
 
     mycursor.execute(sql)

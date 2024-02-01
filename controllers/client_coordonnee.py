@@ -20,7 +20,12 @@ def client_coordonnee_show():
     utilisateur = mycursor.fetchone()
     print(utilisateur)
 
-    sql = "SELECT * FROM adresse WHERE id_utilisateur = %s"
+    sql = '''
+    SELECT *, nom_adresse as nom
+    FROM adresse
+    JOIN habite ON adresse.id_adresse = habite.adresse_id
+    WHERE utilisateur_id = %s
+    '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
 
