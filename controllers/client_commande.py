@@ -69,7 +69,7 @@ def client_commande_show():
     # Just testing to see if the parameters are passed correctly, need to do the proper sql code
     sql = '''SELECT id_commande AS nbr_meubles, date_achat, etat_id, utilisateur_id AS prix_total
             FROM commande c, ligne_commande lc
-            WHERE utilisateur_id = 2
+            WHERE utilisateur_id = %s
             ORDER BY etat_id, date_achat DESC;
             '''
     mycursor.execute(sql, str(id_client))
