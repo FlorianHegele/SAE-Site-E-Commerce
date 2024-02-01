@@ -125,7 +125,7 @@ CREATE TABLE ligne_commande
 CREATE TABLE habite(
     utilisateur_id INT,
     adresse_id INT,
-    PRIMARY KEY(id_utilisateur, id_adresse),
+    PRIMARY KEY(utilisateur_id, adresse_id),
     CONSTRAINT fk_habite_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     CONSTRAINT fk_habite_adresse FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
 );
