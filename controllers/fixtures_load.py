@@ -215,7 +215,7 @@ VALUES (
     mycursor.execute(sql)
 
     sql = '''
-    INSERT INTO adresse (nom_adresse, code_postal, ville, rue)
+    INSERT INTO adresse (nom_adresse, code_postal, ville, rue, valide)
 VALUES (
         'Maison',
         '75000',

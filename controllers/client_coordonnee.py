@@ -40,8 +40,16 @@ def client_coordonnee_edit():
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
+    sql = '''
+    SELECT *
+    FROM utilisateur
+    WHERE id_utilisateur = %s
+    '''
+    mycursor.execute(sql,id_client)
+    utilisateur=mycursor.fetchone()
+
     return render_template('client/coordonnee/edit_coordonnee.html'
-                           #,utilisateur=utilisateur
+                           ,utilisateur=utilisateur
                            )
 
 @client_coordonnee.route('/client/coordonnee/edit', methods=['POST'])
