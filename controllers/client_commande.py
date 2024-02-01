@@ -71,7 +71,7 @@ def client_commande_show():
         SELECT c.id_commande,
             date_achat,
             SUM(lc.quantite) AS nbr_meubles,
-            SUM(prix_meuble) AS prix_total,
+            SUM(lc.prix) AS prix_total,
             etat_id,
             libelle_etat AS libelle
         FROM ligne_commande lc
@@ -92,9 +92,13 @@ def client_commande_show():
     if id_commande != None:
         print("id_commande : " + id_commande)
         sql = '''
-            SELECT lc.quantite, m.nom_meuble AS nom, m.prix_meuble AS prix_ligne 
+            SELECT lc.quantite,
+                lc.prix,
+                m.nom_meuble AS nom,
+                m.prix_meuble AS prix,
+                lc.prix * lc.quantite AS prix_ligne
             FROM ligne_commande lc
-            JOIN meuble m ON lc.meuble_id = m.id_meuble
+                JOIN meuble m ON lc.meuble_id = m.id_meuble
             WHERE lc.commande_id = %s;
         '''
         mycursor.execute(sql, str(id_commande))
