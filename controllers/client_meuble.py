@@ -51,8 +51,9 @@ def client_meuble_show():  # remplace client_index
     types_meuble = mycursor.fetchall()
 
     sql = '''
-    SELECT * FROM ligne_panier as l
-    JOIN meuble AS m ON m.id_meuble = l.meuble_id
+    SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, l.quantite
+    FROM meuble as m
+    JOIN ligne_panier AS l ON m.id_meuble = l.meuble_id
     WHERE l.utilisateur_id = %s
     '''
 
