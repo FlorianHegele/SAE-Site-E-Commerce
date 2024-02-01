@@ -1,7 +1,7 @@
 {#
 meubles (tableau de dictionnaires)
 * tableau de "meuble"
-    * id_meuble, nom, type_meuble_id, prix
+    * id_meuble, nom, type_meuble_id, prix_meuble
     * option :
         * stock ,
         * nb_avis ,
@@ -36,10 +36,10 @@ meubles (tableau de dictionnaires)
         {% if meubles | length >= 1 %}
             {% for ligne in meubles %}
                 <tr>
-                    <td>{{ ligne.nom }}</td>
+                    <td>{{ ligne.nom_meuble }}</td>
                     <td>{{ ligne.id_meuble }}</td>
-                    <td><span style="color: red">{{ ligne.libelle }}</span> ({{ ligne.type_meuble_id }})</td>
-                    <td>{#{ ligne.prix }#} {{ "{:,.2f} €".format(ligne.prix) }}</td>
+                    <td><span style="color: red">{{ ligne.libelle_type_meuble }}</span> ({{ ligne.type_id }})</td>
+                    <td>{#{ ligne.prix_meuble }#} {{ "{:,.2f} €".format(ligne.prix_meuble) }}</td>
                     <td>
                         {% if ligne.stock is defined %}
                             {% if ligne.stock != None %}
@@ -80,10 +80,10 @@ meubles (tableau de dictionnaires)
                             decli ND
                         {% endif %}
                     </td>
-                    <td>{{ ligne.image }}
-                        {% if ligne.image is not none %}
+                    <td>{{ ligne.image_meuble }}
+                        {% if ligne.image_meuble is not none %}
                             <img style="width:40px;height:40px"
-                                 src="{{ url_for('static', filename = 'images/' + ligne['image']) }}"
+                                 src="{{ url_for('static', filename = 'images/' + ligne['image_meuble']) }}"
                                  alt="image  de {{ ligne.nom }}">
                         {% else %}
                             <img style="width:40px;height:40px"
