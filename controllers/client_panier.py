@@ -35,9 +35,7 @@ def client_panier_add():
     #                                , declinaisons=declinaisons
     #                                , quantite=quantite
     #                                , meuble=meuble)
-
-# ajout dans le panier d'un meuble
-
+    # ajout dans le panier d'un meuble
 
     return redirect('/client/meuble/show')
 
@@ -45,22 +43,41 @@ def client_panier_add():
 def client_panier_delete():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    id_meuble = request.form.get('id_meuble','')
-    quantite = 1
+    id_meuble = request.form.get('id_meuble', '')
 
     # ---------
     # partie 2 : on supprime une déclinaison de l'meuble
     # id_declinaison_meuble = request.form.get('id_declinaison_meuble', None)
 
-    sql = ''' selection de la ligne du panier pour l'meuble et l'utilisateur connecté'''
-    meuble_panier=[]
+    sql = '''
+    SELECT * FROM ligne_panier
+    WHERE meuble_id = %s AND utilisateur_id = %s
+    '''
+    mycursor.execute(sql, (id_meuble, id_client))
+    meuble_panier=mycursor.fetchone()
 
-    if not(meuble_panier is None) and meuble_panier['quantite'] > 1:
-        sql = ''' mise à jour de la quantité dans le panier => -1 meuble '''
+    quantite = meuble_panier['quantite']
+
+    if not(meuble_panier is None) and quantite > 1:
+        sql = '''
+        UPDATE ligne_panier SET quantite = quantite - 1
+        WHERE meuble_id = %s AND utilisateur_id = %s
+        '''
+
+        quantite = 1
     else:
-        sql = ''' suppression de la ligne de panier'''
+        sql = '''
+        DELETE FROM ligne_panier
+        WHERE meuble_id = %s AND utilisateur_id = %s
+        '''
+
+    mycursor.execute(sql, (id_meuble, id_client))
 
     # mise à jour du stock de l'meuble disponible
+
+    sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s '''
+    mycursor.execute(sql2, (quantite, id_meuble))
+
     get_db().commit()
     return redirect('/client/meuble/show')
 
@@ -86,12 +103,28 @@ def client_panier_vider():
 def client_panier_delete_line():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+    id_meuble = request.form.get('id_meuble', '')
+    data = (id_meuble, id_client)
+
     #id_declinaison_meuble = request.form.get('id_declinaison_meuble')
 
-    sql = ''' selection de ligne du panier '''
+    sql = '''
+        SELECT quantite FROM ligne_panier
+        WHERE meuble_id = %s AND utilisateur_id = %s
+    '''
 
-    sql = ''' suppression de la ligne du panier '''
-    sql2=''' mise à jour du stock de l'meuble : stock = stock + qté de la ligne pour l'meuble'''
+    mycursor.execute(sql, data)
+    quantite = mycursor.fetchone()['quantite']
+
+    sql = '''
+            DELETE FROM ligne_panier
+            WHERE meuble_id = %s AND utilisateur_id = %s
+            '''
+
+    mycursor.execute(sql, (id_meuble, id_client))
+
+    sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s '''
+    mycursor.execute(sql2, (quantite, id_meuble))
 
     get_db().commit()
     return redirect('/client/meuble/show')

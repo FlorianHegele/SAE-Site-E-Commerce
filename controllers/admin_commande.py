@@ -64,8 +64,7 @@ def admin_commande_show():
 def admin_commande_valider():
     mycursor = get_db().cursor()
     commande_id = request.form.get('id_commande', None)
-    print('CACA',commande_id,"oui")
-    if commande_id != None:
+    if commande_id is not None:
         print(commande_id)
         sql = '''UPDATE commande SET etat_id = 3 WHERE id_commande = %s'''
         mycursor.execute(sql, (commande_id,))
