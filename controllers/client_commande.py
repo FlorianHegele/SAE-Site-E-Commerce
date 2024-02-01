@@ -68,8 +68,8 @@ def client_commande_show():
     id_client = session['id_user']
     # Just testing to see if the parameters are passed correctly, need to do the proper sql code
     sql = '''SELECT id_commande AS nbr_meubles, date_achat, etat_id, utilisateur_id AS prix_total
-            FROM commande
-            WHERE utilisateur_id = %s 
+            FROM commande c, ligne_commande lc
+            WHERE utilisateur_id = 2
             ORDER BY etat_id, date_achat DESC;
             '''
     mycursor.execute(sql, str(id_client))
