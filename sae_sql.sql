@@ -123,11 +123,11 @@ CREATE TABLE ligne_commande
 ) DEFAULT CHARSET utf8;
 
 CREATE TABLE habite(
-    id_utilisateur INT,
-    id_adresse INT,
+    utilisateur_id INT,
+    adresse_id INT,
     PRIMARY KEY(id_utilisateur, id_adresse),
-    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-    FOREIGN KEY(id_adresse) REFERENCES adresse(id_adresse)
+    CONSTRAINT fk_habite_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+    CONSTRAINT fk_habite_adresse FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
 );
 
 INSERT INTO utilisateur (id_utilisateur,
@@ -179,7 +179,7 @@ VALUES (
         'Rue du Chateau'
     );
 
-INSERT INTO habite (id_utilisateur, id_adresse)
+INSERT INTO habite (utilisateur_id, adresse_id)
 VALUES (1, 1),
     (2, 2),
     (3, 3);
