@@ -18,7 +18,7 @@ def client_meuble_show():  # remplace client_index
     sql = '''SELECT * FROM meuble'''
     list_param = []
     condition_and = ""
-    if "filter_word" in session or  "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
+    if "filter_word" in session or "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
         sql = sql + " WHERE "
     if 'filter_word' in session:
         sql = sql + " nom_meuble Like %s "
@@ -50,7 +50,14 @@ def client_meuble_show():  # remplace client_index
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()
 
-    meubles_panier = []
+    sql = '''
+    SELECT * FROM ligne_panier as l
+    JOIN meuble AS m ON m.id_meuble = l.meuble_id
+    WHERE l.utilisateur_id = %s
+    '''
+
+    mycursor.execute(sql, (id_client,))
+    meubles_panier = mycursor.fetchall()
     print(meubles_panier)
 
     if len(meubles_panier) >= 1:
