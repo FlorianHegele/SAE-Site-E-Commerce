@@ -875,18 +875,30 @@ VALUES (1, 1, 2, '2024-01-01'),
     (44, 4, 9, '2024-01-04'),
     (45, 4, 19, '2024-01-04'),
     (46, 4, 27, '2024-01-04'),
-    (1, 5, 2, '2023-03-03'),
-    (2, 5, 1, '2023-03-03'),
-    (3, 5, 3, '2023-03-03');
+    (1, 6, 2, '2023-03-03'),
+    (2, 6, 1, '2023-03-03'),
+    (3, 6, 3, '2023-03-03');
     '''
     mycursor.execute(sql)
 
     sql = '''
-INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix)
-VALUES (1, 1, 2, 300.00),
-    (3, 1, 1, 800.00),
-    (2, 2, 3, 500.00),
-    (1, 3, 1, 150.00);
+    UPDATE ligne_commande
+    SET prix = (SELECT prix_meuble FROM meuble WHERE meuble.id_meuble = ligne_commande.meuble_id);
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix, date_ajout)
+VALUES (1, 1, 2, 300.00, '2024-01-01'),
+    (3, 1, 1, 800.00, '2024-01-01'),
+    (2, 2, 3, 500.00, '2024-01-02'),
+    (1, 3, 1, 150.00, '2024-01-03');
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+    UPDATE ligne_panier
+    SET prix = (SELECT prix_meuble FROM meuble WHERE meuble.id_meuble = ligne_panier.meuble_id);
     '''
     mycursor.execute(sql)
 

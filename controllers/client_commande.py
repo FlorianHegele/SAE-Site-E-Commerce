@@ -79,6 +79,7 @@ def client_commande_show():
         JOIN meuble m ON lc.meuble_id = m.id_meuble
         JOIN etat e ON c.etat_id = e.id_etat
         WHERE c.utilisateur_id = %s
+        GROUP BY c.date_achat
         ORDER BY etat_id,
             date_achat DESC;
     '''
