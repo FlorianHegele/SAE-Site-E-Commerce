@@ -34,12 +34,14 @@ def admin_commande_show():
     commande_id = request.form.get('id_commande', None)
     # Récupération de toutes les informations de la table meuble et commande
     sql = '''
-        SELECT meuble.id_meuble, meuble.nom_meuble AS nom, meuble.largeur, meuble.hauteur, meuble.prix_meuble AS prix, meuble.image_meuble, meuble.stock_meuble, meuble.materiau_id, meuble.fournisseur_id, meuble.marque_id, meuble.type_id, commande.id_commande, commande.date_achat, commande.utilisateur_id, commande.etat_id
+        SELECT meuble.nom_meuble AS nom, COUNT(ligne_commande.meuble_id) AS quantite
         FROM meuble 
-        JOIN ligne_commande LC ON meuble.id_meuble = LC.meuble_id
-        JOIN commande ON LC.commande_id = commande.id_commande
+        JOIN ligne_commande ON meuble.id_meuble = ligne_commande.meuble_id
+        JOIN commande ON ligne_commande.commande_id = commande.id_commande
         WHERE commande.id_commande = %s
+        GROUP BY meuble.nom_meuble
     '''
+
     id_commande = request.args.get('id_commande', None)
     mycursor.execute(sql, (id_commande,))
     meubles_commande = mycursor.fetchall()
