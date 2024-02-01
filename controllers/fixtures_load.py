@@ -126,6 +126,7 @@ CREATE TABLE ligne_panier (
     utilisateur_id INT,
     quantite INT,
     prix DECIMAL(15, 2),
+    date_ajout DATE,
     PRIMARY KEY(meuble_id, utilisateur_id),
     CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
     CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur)
@@ -139,6 +140,7 @@ CREATE TABLE ligne_commande (
     commande_id INT,
     quantite INT,
     date_ajout DATE,
+    prix DECIMAL(15, 2),
     PRIMARY KEY(meuble_id, commande_id),
     CONSTRAINT fk_ligne_commande_meuble FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
     CONSTRAINT fk_ligne_commande_commande FOREIGN KEY(commande_id) REFERENCES commande(id_commande)
@@ -818,7 +820,8 @@ VALUES ('2024-01-01', 1, 1),
     ('2024-01-02', 2, 1),
     ('2024-01-03', 3, 2),
     ('2024-01-04', 1, 4),
-    ('2024-01-04', 1, 3);
+    ('2024-02-04', 1, 3),
+    ('2023-03-03', 2, 4);
     '''
     mycursor.execute(sql)
 
@@ -871,7 +874,10 @@ VALUES (1, 1, 2, '2024-01-01'),
     (43, 4, 8, '2024-01-04'),
     (44, 4, 9, '2024-01-04'),
     (45, 4, 19, '2024-01-04'),
-    (46, 4, 27, '2024-01-04');
+    (46, 4, 27, '2024-01-04'),
+    (1, 5, 2, '2023-03-03'),
+    (2, 5, 1, '2023-03-03'),
+    (3, 5, 3, '2023-03-03');
     '''
     mycursor.execute(sql)
 
