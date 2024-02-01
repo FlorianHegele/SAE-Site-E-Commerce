@@ -5,7 +5,7 @@ import os.path
 from random import random
 
 from flask import Blueprint
-from flask import request, render_template, redirect, flash, session
+from flask import request, render_template, redirect, flash
 #from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
@@ -17,25 +17,10 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    id_admin = session['id_user']
-
-    sql = '''
-SELECT 
-    m.id_meuble, 
-    m.nom_meuble, 
-    m.type_id, 
-    tm.libelle_type_meuble,
-    m.stock_meuble AS stock,
-    m.prix_meuble, 
-    m.image_meuble
-FROM 
-    meuble m
-LEFT JOIN 
-    type_meuble tm ON m.type_id = tm.id_type_meuble '''
+    sql = '''  requête admin_meuble_1
+    '''
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
-    print(meubles)
-
     return render_template('admin/meuble/show_meuble.html', meubles=meubles)
 
 
