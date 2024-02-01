@@ -15,7 +15,7 @@ def client_meuble_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''SELECT * FROM meuble'''
+    sql = '''SELECT *, stock_meuble AS stock FROM meuble'''
     list_param = []
     condition_and = ""
     if "filter_word" in session or "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
