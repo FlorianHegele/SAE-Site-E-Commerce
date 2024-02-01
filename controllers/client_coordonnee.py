@@ -14,6 +14,12 @@ def client_coordonnee_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     utilisateur=[]
+
+    sql = "SELECT * FROM utilisateur WHERE id_utilisateur = %s"
+    mycursor.execute(sql, id_client)
+    utilisateur = mycursor.fetchone()
+    print(utilisateur)
+
     return render_template('client/coordonnee/show_coordonnee.html'
                            , utilisateur=utilisateur
                          #  , adresses=adresses

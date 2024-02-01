@@ -13,7 +13,8 @@ def fct_fixtures_load():
     mycursor = get_db().cursor()
 
     sql = '''
-DROP TABLE IF EXISTS ligne_commande,
+DROP TABLE IF EXISTS habite,
+ligne_commande,
 ligne_panier,
 meuble,
 commande,
@@ -22,7 +23,8 @@ utilisateur,
 marque,
 fournisseur,
 type_meuble,
-materiau;
+materiau,
+adresse;
     '''
 
     mycursor.execute(sql)
@@ -82,6 +84,18 @@ CREATE TABLE etat (
     libelle_etat VARCHAR(255),
     PRIMARY KEY(id_etat)
 ) DEFAULT CHARSET utf8;
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+CREATE TABLE adresse(
+    id_adresse INT AUTO_INCREMENT,
+    nom_adresse VARCHAR(255),
+    code_postal VARCHAR(255),
+    ville VARCHAR(255),
+    rue VARCHAR(255),
+    PRIMARY KEY(id_adresse)
+);
     '''
     mycursor.execute(sql)
 
@@ -148,6 +162,17 @@ CREATE TABLE ligne_commande (
     '''
     mycursor.execute(sql)
 
+    sql = '''
+CREATE TABLE habite(
+    id_utilisateur INT,
+    id_adresse INT,
+    PRIMARY KEY(id_utilisateur, id_adresse),
+    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY(id_adresse) REFERENCES adresse(id_adresse)
+);
+    '''
+    mycursor.execute(sql)
+
     sql = ''' 
 INSERT INTO utilisateur (
         id_utilisateur,
@@ -186,6 +211,39 @@ VALUES (
         '1'
     );
     '''
+    mycursor.execute(sql)
+
+    sql = '''
+    INSERT INTO adresse (nom_adresse, code_postal, ville, rue)
+VALUES (
+        'Maison',
+        '75000',
+        'Paris',
+        'Rue des Fleurs'
+    ),
+    (
+        'Travail',
+        '06400',
+        'Cannes',
+        'Boulevard Carnot'
+    ),
+    (
+        'Maison',
+        '68720',
+        'Zillisheim',
+        'Rue du Chateau'
+    );
+    '''
+
+    mycursor.execute(sql)
+
+    sql = '''
+INSERT INTO habite (id_utilisateur, id_adresse)
+VALUES (1, 1),
+    (2, 2),
+    (3, 3);
+    '''
+
     mycursor.execute(sql)
 
     sql = ''' 

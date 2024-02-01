@@ -1,4 +1,5 @@
-DROP TABLE IF EXISTS ligne_commande,
+DROP TABLE IF EXISTS habite,
+    ligne_commande,
     ligne_panier,
     meuble,
     commande,
@@ -7,7 +8,8 @@ DROP TABLE IF EXISTS ligne_commande,
     marque,
     fournisseur,
     type_meuble,
-    materiau;
+    materiau,
+    adresse;
 
 CREATE TABLE materiau
 (
@@ -55,6 +57,15 @@ CREATE TABLE etat
     libelle_etat VARCHAR(255),
     PRIMARY KEY (id_etat)
 ) DEFAULT CHARSET utf8;
+
+CREATE TABLE adresse(
+    id_adresse INT AUTO_INCREMENT,
+    nom_adresse VARCHAR(255),
+    code_postal VARCHAR(255),
+    ville VARCHAR(255),
+    rue VARCHAR(255),
+    PRIMARY KEY(id_adresse)
+);
 
 CREATE TABLE commande
 (
@@ -111,6 +122,14 @@ CREATE TABLE ligne_commande
     CONSTRAINT fk_ligne_commande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande)
 ) DEFAULT CHARSET utf8;
 
+CREATE TABLE habite(
+    id_utilisateur INT,
+    id_adresse INT,
+    PRIMARY KEY(id_utilisateur, id_adresse),
+    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
+    FOREIGN KEY(id_adresse) REFERENCES adresse(id_adresse)
+);
+
 INSERT INTO utilisateur (id_utilisateur,
                          login,
                          email,
@@ -139,6 +158,31 @@ VALUES (1,
         'ROLE_client',
         'client2',
         '1');
+
+INSERT INTO adresse (nom_adresse, code_postal, ville, rue)
+VALUES (
+        'Maison',
+        '75000',
+        'Paris',
+        'Rue des Fleurs'
+    ),
+    (
+        'Travail',
+        '06400',
+        'Cannes',
+        'Boulevard Carnot'
+    ),
+    (
+        'Maison',
+        '68720',
+        'Zillisheim',
+        'Rue du Chateau'
+    );
+
+INSERT INTO habite (id_utilisateur, id_adresse)
+VALUES (1, 1),
+    (2, 2),
+    (3, 3);
 
 INSERT INTO materiau (libelle_materiau)
 VALUES ('Sheesham massif'),
