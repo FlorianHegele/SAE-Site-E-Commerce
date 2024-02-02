@@ -149,8 +149,7 @@ def client_coordonnee_add_adresse_valide():
     mycursor.execute(sql,tuple)
     get_db().commit()
 
-    ## update last record id from table habite ?
-    ## join on the first inser ?
+    
     sql = '''
     INSERT INTO habite (utilisateur_id,adresse_id)
     VALUES(%s,(SELECT MAX(id_adresse) FROM adresse));
