@@ -94,6 +94,22 @@ def client_coordonnee_delete_adresse():
     id_client = session['id_user']
     id_adresse= request.form.get('id_adresse')
 
+    sql = '''
+    DELETE FROM habite
+    WHERE adresse_id = %s
+    '''
+
+    mycursor.execute(sql,id_adresse)
+    get_db().commit()
+
+    sql = '''
+    DELETE FROM adresse
+    WHERE id_adresse = %s
+    '''
+
+    mycursor.execute(sql,id_adresse)
+    get_db().commit()
+
     return redirect('/client/coordonnee/show')
 
 @client_coordonnee.route('/client/coordonnee/add_adresse')
