@@ -32,8 +32,7 @@ def admin_commande_show():
     FROM commande
     JOIN utilisateur ON commande.utilisateur_id = utilisateur.id_utilisateur
     JOIN etat ON commande.etat_id = etat.id_etat
-    LEFT JOIN ligne_commande ON commande.id_commande = ligne_commande.commande_id
-    LEFT JOIN meuble ON ligne_commande.meuble_id = meuble.id_meuble
+    JOIN ligne_commande ON commande.id_commande = ligne_commande.commande_id
     GROUP BY commande.id_commande;
     '''
 
