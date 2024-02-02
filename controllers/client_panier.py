@@ -52,10 +52,10 @@ def client_panier_add():
             mycursor.execute(sql, (id_meuble, id_client, quantite))
 
         sql = """
-            UPDATE meuble SET stock_meuble = stock_meuble - %s
+            UPDATE meuble SET stock_meuble = stock_meuble - %s WHERE id_meuble = %s
         """
 
-        mycursor.execute(sql, quantite)
+        mycursor.execute(sql, (quantite, id_meuble))
     else:
         print("fraude dans la quantité demandé")
     # ajout dans le panier d'une déclinaison d'un meuble (si 1 declinaison : immédiat sinon => vu pour faire un choix
@@ -86,7 +86,7 @@ def client_panier_delete():
     id_meuble = request.form.get('id_meuble', '')
 
     # ---------
-    # partie 2 : on supprime une déclinaison de l'meuble
+    # partie 2 : on supprime une déclinaison de meuble
     # id_declinaison_meuble = request.form.get('id_declinaison_meuble', None)
 
     sql = '''
@@ -113,7 +113,7 @@ def client_panier_delete():
 
     mycursor.execute(sql, (id_meuble, id_client))
 
-    # mise à jour du stock de l'meuble disponible
+    # mise à jour du stock de meuble disponible
 
     sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s '''
     mycursor.execute(sql2, (quantite, id_meuble))
@@ -126,13 +126,20 @@ def client_panier_delete():
 def client_panier_vider():
     mycursor = get_db().cursor()
     client_id = session['id_user']
-    sql = ''' sélection des lignes de panier'''
-    items_panier = []
-    for item in items_panier:
-        sql = ''' suppression de la ligne de panier de l'meuble pour l'utilisateur connecté'''
+    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s'''
+    mycursor.execute(sql, client_id)
 
-        sql2 = ''' mise à jour du stock de l'meuble : stock = stock + qté de la ligne pour l'meuble'''
-        get_db().commit()
+    items_panier = mycursor.fetchall()
+    for item in items_panier:
+        meuble_id = item['meuble_id']
+
+        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s'''
+        mycursor.execute(sql, (client_id, meuble_id))
+
+        sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s'''
+        mycursor.execute(sql2, (item['quantite'], meuble_id))
+
+    get_db().commit()
     return redirect('/client/meuble/show')
 
 
