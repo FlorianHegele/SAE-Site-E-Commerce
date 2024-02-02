@@ -71,7 +71,7 @@ def client_commande_show():
         SELECT c.id_commande,
             date_achat,
             SUM(lc.quantite) AS nbr_meubles,
-            SUM(lc.prix) AS prix_total,
+            SUM(lc.prix * lc.quantite) AS prix_total,
             etat_id,
             libelle_etat AS libelle
         FROM ligne_commande lc

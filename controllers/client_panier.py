@@ -57,7 +57,7 @@ def client_panier_add():
 
         mycursor.execute(sql, quantite)
     else:
-        print("no quantite")
+        print("fraude dans la quantité demandé")
     # ajout dans le panier d'une déclinaison d'un meuble (si 1 declinaison : immédiat sinon => vu pour faire un choix
     # sql = '''    '''
     # mycursor.execute(sql, (id_meuble))
