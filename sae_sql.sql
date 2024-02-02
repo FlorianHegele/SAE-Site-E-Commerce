@@ -109,9 +109,9 @@ CREATE TABLE ligne_panier
     prix            DECIMAL(15, 2),
     date_ajout      DATE,
     PRIMARY KEY (id_ligne_panier),
-    CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY (meuble_id) 
+    CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY (meuble_id)
         REFERENCES meuble (id_meuble),
-    CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY (utilisateur_id) 
+    CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY (utilisateur_id)
         REFERENCES utilisateur (id_utilisateur)
 ) DEFAULT CHARSET utf8;
 
@@ -263,16 +263,16 @@ VALUES ('En attente'),
        ('Confirmé');
 
 INSERT INTO commande (date_achat, utilisateur_id, etat_id)
-VALUES ('2024-01-01', 1, 1),
+VALUES ('2024-01-01', 2, 1),
        ('2024-01-02', 2, 1),
        ('2024-01-03', 3, 2),
-       ('2024-01-04', 1, 4),
-       ('2024-01-04', 1, 3),
+       ('2024-01-04', 2, 3),
+       ('2024-01-04', 3, 4),
        ('2023-03-03', 2, 4);
 
 INSERT INTO ligne_commande (meuble_id, commande_id, quantite, date_ajout)
-VALUES (1, 1, 2, '2024-01-01'),
-       (2, 1, 1, '2024-01-01'),
+VALUES (2, 1, 1, '2024-01-01'),
+       (1, 1, 2, '2024-01-01'),
        (3, 2, 3, '2024-01-02'),
        (1, 3, 1, '2024-01-03'),
        (1, 4, 11, '2024-01-04'),
@@ -322,6 +322,7 @@ VALUES (1, 1, 2, '2024-01-01'),
        (1, 6, 2, '2023-03-03'),
        (2, 6, 1, '2023-03-03'),
        (3, 6, 3, '2023-03-03');
+
 
 UPDATE ligne_commande
 SET prix = (SELECT prix_meuble FROM meuble WHERE meuble.id_meuble = ligne_commande.meuble_id);
