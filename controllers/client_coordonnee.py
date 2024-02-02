@@ -24,7 +24,7 @@ def client_coordonnee_show():
     SELECT *, nom_adresse as nom
     FROM adresse
     JOIN habite ON adresse.id_adresse = habite.adresse_id
-    WHERE utilisateur_id = %s
+    WHERE utilisateur_id = %s 
     '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
@@ -105,6 +105,7 @@ def client_coordonnee_add_adresse():
     SELECT *
     FROM adresse
     JOIN habite ON adresse.id_adresse = habite.adresse_id
+    JOIN utilisateur ON habite.utilisateur_id = utilisateur.id_utilisateur
     WHERE utilisateur_id = %s
     '''
 
@@ -126,7 +127,7 @@ def client_coordonnee_add_adresse_valide():
 
     sql = '''
     INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
-    VALUES(%s,%s,%s,%s,'1')
+    VALUES(%s,%s,%s,%s,'1');
     '''
     tuple = (nom,rue,code_postal,ville)
     mycursor.execute(sql,tuple)
@@ -135,9 +136,8 @@ def client_coordonnee_add_adresse_valide():
     ## update last record id from table habite ?
     ## join on the first inser ?
     sql = '''
-    UPDATE habite
-    SET utilisateur_id = %s
-    WHERE adresse_id = (SELECT MAX(id_adresse) FROM adresse)
+    INSERT INTO habite (utilisateur_id,adresse_id)
+    VALUES(%s,(SELECT MAX(id_adresse) FROM adresse));
     '''
 
     mycursor.execute(sql,id_client)
