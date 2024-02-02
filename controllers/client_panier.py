@@ -46,7 +46,7 @@ def client_panier_add():
         else:
             sql = """
                 INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix, date_ajout) 
-                VALUE (%s, %s, %s, (SELECT prix_meuble FROM meuble WHERE id_meuble = ligne_panier.meuble_id) , CURRENT_DATE)
+                VALUES (%s, %s, %s, (SELECT prix_meuble FROM meuble WHERE id_meuble = ligne_panier.meuble_id) , CURRENT_DATE)
             """
 
             mycursor.execute(sql, (id_meuble, id_client, quantite))
