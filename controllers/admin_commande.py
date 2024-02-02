@@ -34,7 +34,7 @@ def admin_commande_show():
     commande_id = request.form.get('id_commande', None)
     # Récupération de toutes les informations de la table meuble et commande
     sql = '''
-        SELECT meuble.nom_meuble AS nom, COUNT(ligne_commande.meuble_id) AS quantite
+        SELECT meuble.nom_meuble AS nom, COUNT(ligne_commande.meuble_id) AS quantite,SUM(meuble.prix_meuble * ligne_commande.quantite) AS prix_ligne,meuble.prix_meuble AS prix
         FROM meuble 
         JOIN ligne_commande ON meuble.id_meuble = ligne_commande.meuble_id
         JOIN commande ON ligne_commande.commande_id = commande.id_commande
