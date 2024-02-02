@@ -59,14 +59,30 @@ def client_coordonnee_edit_valide():
     nom=request.form.get('nom')
     login = request.form.get('login')
     email = request.form.get('email')
+    utilisateur = []
 
-    utilisateur = None
-    if utilisateur:
+    sql = '''
+    SELECT *
+    FROM utilisateur
+    WHERE (login = %s OR nom = %s OR email = %s) AND id_utilisateur != %s
+    '''
+    tuple = (nom,login,email,id_client)
+    mycursor.execute(sql,tuple)
+
+    user = mycursor.fetchone()
+    if user:
         flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
         return render_template('client/coordonnee/edit_coordonnee.html'
-                               #, user=user
+                               ,utilisateur=utilisateur
                                )
-
+    
+    sql = '''
+    UPDATE utilisateur
+    SET nom = %s, login = %s, email = %s
+    WHERE id_utilisateur = %s;
+    '''
+    tuple = (nom,login,email,id_client)
+    mycursor.execute(sql,tuple)
 
     get_db().commit()
     return redirect('/client/coordonnee/show')
@@ -85,8 +101,18 @@ def client_coordonnee_add_adresse():
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
+    sql = '''
+    SELECT *
+    FROM adresse
+    JOIN habite ON adresse.id_adresse = habite.adresse_id
+    WHERE utilisateur_id = %s
+    '''
+
+    mycursor.execute(sql,id_client)
+    utilisateur = mycursor.fetchone()
+
     return render_template('client/coordonnee/add_adresse.html'
-                           #,utilisateur=utilisateur
+                           ,utilisateur=utilisateur
                            )
 
 @client_coordonnee.route('/client/coordonnee/add_adresse',methods=['POST'])
@@ -97,6 +123,26 @@ def client_coordonnee_add_adresse_valide():
     rue = request.form.get('rue')
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
+
+    sql = '''
+    INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
+    VALUES(%s,%s,%s,%s,'1')
+    '''
+    tuple = (nom,rue,code_postal,ville)
+    mycursor.execute(sql,tuple)
+    get_db().commit()
+
+    ## update last record id from table habite ?
+    ## join on the first inser ?
+    sql = '''
+    UPDATE habite
+    SET utilisateur_id = %s
+    WHERE adresse_id = (SELECT MAX(id_adresse) FROM adresse)
+    '''
+
+    mycursor.execute(sql,id_client)
+    get_db().commit()
+
     return redirect('/client/coordonnee/show')
 
 @client_coordonnee.route('/client/coordonnee/edit_adresse')

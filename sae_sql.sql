@@ -101,32 +101,35 @@ CREATE TABLE meuble
 
 CREATE TABLE ligne_panier
 (
+    id_ligne_panier INT AUTO_INCREMENT,
     meuble_id      INT,
     utilisateur_id INT,
     quantite       INT,
     prix           DECIMAL(15, 2),
     date_ajout     DATE,
-    PRIMARY KEY (meuble_id, utilisateur_id),
+    PRIMARY KEY (id_ligne_panier),
     CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble),
     CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur)
 ) DEFAULT CHARSET utf8;
 
 CREATE TABLE ligne_commande
 (
+    id_ligne_commande INT AUTO_INCREMENT,
     meuble_id   INT,
     commande_id INT,
     quantite    INT,
     date_ajout  DATE,
     prix        DECIMAL(15, 2),
-    PRIMARY KEY (meuble_id, commande_id),
+    PRIMARY KEY (id_ligne_commande),
     CONSTRAINT fk_ligne_commande_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble),
     CONSTRAINT fk_ligne_commande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande)
 ) DEFAULT CHARSET utf8;
 
 CREATE TABLE habite(
+    id_habite INT AUTO_INCREMENT,
     utilisateur_id INT,
     adresse_id INT,
-    PRIMARY KEY(utilisateur_id, adresse_id),
+    PRIMARY KEY(id_habite),
     CONSTRAINT fk_habite_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
     CONSTRAINT fk_habite_adresse FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
 );
