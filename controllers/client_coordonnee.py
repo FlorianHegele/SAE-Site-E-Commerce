@@ -145,7 +145,7 @@ def client_coordonnee_add_adresse_valide():
     INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
     VALUES(%s,%s,%s,%s,'1');
     '''
-    tuple = (nom,rue,code_postal,ville)
+    tuple = (nom,code_postal,ville,rue)
     mycursor.execute(sql,tuple)
     get_db().commit()
 
@@ -166,9 +166,25 @@ def client_coordonnee_edit_adresse():
     id_client = session['id_user']
     id_adresse = request.args.get('id_adresse')
 
+    sql = '''
+    SELECT nom_adresse AS nom,code_postal,ville,rue, id_adresse
+    FROM adresse
+    WHERE id_adresse = %s
+    '''
+    mycursor.execute(sql,id_adresse)
+    adresse = mycursor.fetchone()
+
+    sql = '''
+    SELECT *
+    FROM utilisateur
+    WHERE id_utilisateur = %s
+    '''
+    mycursor.execute(sql,id_client)
+    utilisateur = mycursor.fetchone()
+
     return render_template('/client/coordonnee/edit_adresse.html'
-                           # ,utilisateur=utilisateur
-                           # ,adresse=adresse
+                           ,utilisateur=utilisateur
+                           ,adresse=adresse
                            )
 
 @client_coordonnee.route('/client/coordonnee/edit_adresse',methods=['POST'])
@@ -180,5 +196,15 @@ def client_coordonnee_edit_adresse_valide():
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
     id_adresse = request.form.get('id_adresse')
+
+    sql = '''
+    UPDATE adresse
+    SET nom_adresse = %s, code_postal = %s, ville = %s, rue = %s
+    WHERE id_adresse = %s;
+    '''
+    tuple = (nom,code_postal,ville,rue,id_adresse)
+    print(tuple)
+    mycursor.execute(sql,tuple)
+    get_db().commit()
 
     return redirect('/client/coordonnee/show')

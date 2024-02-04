@@ -36,3 +36,9 @@ SELECT *
         JOIN commande c ON lc.commande_id = c.id_commande
 
          WHERE utilisateur_id = 2;
+
+SELECT * from adresse;
+
+   UPDATE adresse
+    SET nom_adresse = 'fjkbesz', code_postal = '12435', ville = 'bonbah', rue = 'jsp frr'
+    WHERE id_adresse = 5;
