@@ -42,3 +42,5 @@ SELECT * from adresse;
    UPDATE adresse
     SET nom_adresse = 'fjkbesz', code_postal = '12435', ville = 'bonbah', rue = 'jsp frr'
     WHERE id_adresse = 5;
+
+DELETE FROM adresse WHERE id_adresse = 3;

@@ -14,21 +14,35 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = ''' selection des meubles d'un panier 
+    sql = '''
+        SELECT * FROM ligne_panier
+        WHERE utilisateur_id = %s;
     '''
     meubles_panier = []
     if len(meubles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = '''
+            SELECT SUM(prix * quantite) AS prix_total
+            FROM ligne_panier
+            WHERE utilisateur_id = %s;
+        '''
+        mycursor.execute(sql, id_client)
+        prix_total = mycursor.fetchone()
     else:
         prix_total = None
     # etape 2 : selection des adresses
+    sql = '''
+        SELECT * FROM adresse
+        JOIN habite ON adresse.id_adresse = habite.adresse_id
+        WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql, id_client)
+    adresses = mycursor.fetchall()
     return render_template('client/boutique/panier_validation_adresses.html'
-                           #, adresses=adresses
+                           , adresses=adresses
                            , meubles_panier=meubles_panier
                            , prix_total= prix_total
                            , validation=1
-                           #, id_adresse_fav=id_adresse_fav
+                           #, id_adresse_fav=id_adresse_fav 
                            )
 
 
