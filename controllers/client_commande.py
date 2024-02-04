@@ -50,16 +50,20 @@ def client_commande_valide():
 def client_commande_add():
     mycursor = get_db().cursor()
 
-    # choix de(s) (l')adresse(s)
-
     id_client = session['id_user']
-    sql = ''' selection du contenu du panier de l'utilisateur '''
-    items_ligne_panier = []
-    # if items_ligne_panier is None or len(items_ligne_panier) < 1:
-    #     flash(u'Pas d\'meubles dans le ligne_panier', 'alert-warning')
-    #     return redirect('/client/meuble/show')
-                                           # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
-    #a = datetime.strptime('my date', "%b %d %Y %H:%M")
+    sql = '''
+        SELECT * FROM ligne_panier
+        WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql, id_client)
+    items_ligne_panier = mycursor.fetchall()
+    if items_ligne_panier is None or len(items_ligne_panier) < 1:
+        flash(u'Pas de meubles dans le panier', 'alert-warning')
+        return redirect('/client/meuble/show')
+                                        #    https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
+    mydate = datetime.now()
+    print(mydate)
+    a = datetime.strptime('my date', "%b %d %Y %H:%M")
 
     sql = ''' creation de la commande '''
 
