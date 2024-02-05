@@ -40,9 +40,9 @@ def client_meuble_show():  # remplace client_index
             list_param.append(item)
         sql = sql + ")"
     tuple_sql = tuple(list_param)
-    print(sql)
+    #print(sql)
     mycursor.execute(sql, tuple_sql)
-    print(tuple_sql)
+    #print(tuple_sql)
     meubles = mycursor.fetchall()
 
     # pour le filtre
@@ -57,20 +57,23 @@ def client_meuble_show():  # remplace client_index
     WHERE l.utilisateur_id = %s
     '''
 
-    mycursor.execute(sql, (id_client,))
+    mycursor.execute(sql, id_client)
     meubles_panier = mycursor.fetchall()
-    print(meubles_panier)
 
+    prix_total = None
     if len(meubles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
-    else:
-        prix_total = None
+        sql = '''
+        SELECT SUM(l.prix * l.quantite) AS prix_total
+        FROM ligne_panier AS l
+        WHERE utilisateur_id = %s
+        '''
+        mycursor.execute(sql, id_client)
+        prix_total = mycursor.fetchone()['prix_total']
 
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
                            , types_meuble=types_meuble
                            , meubles_panier=meubles_panier
-                           # , prix_total=prix_total
+                           , prix_total=prix_total
                            , items_filtre=types_meuble
                            )

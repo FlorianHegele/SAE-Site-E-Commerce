@@ -14,21 +14,35 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
-    sql = ''' selection des meubles d'un panier 
+    sql = '''
+        SELECT * FROM ligne_panier
+        WHERE utilisateur_id = %s;
     '''
     meubles_panier = []
     if len(meubles_panier) >= 1:
-        sql = ''' calcul du prix total du panier '''
-        prix_total = None
+        sql = '''
+            SELECT SUM(prix * quantite) AS prix_total
+            FROM ligne_panier
+            WHERE utilisateur_id = %s;
+        '''
+        mycursor.execute(sql, id_client)
+        prix_total = mycursor.fetchone()
     else:
         prix_total = None
     # etape 2 : selection des adresses
+    sql = '''
+        SELECT * FROM adresse
+        JOIN habite ON adresse.id_adresse = habite.adresse_id
+        WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql, id_client)
+    adresses = mycursor.fetchall()
     return render_template('client/boutique/panier_validation_adresses.html'
-                           #, adresses=adresses
+                           , adresses=adresses
                            , meubles_panier=meubles_panier
                            , prix_total= prix_total
                            , validation=1
-                           #, id_adresse_fav=id_adresse_fav
+                           #, id_adresse_fav=id_adresse_fav 
                            )
 
 
@@ -36,16 +50,20 @@ def client_commande_valide():
 def client_commande_add():
     mycursor = get_db().cursor()
 
-    # choix de(s) (l')adresse(s)
-
     id_client = session['id_user']
-    sql = ''' selection du contenu du panier de l'utilisateur '''
-    items_ligne_panier = []
-    # if items_ligne_panier is None or len(items_ligne_panier) < 1:
-    #     flash(u'Pas d\'meubles dans le ligne_panier', 'alert-warning')
-    #     return redirect('/client/meuble/show')
-                                           # https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
-    #a = datetime.strptime('my date', "%b %d %Y %H:%M")
+    sql = '''
+        SELECT * FROM ligne_panier
+        WHERE utilisateur_id = %s;
+    '''
+    mycursor.execute(sql, id_client)
+    items_ligne_panier = mycursor.fetchall()
+    if items_ligne_panier is None or len(items_ligne_panier) < 1:
+        flash(u'Pas de meubles dans le panier', 'alert-warning')
+        return redirect('/client/meuble/show')
+                                        #    https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
+    mydate = datetime.now()
+    print(mydate)
+    a = datetime.strptime('my date', "%b %d %Y %H:%M")
 
     sql = ''' creation de la commande '''
 
@@ -71,7 +89,7 @@ def client_commande_show():
         SELECT c.id_commande,
             date_achat,
             SUM(lc.quantite) AS nbr_meubles,
-            SUM(lc.prix) AS prix_total,
+            SUM(lc.prix * lc.quantite) AS prix_total,
             etat_id,
             libelle_etat AS libelle
         FROM ligne_commande lc
@@ -79,7 +97,7 @@ def client_commande_show():
         JOIN meuble m ON lc.meuble_id = m.id_meuble
         JOIN etat e ON c.etat_id = e.id_etat
         WHERE c.utilisateur_id = %s
-        GROUP BY c.date_achat
+        GROUP BY c.id_commande, c.date_achat, c.etat_id, e.libelle_etat
         ORDER BY etat_id,
             date_achat DESC;
     '''

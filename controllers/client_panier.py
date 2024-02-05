@@ -1,12 +1,14 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
+import time
+
 from flask import Blueprint
 from flask import request, render_template, redirect, abort, flash, session
 
 from connexion_db import get_db
 
 client_panier = Blueprint('client_panier', __name__,
-                        template_folder='templates')
+                          template_folder='templates')
 
 
 @client_panier.route('/client/panier/add', methods=['POST'])
@@ -14,12 +16,49 @@ def client_panier_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     id_meuble = request.form.get('id_meuble')
-    quantite = request.form.get('quantite')
+    quantite = int(request.form.get('quantite'))
     # ---------
-    #id_declinaison_meuble=request.form.get('id_declinaison_meuble',None)
-    id_declinaison_meuble = 1
+    # id_declinaison_meuble=request.form.get('id_declinaison_meuble',None)
+    # id_declinaison_meuble = 1
 
-# ajout dans le panier d'une déclinaison d'un meuble (si 1 declinaison : immédiat sinon => vu pour faire un choix
+    sql = """
+        SELECT stock_meuble as quantite FROM meuble
+        where id_meuble = %s
+    """
+    mycursor.execute(sql, id_meuble)
+
+    # check si la quantite est bonne
+    if quantite >= 1 or quantite <= mycursor.fetchone()['quantite']:
+        sql = """
+            SELECT * FROM ligne_panier
+            WHERE utilisateur_id = %s AND meuble_id = %s
+        """
+
+        mycursor.execute(sql, (id_client, id_meuble))
+        ligne_panier = mycursor.fetchone()
+
+        if ligne_panier is not None:
+            sql = """
+                UPDATE ligne_panier SET quantite = quantite + %s
+                WHERE meuble_id = %s AND utilisateur_id = %s
+            """
+            mycursor.execute(sql, (quantite, id_meuble, id_client))
+        else:
+            sql = """
+                INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix, date_ajout) 
+                VALUES (%s, %s, %s, (SELECT prix_meuble FROM meuble WHERE id_meuble = ligne_panier.meuble_id) , CURRENT_DATE)
+            """
+
+            mycursor.execute(sql, (id_meuble, id_client, quantite))
+
+        sql = """
+            UPDATE meuble SET stock_meuble = stock_meuble - %s WHERE id_meuble = %s
+        """
+
+        mycursor.execute(sql, (quantite, id_meuble))
+    else:
+        print("fraude dans la quantité demandé")
+    # ajout dans le panier d'une déclinaison d'un meuble (si 1 declinaison : immédiat sinon => vu pour faire un choix
     # sql = '''    '''
     # mycursor.execute(sql, (id_meuble))
     # declinaisons = mycursor.fetchall()
@@ -36,8 +75,9 @@ def client_panier_add():
     #                                , quantite=quantite
     #                                , meuble=meuble)
     # ajout dans le panier d'un meuble
-
+    get_db().commit()
     return redirect('/client/meuble/show')
+
 
 @client_panier.route('/client/panier/delete', methods=['POST'])
 def client_panier_delete():
@@ -46,7 +86,7 @@ def client_panier_delete():
     id_meuble = request.form.get('id_meuble', '')
 
     # ---------
-    # partie 2 : on supprime une déclinaison de l'meuble
+    # partie 2 : on supprime une déclinaison de meuble
     # id_declinaison_meuble = request.form.get('id_declinaison_meuble', None)
 
     sql = '''
@@ -54,11 +94,11 @@ def client_panier_delete():
     WHERE meuble_id = %s AND utilisateur_id = %s
     '''
     mycursor.execute(sql, (id_meuble, id_client))
-    meuble_panier=mycursor.fetchone()
+    meuble_panier = mycursor.fetchone()
 
     quantite = meuble_panier['quantite']
 
-    if not(meuble_panier is None) and quantite > 1:
+    if not (meuble_panier is None) and quantite > 1:
         sql = '''
         UPDATE ligne_panier SET quantite = quantite - 1
         WHERE meuble_id = %s AND utilisateur_id = %s
@@ -73,7 +113,7 @@ def client_panier_delete():
 
     mycursor.execute(sql, (id_meuble, id_client))
 
-    # mise à jour du stock de l'meuble disponible
+    # mise à jour du stock de meuble disponible
 
     sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s '''
     mycursor.execute(sql2, (quantite, id_meuble))
@@ -82,20 +122,24 @@ def client_panier_delete():
     return redirect('/client/meuble/show')
 
 
-
-
-
 @client_panier.route('/client/panier/vider', methods=['POST'])
 def client_panier_vider():
     mycursor = get_db().cursor()
     client_id = session['id_user']
-    sql = ''' sélection des lignes de panier'''
-    items_panier = []
-    for item in items_panier:
-        sql = ''' suppression de la ligne de panier de l'meuble pour l'utilisateur connecté'''
+    sql = '''SELECT * FROM ligne_panier WHERE utilisateur_id = %s'''
+    mycursor.execute(sql, client_id)
 
-        sql2=''' mise à jour du stock de l'meuble : stock = stock + qté de la ligne pour l'meuble'''
-        get_db().commit()
+    items_panier = mycursor.fetchall()
+    for item in items_panier:
+        meuble_id = item['meuble_id']
+
+        sql = '''DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s'''
+        mycursor.execute(sql, (client_id, meuble_id))
+
+        sql2 = '''UPDATE meuble SET stock_meuble = stock_meuble + %s WHERE id_meuble = %s'''
+        mycursor.execute(sql2, (item['quantite'], meuble_id))
+
+    get_db().commit()
     return redirect('/client/meuble/show')
 
 
@@ -106,7 +150,7 @@ def client_panier_delete_line():
     id_meuble = request.form.get('id_meuble', '')
     data = (id_meuble, id_client)
 
-    #id_declinaison_meuble = request.form.get('id_declinaison_meuble')
+    # id_declinaison_meuble = request.form.get('id_declinaison_meuble')
 
     sql = '''
         SELECT quantite FROM ligne_panier
@@ -117,9 +161,9 @@ def client_panier_delete_line():
     quantite = mycursor.fetchone()['quantite']
 
     sql = '''
-            DELETE FROM ligne_panier
-            WHERE meuble_id = %s AND utilisateur_id = %s
-            '''
+        DELETE FROM ligne_panier
+        WHERE meuble_id = %s AND utilisateur_id = %s
+    '''
 
     mycursor.execute(sql, (id_meuble, id_client))
 
@@ -150,14 +194,14 @@ def client_panier_filtre():
                 flash('Le mot doit contenir au moins 2 lettres')
             else:
                 session.pop('filter_word', None)
-    
+
     if filter_prix_min or filter_prix_max:
         if filter_prix_min.isdecimal() and filter_prix_max.isdecimal():
             if int(filter_prix_min) < int(filter_prix_max):
                 session['filter_prix_min'] = filter_prix_min
                 session['filter_prix_max'] = filter_prix_max
-            else :
-                flash('Le prix minimum doit être inférieur au prix maximum')    
+            else:
+                flash('Le prix minimum doit être inférieur au prix maximum')
         else:
             flash('Les prix doivent être des nombres entiers')
     if filter_types and filter_types != []:

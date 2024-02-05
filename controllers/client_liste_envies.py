@@ -40,7 +40,7 @@ def client_liste_envies_show():
 def client_historique_add(meuble_id, client_id):
     mycursor = get_db().cursor()
     client_id = session['id_user']
-    # rechercher si l'meuble pour cet utilisateur est dans l'historique
+    # rechercher si le meuble pour cet utilisateur est dans l'historique
     # si oui mettre
     sql ='''   '''
     mycursor.execute(sql, (meuble_id, client_id))
