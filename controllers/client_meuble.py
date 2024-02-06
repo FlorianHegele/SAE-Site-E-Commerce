@@ -51,7 +51,7 @@ def client_meuble_show():  # remplace client_index
     types_meuble = mycursor.fetchall()
 
     sql = '''
-    SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, l.quantite, m.id_meuble
+    SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, m.stock_meuble as stock, l.quantite, m.id_meuble
     FROM meuble as m
     JOIN ligne_panier AS l ON m.id_meuble = l.meuble_id
     WHERE l.utilisateur_id = %s
@@ -69,6 +69,9 @@ def client_meuble_show():  # remplace client_index
         '''
         mycursor.execute(sql, id_client)
         prix_total = mycursor.fetchone()['prix_total']
+
+    # TODO : FAUT FAIRE LA
+    print(meubles_panier)
 
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
