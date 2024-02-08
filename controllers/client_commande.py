@@ -131,3 +131,25 @@ def client_commande_show():
                            , commande_adresses=commande_adresses
                            )
 
+@client_commande.route('/client/commande/confirm', methods=['POST'])
+def client_commande_confirm():
+    mycursor = get_db().cursor()
+    id_client = session['id_user']
+    sql = '''
+        SELECT * FROM ligne_panier
+        WHERE id_utilisateur = %s;
+    '''
+
+    sql = '''
+        INSERT INTO ligne_commande(id_meuble, id_commande, quantite, prix)
+        FROM ligne_panier
+        WHERE id_commande = id_utilisateur
+        '''
+
+    if len(ligne_commande)>0:
+        sql = '''
+        INSERT INTO commande(id_commande, date_achat, id_etat, id_utilisateur)
+        FROM ligne_commande
+        WHERE id_utilisateur = id_commande
+        '''
+
