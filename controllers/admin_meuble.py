@@ -17,7 +17,7 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  requête admin_meuble_1
+    sql = '''  SELECT *, stock_meuble AS stock FROM meuble
     '''
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
@@ -102,13 +102,13 @@ def edit_meuble():
     id_meuble=request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    requête admin_meuble_6    
+    SELECT *, stock_meuble AS stock FROM meuble WHERE id_meuble = %s;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
     print(meuble)
     sql = '''
-    requête admin_meuble_7
+    SELECT * FROM type_meuble;  
     '''
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()

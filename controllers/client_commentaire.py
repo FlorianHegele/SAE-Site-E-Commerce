@@ -20,11 +20,11 @@ def client_meuble_details():
     ## partie 4
     # client_historique_add(id_meuble, id_client)
 
-    sql = '''
-    '''
-    #mycursor.execute(sql, id_meuble)
-    #meuble = mycursor.fetchone()
-    meuble=[]
+    sql = '''SELECT * FROM meuble 
+    WHERE id_meuble = %s;'''
+    mycursor.execute(sql, id_meuble)
+    meuble = mycursor.fetchone()
+    #meuble=[]
     commandes_meubles=[]
     nb_commentaires=[]
     if meuble is None:
