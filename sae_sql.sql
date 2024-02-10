@@ -70,7 +70,13 @@ CREATE TABLE IF NOT EXISTS adresse(
     PRIMARY KEY(id_adresse)
 );
 INSERT INTO adresse (nom_adresse, code_postal, ville, rue, valide)
-VALUES ('Maison', '75000', 'Paris', 'Rue des Fleurs', 1),
+VALUES (
+        'Maison',
+        '75000',
+        'Paris',
+        'Rue des Fleurs',
+        1
+    ),
     (
         'Travail',
         '06400',
