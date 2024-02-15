@@ -49,29 +49,29 @@ def client_commande_valide():
 @client_commande.route('/client/commande/add', methods=['POST'])
 def client_commande_add():
     mycursor = get_db().cursor()
-
     id_client = session['id_user']
-    sql = '''
-        SELECT * FROM ligne_panier
-        WHERE utilisateur_id = %s;
-    '''
+
+    sql = "SELECT * FROM ligne_panier WHERE utilisateur_id=%s"
     mycursor.execute(sql, id_client)
     items_ligne_panier = mycursor.fetchall()
     if items_ligne_panier is None or len(items_ligne_panier) < 1:
-        flash(u'Pas de meubles dans le panier', 'alert-warning')
-        return redirect('/client/meuble/show')
-                                        #    https://pynative.com/python-mysql-transaction-management-using-commit-rollback/
-    mydate = datetime.now()
-    print(mydate)
-    a = datetime.strptime('my date', "%b %d %Y %H:%M")
+        flash(u'Pas d\'articles dans le panier')
+        return redirect('/client/article/show')
 
-    sql = ''' creation de la commande '''
+    tuple_insert = (id_client, '1')  # 1 : état de commande : "en cours" ou "validé"
+    sql = "INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUES (CURRENT_TIMESTAMP, %s, %s)"
+    mycursor.execute(sql, tuple_insert)
+    sql = "SELECT last_insert_id() as last_insert_id"
+    mycursor.execute(sql)
+    commande_id = mycursor.fetchone()
 
-    sql = '''SELECT last_insert_id() as last_insert_id'''
-    # numéro de la dernière commande
     for item in items_ligne_panier:
-        sql = ''' suppression d'une ligne de panier '''
-        sql = "  ajout d'une ligne de commande'"
+        sql = "DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s"
+        mycursor.execute(sql, (item['utilisateur_id'], item['meuble_id']))
+
+        sql = "INSERT INTO ligne_commande (commande_id, meuble_id, prix, quantite) VALUES (%s, %s, %s, %s)"
+        tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], item['prix'], item['quantite'])
+        mycursor.execute(sql, tuple_insert)
 
     get_db().commit()
     flash(u'Commande ajoutée','alert-success')
@@ -130,26 +130,3 @@ def client_commande_show():
                            , meubles_commande=meubles_commande
                            , commande_adresses=commande_adresses
                            )
-
-@client_commande.route('/client/commande/confirm', methods=['POST'])
-def client_commande_confirm():
-    mycursor = get_db().cursor()
-    id_client = session['id_user']
-    sql = '''
-        SELECT * FROM ligne_panier
-        WHERE id_utilisateur = %s;
-    '''
-
-    sql = '''
-        INSERT INTO ligne_commande(id_meuble, id_commande, quantite, prix)
-        FROM ligne_panier
-        WHERE id_commande = id_utilisateur
-        '''
-
-    if len(ligne_commande)>0:
-        sql = '''
-        INSERT INTO commande(id_commande, date_achat, id_etat, id_utilisateur)
-        FROM ligne_commande
-        WHERE id_utilisateur = id_commande
-        '''
-

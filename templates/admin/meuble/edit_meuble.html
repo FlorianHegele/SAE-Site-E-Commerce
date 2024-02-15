@@ -53,6 +53,10 @@ types_meuble : tableau de dictionnaires
                 <label for="description">Description :
                     <input name="description" type="text" value="{{ meuble.description }}" class="form-control">
                 </label>
+                <label for="stock">Stock :
+                    <input name="stock" type="number" value="{{ meuble.stock }}" class="form-control">
+                </label>
+
                 <button class="btn btn-primary mt-2">
                     Modifier
                 </button>
@@ -74,7 +78,7 @@ types_meuble : tableau de dictionnaires
                     <th style="width: 300px">taille</th>
                     <th style="width: 300px">couleur</th>
                     <th style="width: 300px">stock</th>
-                    <th style="width: 300px">opérations</th>
+                    <th style="width: 300px">opérations</th>* FROM
 
                     {% if declinaisons_meuble | length == 0 %}
                         <tr>
