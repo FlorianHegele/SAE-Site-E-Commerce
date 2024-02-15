@@ -102,16 +102,19 @@ def edit_meuble():
     id_meuble=request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT *, stock_meuble AS stock FROM meuble WHERE id_meuble = %s;  
+    SELECT *,nom_meuble,image_meuble, prix_meuble AS prix, stock_meuble AS stock 
+    FROM meuble 
+    WHERE id_meuble = %s;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
     print(meuble)
     sql = '''
-    SELECT * FROM type_meuble;  
+    SELECT *, id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
     '''
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()
+    print(types_meuble)
 
     # sql = '''
     # requête admin_meuble_6
@@ -130,41 +133,39 @@ def edit_meuble():
 def valid_edit_meuble():
     mycursor = get_db().cursor()
     nom = request.form.get('nom')
-    id_meuble = request.form.get('id_meuble')
+    id_meuble = request.form.get('id_meuble', '')
     image = request.files.get('image', '')
     type_meuble_id = request.form.get('type_meuble_id', '')
     prix = request.form.get('prix', '')
     description = request.form.get('description')
-    sql = '''
-       requête admin_meuble_8
-       '''
-    mycursor.execute(sql, id_meuble)
+    stock = request.form.get('stock')
+    sql_image = '''
+        SELECT image_meuble
+        FROM meuble 
+        WHERE id_meuble = %s;
+    '''
+    mycursor.execute(sql_image, (id_meuble,))
     image_nom = mycursor.fetchone()
-    image_nom = image_nom['image']
+    if image_nom:
+        image_nom = image_nom['image_meuble']
     if image:
-        if image_nom != "" and image_nom is not None and os.path.exists(
-                os.path.join(os.getcwd() + "/static/images/", image_nom)):
+        if image_nom and os.path.exists(os.path.join(os.getcwd() + "/static/images/", image_nom)):
             os.remove(os.path.join(os.getcwd() + "/static/images/", image_nom))
-        # filename = secure_filename(image.filename)
-        if image:
-            filename = 'img_upload_' + str(int(2147483647 * random())) + '.png'
-            image.save(os.path.join('static/images/', filename))
-            image_nom = filename
-
-    sql = '''  requête admin_meuble_9 '''
-    mycursor.execute(sql, (nom, image_nom, prix, type_meuble_id, description, id_meuble))
-
+        filename = 'img_upload_' + str(int(2147483647 * random())) + '.png'
+        image.save(os.path.join('static/images/', filename))
+        image_nom = filename
+    sql_update = '''  
+        UPDATE meuble 
+        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_id = %s, stock_meuble = %s
+        WHERE id_meuble = %s;
+    '''
+    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, stock, id_meuble))
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'meuble modifié , nom:' + nom + '- type_meuble :' + type_meuble_id + ' - prix:' + prix  + ' - image:' + image_nom + ' - description: ' + description
+    message = u'Meuble modifié - Nom: ' + nom + ' - Type de meuble: ' + type_meuble_id + ' - Prix: ' + prix + ' - Image: ' + image_nom + ' - Description: ' + description + ' - Stock: ' + stock
     flash(message, 'alert-success')
     return redirect('/admin/meuble/show')
-
-
-
-
-
 
 
 @admin_meuble.route('/admin/meuble/avis/<int:id>', methods=['GET'])
