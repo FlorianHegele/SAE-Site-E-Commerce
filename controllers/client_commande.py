@@ -58,25 +58,19 @@ def client_commande_add():
         flash(u'Pas d\'articles dans le panier')
         return redirect('/client/article/show')
 
-    #date_commande = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     tuple_insert = (id_client, '1')  # 1 : état de commande : "en cours" ou "validé"
-    sql = "INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUES (NOW(), %s, %s)"
+    sql = "INSERT INTO commande(date_achat, utilisateur_id, etat_id) VALUES (CURRENT_TIMESTAMP, %s, %s)"
     mycursor.execute(sql, tuple_insert)
     sql = "SELECT last_insert_id() as last_insert_id"
     mycursor.execute(sql)
     commande_id = mycursor.fetchone()
-    print(commande_id, tuple_insert)
 
     for item in items_ligne_panier:
         sql = "DELETE FROM ligne_panier WHERE utilisateur_id = %s AND meuble_id = %s"
         mycursor.execute(sql, (item['utilisateur_id'], item['meuble_id']))
-        sql = "SELECT prix_meuble AS prix FROM meuble WHERE id_meuble = %s"
-        mycursor.execute(sql, item['meuble_id'])
-        prix = mycursor.fetchone()
-        print(prix)
+
         sql = "INSERT INTO ligne_commande (commande_id, meuble_id, prix, quantite) VALUES (%s, %s, %s, %s)"
-        tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], prix['prix'], item['quantite'])
-        print(tuple_insert)
+        tuple_insert = (commande_id['last_insert_id'], item['meuble_id'], item['prix'], item['quantite'])
         mycursor.execute(sql, tuple_insert)
 
     get_db().commit()
