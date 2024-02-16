@@ -56,15 +56,15 @@ CREATE TABLE type_meuble(
 CREATE TABLE commande(
    id_commande INT AUTO_INCREMENT,
    date_achat DATETIME,
-   id_adresse INT NOT NULL,
-   id_etat INT NOT NULL,
-   id_utilisateur INT NOT NULL,
-   id_adresse_1 INT NOT NULL,
+  adresse_id_livr INT NOT NULL,
+   etat_id INT NOT NULL,
+   utilisateur_id  INT NOT NULL,
+   adresse_id_fact  INT NOT NULL,
    PRIMARY KEY(id_commande),
-   FOREIGN KEY(id_adresse) REFERENCES adresse(id_adresse),
-   FOREIGN KEY(id_etat) REFERENCES etat(id_etat),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_adresse_1) REFERENCES adresse(id_adresse)
+   FOREIGN KEY(adresse_id_livr) REFERENCES adresse(id_adresse),
+   FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(adresse_id_fact) REFERENCES adresse(id_adresse)
 );
 
 CREATE TABLE meuble(
@@ -74,9 +74,9 @@ CREATE TABLE meuble(
    prix_meuble DECIMAL(19,4),
    description_meuble VARCHAR(255),
    image_meuble VARCHAR(255),
-   id_type_meuble INT NOT NULL,
+   type_meuble_id INT NOT NULL,
    PRIMARY KEY(id_meuble),
-   FOREIGN KEY(id_type_meuble) REFERENCES type_meuble(id_type_meuble)
+   FOREIGN KEY(type_meuble_id) REFERENCES type_meuble(id_type_meuble)
 );
 
 CREATE TABLE declinaison_meuble(
@@ -84,75 +84,75 @@ CREATE TABLE declinaison_meuble(
    stock INT,
    prix_declinaison DECIMAL(19,4),
    image_declinaison VARCHAR(255),
-   id_meuble INT NOT NULL,
-   id_materiau INT NOT NULL,
+   meuble_id INT NOT NULL,
+   materiau_id  INT NOT NULL,
    PRIMARY KEY(id_declinaison_meuble),
-   FOREIGN KEY(id_meuble) REFERENCES meuble(id_meuble),
-   FOREIGN KEY(id_materiau) REFERENCES materiau(id_materiau)
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
+   FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau)
 );
 
 CREATE TABLE concerne(
-   id_utilisateur INT,
-   id_adresse INT,
-   PRIMARY KEY(id_utilisateur, id_adresse),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_adresse) REFERENCES adresse(id_adresse)
+   utilisateur_id  INT,
+   adresse_id INT,
+   PRIMARY KEY(utilisateur_id, adresse_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
 );
 
 CREATE TABLE ligne_commande(
-   id_commande INT,
-   id_declinaison_meuble INT,
+   commande_id  INT,
+   declinaison_meuble_id INT,
    quantite_lc INT,
    prix_lc DECIMAL(19,4),
-   PRIMARY KEY(id_commande, id_declinaison_meuble),
-   FOREIGN KEY(id_commande) REFERENCES commande(id_commande),
-   FOREIGN KEY(id_declinaison_meuble) REFERENCES declinaison_meuble(id_declinaison_meuble)
+   PRIMARY KEY(commande_id, declinaison_meuble_id),
+   FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
+   FOREIGN KEY(declinaison_meuble_id) REFERENCES declinaison_meuble(id_declinaison_meuble)
 );
 
 CREATE TABLE ligne_panier(
-   id_utilisateur INT,
-   id_declinaison_meuble INT,
+   utilisateur_id INT,
+   declinaison_meuble_id INT,
    date_ajout DATETIME,
    quantite_lp INT,
-   PRIMARY KEY(id_utilisateur, id_declinaison_meuble),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_declinaison_meuble) REFERENCES declinaison_meuble(id_declinaison_meuble)
+   PRIMARY KEY(utilisateur_id, declinaison_meuble_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(declinaison_meuble_id) REFERENCES declinaison_meuble(id_declinaison_meuble)
 );
 
 CREATE TABLE note(
-   id_utilisateur INT,
-   id_meuble INT,
+   utilisateur_id INT,
+   meuble_id INT,
    note DECIMAL(2,1),
-   PRIMARY KEY(id_utilisateur, id_meuble),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_meuble) REFERENCES meuble(id_meuble)
+   PRIMARY KEY(utilisateur_id, meuble_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
 );
 
 CREATE TABLE commentaire(
-   id_utilisateur INT,
-   id_meuble INT,
+   utilisateur_id INT,
+   meuble_id INT,
    date_publication DATETIME,
    commentaire VARCHAR(255),
    valider INT,
-   PRIMARY KEY(id_utilisateur, id_meuble, date_publication),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_meuble) REFERENCES meuble(id_meuble)
+   PRIMARY KEY(utilisateur_id, meuble_id, date_publication),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
 );
 
 CREATE TABLE historique(
-   id_utilisateur INT,
-   id_meuble INT,
+   utilisateur_id INT,
+   meuble_id INT,
    date_consultation DATETIME,
-   PRIMARY KEY(id_utilisateur, id_meuble, date_consultation),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_meuble) REFERENCES meuble(id_meuble)
+   PRIMARY KEY(utilisateur_id, meuble_id, date_consultation),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
 );
 
 CREATE TABLE liste_envie(
-   id_utilisateur INT,
-   id_meuble INT,
+   utilisateur_id INT,
+   meuble_id INT,
    date_update DATETIME,
-   PRIMARY KEY(id_utilisateur, id_meuble, date_update),
-   FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur),
-   FOREIGN KEY(id_meuble) REFERENCES meuble(id_meuble)
+   PRIMARY KEY(utilisateur_id, meuble_id, date_update),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
 );
