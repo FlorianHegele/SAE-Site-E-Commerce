@@ -543,6 +543,7 @@ CREATE TABLE IF NOT EXISTS note(
     FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
 );
 -- Views
+DROP view IF EXISTS v_ligne_panier, v_ligne_commande;
 CREATE view IF NOT EXISTS v_ligne_commande AS
 SELECT *
 FROM ligne_commande
