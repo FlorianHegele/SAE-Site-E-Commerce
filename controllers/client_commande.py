@@ -123,7 +123,21 @@ def client_commande_show():
         meubles_commande = mycursor.fetchall()
 
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
-        sql = ''' selection des adressses '''
+        sql = '''
+            SELECT a.id_adresse,
+                a.rue,
+                a.code_postal,
+                a.ville,
+                a.pays,
+                a.type_adresse_id,
+                ta.libelle_type_adresse AS libelle
+            FROM adresse a
+                JOIN habite h ON a.id_adresse = h.adresse_id
+                JOIN type_adresse ta ON a.type_adresse_id = ta.id_type_adresse
+            WHERE h.utilisateur_id = %s;
+        '''
+        mycursor.execute(sql, str(id_client))
+        commande_adresses = mycursor.fetchall()
 
     return render_template('client/commandes/show.html'
                            , commandes=commandes
