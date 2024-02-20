@@ -12,970 +12,509 @@ fixtures_load = Blueprint('fixtures_load', __name__, template_folder='templates'
 def fct_fixtures_load():
     mycursor = get_db().cursor()
 
-    sql = '''
-DROP TABLE IF EXISTS habite,
-ligne_commande,
+    sql = ''' 
+DROP TABLE IF EXISTS liste_envie,
+historique,
+commentaire,
+note,
 ligne_panier,
+ligne_commande,
+concerne,
+declinaison_meuble,
 meuble,
 commande,
-etat,
-utilisateur,
-marque,
-fournisseur,
 type_meuble,
 materiau,
-adresse;
-    '''
-
-    mycursor.execute(sql)
-    sql = '''
-CREATE TABLE materiau (
-    id_materiau INT AUTO_INCREMENT,
-    libelle_materiau VARCHAR(255),
-    PRIMARY KEY(id_materiau)
-) DEFAULT CHARSET utf8;
-    '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-CREATE TABLE type_meuble (
-    id_type_meuble INT AUTO_INCREMENT,
-    libelle_type_meuble VARCHAR(255),
-    PRIMARY KEY(id_type_meuble)
-) DEFAULT CHARSET utf8;
-    '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-CREATE TABLE fournisseur (
-    id_fournisseur INT AUTO_INCREMENT,
-    libelle_fournisseur VARCHAR(255),
-    PRIMARY KEY(id_fournisseur)
-) DEFAULT CHARSET utf8;
-    '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-CREATE TABLE marque (
-    id_marque INT AUTO_INCREMENT,
-    libelle_marque VARCHAR(255),
-    PRIMARY KEY(id_marque)
-) DEFAULT CHARSET utf8;
-    '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-CREATE TABLE utilisateur (
-    id_utilisateur INT AUTO_INCREMENT,
-    login VARCHAR(255),
-    email VARCHAR(255),
-    nom VARCHAR(255),
-    password VARCHAR(255) NOT NULL,
-    role VARCHAR(255),
-    est_actif TINYINT,
-    PRIMARY KEY(id_utilisateur)
-) DEFAULT CHARSET utf8;
+etat,
+adresse,
+utilisateur;
     '''
     mycursor.execute(sql)
 
     sql = '''
-CREATE TABLE etat (
-    id_etat INT AUTO_INCREMENT,
-    libelle_etat VARCHAR(255),
-    PRIMARY KEY(id_etat)
-) DEFAULT CHARSET utf8;
+CREATE TABLE utilisateur(
+   id_utilisateur INT AUTO_INCREMENT,
+   login VARCHAR(255),
+   email VARCHAR(255),
+   nom_utilisateur VARCHAR(255),
+   password VARCHAR(255),
+   role VARCHAR(255),
+   est_actif TINYINT,
+   PRIMARY KEY(id_utilisateur)
+);  
     '''
-    mycursor.execute(sql)
+    mycursor.execute(sql) 
 
     sql = '''
 CREATE TABLE adresse(
-    id_adresse INT AUTO_INCREMENT,
-    nom_adresse VARCHAR(255),
-    code_postal VARCHAR(255),
-    ville VARCHAR(255),
-    rue VARCHAR(255),
-    valide INT,
-    PRIMARY KEY(id_adresse)
+   id_adresse INT AUTO_INCREMENT,
+   nom_adresse VARCHAR(255),
+   rue VARCHAR(255),
+   code_postal VARCHAR(5),
+   ville VARCHAR(255),
+   valide TINYINT,
+   PRIMARY KEY(id_adresse)
+);
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+CREATE TABLE etat(
+   id_etat INT AUTO_INCREMENT,
+   libelle_etat VARCHAR(255),
+   PRIMARY KEY(id_etat)
 );
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-CREATE TABLE commande (
-    id_commande INT AUTO_INCREMENT,
-    date_achat DATE,
-    utilisateur_id INT NOT NULL,
-    etat_id INT,
-    PRIMARY KEY(id_commande),
-    CONSTRAINT fk_commande_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-    CONSTRAINT fk_commande_etat FOREIGN KEY(etat_id) REFERENCES etat(id_etat)
-) DEFAULT CHARSET utf8; 
+CREATE TABLE materiau(
+   id_materiau INT AUTO_INCREMENT,
+   libelle_materiau VARCHAR(255),
+   PRIMARY KEY(id_materiau)
+);
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-CREATE TABLE meuble (
-    id_meuble INT AUTO_INCREMENT,
-    nom_meuble VARCHAR(255),
-    largeur INT,
-    hauteur INT,
-    prix_meuble DECIMAL(10, 2),
-    image_meuble VARCHAR(255),
-    stock_meuble INT,
-    materiau_id INT,
-    fournisseur_id INT NOT NULL,
-    marque_id INT NOT NULL,
-    type_id INT NOT NULL,
-    PRIMARY KEY(id_meuble),
-    CONSTRAINT fk_meuble_materiau FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
-    CONSTRAINT fk_meuble_fournisseur FOREIGN KEY(fournisseur_id) REFERENCES fournisseur(id_fournisseur),
-    CONSTRAINT fk_meuble_marque FOREIGN KEY(marque_id) REFERENCES marque(id_marque),
-    CONSTRAINT fk_meuble_type_meuble FOREIGN KEY(type_id) REFERENCES type_meuble(id_type_meuble)
-) DEFAULT CHARSET utf8;
+CREATE TABLE type_meuble(
+   id_type_meuble INT AUTO_INCREMENT,
+   libelle_type_meuble VARCHAR(255),
+   PRIMARY KEY(id_type_meuble)
+);
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-CREATE TABLE ligne_panier
-(
-    id_ligne_panier INT AUTO_INCREMENT,
-    meuble_id      INT,
-    utilisateur_id INT,
-    quantite       INT,
-    prix           DECIMAL(15, 2),
-    date_ajout     DATE,
-    PRIMARY KEY (id_ligne_panier),
-    CONSTRAINT fk_ligne_panier_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble),
-    CONSTRAINT fk_ligne_panier_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur (id_utilisateur)
-) DEFAULT CHARSET utf8;
+CREATE TABLE commande(
+   id_commande INT AUTO_INCREMENT,
+   date_achat DATETIME,
+  adresse_id_livr INT NOT NULL,
+   etat_id INT NOT NULL,
+   utilisateur_id  INT NOT NULL,
+   adresse_id_fact  INT NOT NULL,
+   PRIMARY KEY(id_commande),
+   FOREIGN KEY(adresse_id_livr) REFERENCES adresse(id_adresse),
+   FOREIGN KEY(etat_id) REFERENCES etat(id_etat),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(adresse_id_fact) REFERENCES adresse(id_adresse)
+);
      '''
     mycursor.execute(sql)
-
-    sql = ''' 
-CREATE TABLE ligne_commande
-(
-    id_ligne_commande INT AUTO_INCREMENT,
-    meuble_id   INT,
-    commande_id INT,
-    quantite    INT,
-    date_ajout  DATE,
-    prix        DECIMAL(15, 2),
-    PRIMARY KEY (id_ligne_commande),
-    CONSTRAINT fk_ligne_commande_meuble FOREIGN KEY (meuble_id) REFERENCES meuble (id_meuble),
-    CONSTRAINT fk_ligne_commande_commande FOREIGN KEY (commande_id) REFERENCES commande (id_commande)
-) DEFAULT CHARSET utf8;
-    '''
-    mycursor.execute(sql)
-
+    
     sql = '''
-CREATE TABLE habite(
-    id_habite INT AUTO_INCREMENT,
-    utilisateur_id INT,
-    adresse_id INT,
-    PRIMARY KEY(id_habite),
-    CONSTRAINT fk_habite_utilisateur FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
-    CONSTRAINT fk_habite_adresse FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
+CREATE TABLE meuble(
+   id_meuble INT AUTO_INCREMENT,
+   nom_meuble VARCHAR(255),
+   disponible INT,
+   prix_meuble DECIMAL(19,4),
+   description_meuble VARCHAR(255),
+   image_meuble VARCHAR(255),
+   type_meuble_id INT NOT NULL,
+   PRIMARY KEY(id_meuble),
+   FOREIGN KEY(type_meuble_id) REFERENCES type_meuble(id_type_meuble)
 );
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO utilisateur (
-        id_utilisateur,
-        login,
-        email,
-        password,
-        role,
-        nom,
-        est_actif
-    )
-VALUES (
-        1,
-        'admin',
-        'admin@admin.fr',
-        'pbkdf2:sha256:600000$828ij7RCZN24IWfq$3dbd14ea15999e9f5e340fe88278a45c1f41901ee6b2f56f320bf1fa6adb933d',
-        'ROLE_admin',
-        'admin',
-        '1'
-    ),
-    (
-        2,
-        'client',
-        'client@client.fr',
-        'pbkdf2:sha256:600000$ik00jnCw52CsLSlr$9ac8f694a800bca6ee25de2ea2db9e5e0dac3f8b25b47336e8f4ef9b3de189f4',
-        'ROLE_client',
-        'client',
-        '1'
-    ),
-    (
-        3,
-        'client2',
-        'client2@client2.fr',
-        'pbkdf2:sha256:600000$3YgdGN0QUT1jjZVN$baa9787abd4decedc328ed56d86939ce816c756ff6d94f4e4191ffc9bf357348',
-        'ROLE_client',
-        'client2',
-        '1'
-    );
+CREATE TABLE declinaison_meuble(
+   id_declinaison_meuble INT AUTO_INCREMENT,
+   stock INT,
+   prix_declinaison DECIMAL(19,4),
+   image_declinaison VARCHAR(255),
+   meuble_id INT NOT NULL,
+   materiau_id  INT NOT NULL,
+   PRIMARY KEY(id_declinaison_meuble),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
+   FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau)
+);
     '''
     mycursor.execute(sql)
 
     sql = '''
-    INSERT INTO adresse (nom_adresse, code_postal, ville, rue, valide)
-VALUES (
-        'Maison',
-        '75000',
-        'Paris',
-        'Rue des Fleurs',
-        1
-    ),
-    (
-        'Travail',
-        '06400',
-        'Cannes',
-        'Boulevard Carnot',
-        1
-    ),
-    (
-        'Fausse adresse',
-        '06401',
-        'Cdds',
-        'Boulevard not',
-        0
-    ),
-    (
-        'Maison',
-        '68720',
-        'Zillisheim',
-        'Rue du Chateau',
-        1
-    );
+CREATE TABLE concerne(
+   utilisateur_id  INT,
+   adresse_id INT,
+   PRIMARY KEY(utilisateur_id, adresse_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(adresse_id) REFERENCES adresse(id_adresse)
+);
+    '''
+    mycursor.execute(sql)
+
+    sql = ''' 
+CREATE TABLE ligne_commande(
+   commande_id  INT,
+   declinaison_meuble_id INT,
+   quantite_lc INT,
+   prix_lc DECIMAL(19,4),
+   PRIMARY KEY(commande_id, declinaison_meuble_id),
+   FOREIGN KEY(commande_id) REFERENCES commande(id_commande),
+   FOREIGN KEY(declinaison_meuble_id) REFERENCES declinaison_meuble(id_declinaison_meuble)
+);
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+CREATE TABLE ligne_panier(
+   utilisateur_id INT,
+   declinaison_meuble_id INT,
+   date_ajout DATETIME,
+   quantite_lp INT,
+   PRIMARY KEY(utilisateur_id, declinaison_meuble_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(declinaison_meuble_id) REFERENCES declinaison_meuble(id_declinaison_meuble)
+);
     '''
 
     mycursor.execute(sql)
 
     sql = '''
-INSERT INTO habite (utilisateur_id, adresse_id)
-VALUES (1, 1),
-    (2, 2),
-    (2, 3),
-    (3, 4);
+CREATE TABLE note(
+   utilisateur_id INT,
+   meuble_id INT,
+   note DECIMAL(2,1),
+   PRIMARY KEY(utilisateur_id, meuble_id),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
+);
     '''
 
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO materiau (libelle_materiau)
-VALUES ('Sheesham massif'),
-    ('Mélaminé blanc'),
-    ('Verre'),
-    ('Rotin'),
-    ('Violet'),
-    ('Rose'),
-    ('Rouge'),
-    ('Gris'),
-    ('Vert'),
-    ('Blanc'),
-    ('Orange'),
-    ('Noir'),
-    ('Bleu'),
-    ('Bleu foncé'),
-    ('Bleu clair'),
-    ('Hêtre massif'),
-    ('Chêne massif'),
-    ('Noyer massif'),
-    ('Pin massif'),
-    ('Eucalyptus'),
-    ('Chêne clair'),
-    ('Chêne foncé');
+CREATE TABLE commentaire(
+   utilisateur_id INT,
+   meuble_id INT,
+   date_publication DATETIME,
+   commentaire VARCHAR(255),
+   valider INT,
+   PRIMARY KEY(utilisateur_id, meuble_id, date_publication),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
+);
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO type_meuble (libelle_type_meuble)
-VALUES ('Étagère'),
-    ('Table'),
-    ('Buffet'),
-    ('Bibliothèque'),
-    ('Vitrine'),
-    ('Chaise'),
-    ('Pouf');
+CREATE TABLE historique(
+   utilisateur_id INT,
+   meuble_id INT,
+   date_consultation DATETIME,
+   PRIMARY KEY(utilisateur_id, meuble_id, date_consultation),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
+);
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO marque (libelle_marque)
-VALUES ('Maisons du monde'),
-    ('Ikea'),
-    ('ManoMano'),
-    ('magequip'),
-    ('Pickawood');
-        '''
-    mycursor.execute(sql)
-
-    sql = ''' 
-INSERT INTO fournisseur (libelle_fournisseur)
-VALUES ('Tikamoon'),
-    ('Ikea'),
-    ('NKL'),
-    ('Alvero');
-    '''
-    mycursor.execute(sql)
-
-
-    sql = '''
-INSERT INTO meuble (
-        nom_meuble,
-        largeur,
-        hauteur,
-        prix_meuble,
-        image_meuble,
-        stock_meuble,
-        materiau_id,
-        fournisseur_id,
-        marque_id,
-        type_id
-    )
-VALUES (
-        'Etagère déstructuré',
-        110,
-        195,
-        819,
-        '1.jpg',
-        8,
-        1,
-        1,
-        1,
-        1
-    ),
-    (
-        'Table en sheesham',
-        130,
-        78,
-        419,
-        '2.jpg',
-        2,
-        1,
-        1,
-        1,
-        2
-    ),
-    (
-        'Buffet 2 portes 3 tiroirs',
-        160,
-        85,
-        799,
-        '3.jpg',
-        3,
-        1,
-        1,
-        1,
-        3
-    ),
-    (
-        'Bibliothèque personnalisable',
-        138,
-        138,
-        976,
-        '4.jpg',
-        12,
-        2,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        172,
-        138,
-        1182,
-        '5.jpg',
-        6,
-        2,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        206,
-        138,
-        1389,
-        '6.jpg',
-        6,
-        2,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        138,
-        138,
-        1427,
-        '7.jpg',
-        1,
-        16,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        172,
-        138,
-        1737,
-        '8.jpg',
-        2,
-        16,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        206,
-        138,
-        2047,
-        '9.jpg',
-        2,
-        16,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        138,
-        138,
-        1725,
-        '10.jpg',
-        6,
-        17,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        172,
-        138,
-        2104,
-        '11.jpg',
-        9,
-        17,
-        2,
-        2,
-        4
-    ),
-    (
-        'Bibliothèque personnalisable',
-        206,
-        138,
-        2485,
-        '12.jpg',
-        13,
-        17,
-        2,
-        2,
-        4
-    ),
-    (
-        'Vitrine en verre',
-        95,
-        72,
-        700,
-        '13.jpg',
-        13,
-        3,
-        2,
-        2,
-        5
-    ),
-    ('Banc TV', 80, 40, 345, '14.jpg', 12, 3, 2, 2, 2),
-    (
-        'Vitrine figurine',
-        62,
-        200,
-        518,
-        '15.jpg',
-        2,
-        3,
-        2,
-        2,
-        5
-    ),
-    (
-        'Chaise Venus',
-        58,
-        76,
-        159,
-        '16.jpg',
-        2,
-        17,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise Venus',
-        58,
-        76,
-        159,
-        '17.jpg',
-        5,
-        18,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise en rotin',
-        70,
-        72,
-        226,
-        '18.jpg',
-        3,
-        4,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise simple',
-        52,
-        79,
-        56,
-        '19.jpg',
-        25,
-        5,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise simple',
-        52,
-        79,
-        56,
-        '20.jpg',
-        16,
-        6,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise simple',
-        52,
-        79,
-        56,
-        '21.jpg',
-        11,
-        8,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise simple',
-        52,
-        79,
-        56,
-        '22.jpg',
-        7,
-        9,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '23.jpg',
-        7,
-        8,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '24.jpg',
-        4,
-        9,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '25.jpg',
-        2,
-        10,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '26.jpg',
-        1,
-        11,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '27.jpg',
-        5,
-        12,
-        1,
-        3,
-        6
-    ),
-    (
-        'Chaise jardin',
-        55,
-        75,
-        65,
-        '28.jpg',
-        6,
-        13,
-        1,
-        3,
-        6
-    ),
-    (
-        'Table longue',
-        240,
-        135,
-        895,
-        '29.jpg',
-        21,
-        17,
-        1,
-        3,
-        2
-    ),
-    (
-        'Table à manger',
-        210,
-        70,
-        950,
-        '30.jpg',
-        2,
-        17,
-        1,
-        3,
-        2
-    ),
-    (
-        'Table rustique',
-        220,
-        70,
-        1450,
-        '31.jpg',
-        5,
-        19,
-        1,
-        3,
-        2
-    ),
-    (
-        'Table ronde',
-        110,
-        110,
-        425,
-        '32.jpg',
-        6,
-        19,
-        3,
-        4,
-        2
-    ),
-    (
-        'Table en dur',
-        250,
-        60,
-        2250,
-        '33.jpg',
-        7,
-        20,
-        3,
-        4,
-        2
-    ),
-    (
-        'Table bar',
-        100,
-        100,
-        1400,
-        '34.jpg',
-        16,
-        20,
-        3,
-        4,
-        2
-    ),
-    (
-        'Bibliothèque escalier',
-        150,
-        130,
-        750,
-        '35.jpg',
-        23,
-        17,
-        3,
-        4,
-        4
-    ),
-    (
-        'Bibliothèque escalier',
-        150,
-        130,
-        750,
-        '36.jpg',
-        2,
-        17,
-        3,
-        4,
-        4
-    ),
-    (
-        'Pouf plastique',
-        50,
-        50,
-        75,
-        '38.jpg',
-        0,
-        12,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf plastique',
-        50,
-        50,
-        75,
-        '39.jpg',
-        5,
-        11,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf plastique',
-        50,
-        50,
-        75,
-        '41.jpg',
-        6,
-        7,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf plastique',
-        50,
-        50,
-        75,
-        '42.jpg',
-        0,
-        9,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '43.jpg',
-        12,
-        10,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '44.jpg',
-        11,
-        9,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '45.jpg',
-        8,
-        14,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '46.jpg',
-        9,
-        15,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '47.jpg',
-        19,
-        8,
-        4,
-        5,
-        7
-    ),
-    (
-        'Pouf Velour',
-        60,
-        60,
-        150,
-        '48.jpg',
-        27,
-        6,
-        4,
-        5,
-        7
-    );
+CREATE TABLE liste_envie(
+   utilisateur_id INT,
+   meuble_id INT,
+   date_update DATETIME,
+   PRIMARY KEY(utilisateur_id, meuble_id, date_update),
+   FOREIGN KEY(utilisateur_id) REFERENCES utilisateur(id_utilisateur),
+   FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble)
+);
         '''
     mycursor.execute(sql)
 
 
     sql = ''' 
-INSERT INTO etat (libelle_etat)
-VALUES ('En attente'),
-    ('Expédié'),
-    ('Validé'),
-    ('Confirmé');
+INSERT INTO utilisateur (login,email,nom_utilisateur,password,`role`,est_actif) VALUES
+	 ('admin','admin@admin.fr','Administrateur','pbkdf2:sha256:600000$828ij7RCZN24IWfq$3dbd14ea15999e9f5e340fe88278a45c1f41901ee6b2f56f320bf1fa6adb933d','ROLE_admin',1),
+	 ('client','client@client.fr','Semih Remork','pbkdf2:sha256:600000$ik00jnCw52CsLSlr$9ac8f694a800bca6ee25de2ea2db9e5e0dac3f8b25b47336e8f4ef9b3de189f4','ROLE_client',1),
+	 ('client2','client2@client2.fr','Jack Séparou','pbkdf2:sha256:600000$3YgdGN0QUT1jjZVN$baa9787abd4decedc328ed56d86939ce816c756ff6d94f4e4191ffc9bf357348','ROLE_client',1);
+    '''
+    mycursor.execute(sql)
+
+
+    sql = '''
+INSERT INTO adresse (nom_adresse,rue,code_postal,ville,valide) VALUES
+	 ('Crêperie les Tonnelles','101 Av. du Maréchal Foch','92210','Saint-Cloud',1),
+	 ('Residhome Paris Issy-les-Moulineaux','22-24 Rue du Passeur de Boulogne','92130','Issy-les-Moulineaux',1),
+	 ('Fausse adresse','Boulevard not','06401','Cdds',0),
+	 ('DSI Group','41 Av. du Général Leclerc','92350','Le Plessis-Robinson',1);
+        '''
+    mycursor.execute(sql)
+
+
+    sql = ''' 
+INSERT INTO etat (libelle_etat) VALUES
+	 ('En attente'),
+	 ('Expédié'),
+	 ('Validé'),
+	 ('Confirmé');
         '''
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO commande (date_achat, utilisateur_id, etat_id)
-VALUES ('2024-01-01', 1, 1),
-    ('2024-01-02', 2, 1),
-    ('2024-01-03', 3, 2),
-    ('2024-01-04', 1, 4),
-    ('2024-02-04', 1, 3),
-    ('2023-03-03', 2, 4);
+INSERT INTO materiau (libelle_materiau) VALUES
+	 ('Sheesham massif'),
+	 ('Mélaminé blanc'),
+	 ('Verre'),
+	 ('Rotin'),
+	 ('Violet'),
+	 ('Rose'),
+	 ('Rouge'),
+	 ('Gris'),
+	 ('Vert'),
+	 ('Blanc'),
+	 ('Orange'),
+	 ('Noir'),
+	 ('Bleu'),
+	 ('Bleu foncé'),
+	 ('Bleu clair'),
+	 ('Hêtre massif'),
+	 ('Chêne massif'),
+	 ('Noyer massif'),
+	 ('Pin massif'),
+	 ('Eucalyptus'),
+	 ('Chêne clair'),
+	 ('Chêne foncé');
     '''
     mycursor.execute(sql)
 
     sql = ''' 
-INSERT INTO ligne_commande (meuble_id, commande_id, quantite, date_ajout)
-VALUES (1, 1, 2, '2024-01-01'),
-    (2, 1, 1, '2024-01-01'),
-    (3, 2, 3, '2024-01-02'),
-    (1, 3, 1, '2024-01-03'),
-    (1, 4, 11, '2024-01-04'),
-    (2, 4, 5, '2024-01-04'),
-    (3, 4, 4, '2024-01-04'),
-    (4, 4, 12, '2024-01-04'),
-    (5, 4, 6, '2024-01-04'),
-    (6, 4, 6, '2024-01-04'),
-    (7, 4, 1, '2024-01-04'),
-    (8, 4, 2, '2024-01-04'),
-    (9, 4, 2, '2024-01-04'),
-    (10, 4, 6, '2024-01-04'),
-    (11, 4, 9, '2024-01-04'),
-    (12, 4, 13, '2024-01-04'),
-    (13, 4, 13, '2024-01-04'),
-    (14, 4, 12, '2024-01-04'),
-    (15, 4, 2, '2024-01-04'),
-    (16, 4, 2, '2024-01-04'),
-    (17, 4, 5, '2024-01-04'),
-    (18, 4, 3, '2024-01-04'),
-    (19, 4, 25, '2024-01-04'),
-    (20, 4, 16, '2024-01-04'),
-    (21, 4, 11, '2024-01-04'),
-    (22, 4, 7, '2024-01-04'),
-    (23, 4, 7, '2024-01-04'),
-    (24, 4, 4, '2024-01-04'),
-    (25, 4, 2, '2024-01-04'),
-    (26, 4, 1, '2024-01-04'),
-    (27, 4, 5, '2024-01-04'),
-    (28, 4, 6, '2024-01-04'),
-    (29, 4, 21, '2024-01-04'),
-    (30, 4, 2, '2024-01-04'),
-    (31, 4, 5, '2024-01-04'),
-    (32, 4, 6, '2024-01-04'),
-    (33, 4, 7, '2024-01-04'),
-    (34, 4, 16, '2024-01-04'),
-    (35, 4, 23, '2024-01-04'),
-    (36, 4, 2, '2024-01-04'),
-    (38, 4, 5, '2024-01-04'),
-    (39, 4, 6, '2024-01-04'),
-    (41, 4, 12, '2024-01-04'),
-    (42, 4, 11, '2024-01-04'),
-    (43, 4, 8, '2024-01-04'),
-    (44, 4, 9, '2024-01-04'),
-    (45, 4, 19, '2024-01-04'),
-    (46, 4, 27, '2024-01-04'),
-    (1, 6, 2, '2023-03-03'),
-    (2, 6, 1, '2023-03-03'),
-    (3, 6, 3, '2023-03-03');
+INSERT INTO type_meuble (libelle_type_meuble) VALUES
+	 ('Étagère'),
+	 ('Table'),
+	 ('Buffet'),
+	 ('Bibliothèque'),
+	 ('Vitrine'),
+	 ('Chaise'),
+	 ('Pouf');
     '''
     mycursor.execute(sql)
 
     sql = '''
-    UPDATE ligne_commande
-    SET prix = (SELECT prix_meuble FROM meuble WHERE meuble.id_meuble = ligne_commande.meuble_id);
+INSERT INTO commande (date_achat,adresse_id_livr,etat_id,utilisateur_id,adresse_id_fact) VALUES
+	 ('2024-01-01 00:00:00',2,1,2,2),
+	 ('2024-01-02 00:00:00',2,1,2,2),
+	 ('2024-01-03 00:00:00',4,2,3,4),
+	 ('2024-01-04 00:00:00',4,3,3,4),
+	 ('2023-03-03 00:00:00',2,4,2,2); 
     '''
     mycursor.execute(sql)
 
     sql = '''
-INSERT INTO ligne_panier (meuble_id, utilisateur_id, quantite, prix, date_ajout)
-VALUES (1, 1, 2, 300.00, '2024-01-01'),
-    (3, 1, 1, 800.00, '2024-01-01'),
-    (2, 2, 3, 500.00, '2024-01-02'),
-    (1, 3, 1, 150.00, '2024-01-03');
+INSERT INTO meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_meuble,type_meuble_id) VALUES
+	 ('Etagère déstructuré',1,819.0000,'Une étagère fort sympathique.','1.jpg',1),
+	 ('Table en sheesham',1,419.0000,'C''est une table... et elle est en sheesham...','2.jpg',2),
+	 ('Buffet 2 portes 3 tiroirs',1,799.0000,'Plus de porte que dans une voiture familiale.','3.jpg',3),
+	 ('Bibliothèque personnalisable',1,976.0000,'On sait que vous ne lirez pas ce qu''il y a dedans.','4.jpg',4),
+	 ('Vitrine en verre',1,700.0000,'Parce qu''on ne voyait pas à travers celle en bois.','13.jpg',5),
+	 ('Banc TV',1,345.0000,'C''est pour la télé pas pour vous ! Enfin je crois...','14.jpg',2),
+	 ('Vitrine figurine',1,518.0000,'En voilà un qui a un hobbie qui ne plait pas à sa femme.','15.jpg',5),
+	 ('Chaise Venus',1,159.0000,'On voulait l''appeler Uranus mais ça sonnait pas aussi sérieux...','16.jpg',6),
+	 ('Chaise en rotin',1,226.0000,'Et pas en pétin, ahahah...','18.jpg',6),
+	 ('Chaise simple',1,56.0000,'Il faut vraiment que j''explique ce que c''est ?','19.jpg',6),
+	 ('Chaise jardin',1,65.0000,'Une chaise mais à mettre dans le jardin... Ou pas, je m''en fiche','23.jpg',6),
+	 ('Table longue',1,895.0000,'Vous pouvez surement vous allongez dessus aussi','29.jpg',2),
+	 ('Table à manger',1,950.0000,'Cette table là, c''est uniquement pour manger !','30.jpg',2),
+	 ('Table rustique',1,1450.0000,'Elle est vieille mais rustique c''est plus vendeur.','31.jpg',2),
+	 ('Table ronde',1,425.0000,'Mais toujours pas de trace du graal... Quelqu''un a vu Perceval ?','32.jpg',2),
+	 ('Table en dur',1,2250.0000,'Parce que les tables molles tiennent pas aussi bien.','33.jpg',2),
+	 ('Table bar',1,1400.0000,'Pour un bon ricard !','34.jpg',2),
+	 ('Bibliothèque escalier',1,750.0000,'Je crois qu''on peut monter dessus, j''ai juste pas d''étage chez moi','35.jpg',4),
+	 ('Pouf plastique',1,75.0000,'Et non une femme de petite vertue ayant fait de la chirurgie esthétique','38.jpg',7),
+	 ('Pouf Velour',1,150.0000,'C''est tout doux !','43.jpg',7);
     '''
     mycursor.execute(sql)
 
     sql = '''
-    UPDATE ligne_panier
-    SET prix = (SELECT prix_meuble FROM meuble WHERE meuble.id_meuble = ligne_panier.meuble_id);
+INSERT INTO declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
+	 (8,819.0000,'1.jpg',1,1),
+	 (2,419.2500,'2.jpg',2,1),
+	 (3,799.0000,'3.jpg',3,1),
+	 (12,976.5000,'4.jpg',4,2),
+	 (1,1427.0000,'7.jpg',4,16),
+	 (6,1725.0000,'10.jpg',4,17),
+	 (13,700.0000,'13.jpg',5,3),
+	 (12,345.0000,'14.jpg',6,3),
+	 (2,518.0000,'15.jpg',7,3),
+	 (2,159.0000,'16.jpg',8,17),
+	 (5,159.5000,'17.jpg',8,18),
+	 (3,226.0000,'18.jpg',9,4),
+	 (25,56.0000,'19.jpg',10,5),
+	 (16,56.0000,'20.jpg',10,6),
+	 (11,57.0000,'21.jpg',10,8),
+	 (7,56.9900,'22.jpg',10,9),
+	 (7,65.0000,'23.jpg',11,8),
+	 (4,65.2000,'24.jpg',11,9),
+	 (2,64.0000,'25.jpg',11,10),
+	 (1,66.0000,'26.jpg',11,11),
+	 (5,66.0000,'27.jpg',11,12),
+	 (6,65.0000,'28.jpg',11,13),
+	 (21,895.9900,'29.jpg',12,17),
+	 (2,950.0000,'30.jpg',13,17),
+	 (5,1450.2500,'31.jpg',14,19),
+	 (6,425.0000,'32.jpg',15,19),
+	 (7,2250.0000,'33.jpg',16,20),
+	 (16,1400.0000,'34.jpg',17,20),
+	 (23,750.0000,'35.jpg',18,17),
+	 (2,750.0000,'36.jpg',18,17),
+	 (0,76.0000,'38.jpg',19,12),
+	 (5,75.0000,'39.jpg',19,11),
+	 (6,76.0000,'41.jpg',19,7),
+	 (0,75.0000,'42.jpg',19,9),
+	 (12,151.0000,'43.jpg',20,10),
+	 (11,150.2500,'44.jpg',20,9),
+	 (8,152.9900,'45.jpg',20,14),
+	 (9,152.9900,'46.jpg',20,15),
+	 (19,152.9900,'47.jpg',20,8),
+	 (27,152.9900,'48.jpg',20,6);
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+INSERT INTO concerne (utilisateur_id,adresse_id) VALUES
+	 (1,1),
+	 (2,2),
+	 (2,3),
+	 (3,4);
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+INSERT INTO ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+	 (1,1,2,819.0000),
+	 (1,2,1,419.0000),
+	 (2,3,3,799.0000),
+	 (3,1,1,819.0000),
+	 (4,1,11,819.0000),
+	 (4,2,5,419.0000),
+	 (4,3,4,799.0000),
+	 (4,4,12,976.0000),
+	 (4,5,6,1427.0000),
+	 (4,6,6,1725.0000),
+	 (4,7,1,700.0000),
+	 (4,8,2,345.0000),
+	 (4,9,2,518.0000),
+	 (4,10,6,159.0000),
+	 (4,11,9,159.0000),
+	 (4,12,13,226.0000),
+	 (4,13,13,56.0000),
+	 (4,14,12,57.0000),
+	 (4,15,2,58.0000),
+	 (4,16,2,62.0000),
+	 (4,17,5,65.0000),
+	 (4,18,3,66.0000),
+	 (4,19,25,62.0000),
+	 (4,20,16,65.0000),
+	 (4,21,11,65.0000),
+	 (4,22,7,65.0000),
+	 (4,23,7,895.0000),
+	 (4,24,4,950.0000),
+	 (4,25,2,1450.0000),
+	 (4,26,1,425.0000),
+	 (4,27,5,2250.0000),
+	 (4,28,6,1400.0000),
+	 (4,29,21,750.0000),
+	 (4,30,2,750.0000),
+	 (4,31,5,75.0000),
+	 (4,32,6,75.0000),
+	 (4,33,7,72.0000),
+	 (4,34,16,73.0000),
+	 (4,35,23,150.0000),
+	 (4,36,2,145.0000),
+	 (4,38,5,145.0000),
+	 (4,39,6,155.0000),
+	 (5,1,2,819.0000),
+	 (5,2,1,419.0000),
+	 (5,3,3,799.0000),
+	 (5,25,2,1445.0000),
+	 (5,34,11,75.0000);
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+INSERT INTO ligne_panier (utilisateur_id,declinaison_meuble_id,date_ajout,quantite_lp) VALUES
+	 (1,1,'2024-01-01 00:00:00',2),
+	 (1,3,'2024-01-01 00:00:00',1),
+	 (2,1,'2024-01-02 00:00:00',3),
+	 (2,2,'2024-01-02 00:00:00',3),
+	 (3,1,'2024-01-03 00:00:00',1);
     '''
     mycursor.execute(sql)
 
+   
+    sql = '''
+drop view if exists v_commande,
+v_concerne,
+v_declinaison_meuble,
+v_historique,
+v_ligne_commande,
+v_ligne_panier,
+v_liste_envie,
+v_note;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_declinaison_meuble as
+select *
+from declinaison_meuble dm
+join meuble m on m.id_meuble = dm.meuble_id
+join type_meuble tm on m.type_meuble_id = tm.id_type_meuble;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_ligne_commande as
+select *
+from ligne_commande lc
+join commande c on lc.commande_id = c.id_commande
+join declinaison_meuble dm on lc.declinaison_meuble_id = dm.id_declinaison_meuble;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_ligne_panier as
+select *
+from ligne_panier lp
+join utilisateur u on u.id_utilisateur = lp.utilisateur_id
+join declinaison_meuble dm on dm.id_declinaison_meuble = lp.declinaison_meuble_id;
+    '''
+    mycursor.execute(sql)
+
+    sql = '''
+create view v_concerne as
+select *
+from concerne
+join utilisateur u on u.id_utilisateur = concerne.utilisateur_id
+join adresse a on a.id_adresse = concerne.adresse_id;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_liste_envie as
+select *
+from liste_envie
+join utilisateur u on u.id_utilisateur = liste_envie.utilisateur_id
+join meuble m on liste_envie.meuble_id = m.id_meuble;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_historique as
+select *
+from historique
+join utilisateur u on u.id_utilisateur = historique.utilisateur_id
+join meuble m on m.id_meuble = historique.meuble_id;
+    '''
+    mycursor.execute(sql)
+    
+    sql = '''
+create view v_note as
+select *
+from note n
+join meuble m on m.id_meuble = n.meuble_id
+join utilisateur u on u.id_utilisateur = n.utilisateur_id;
+    '''
+    mycursor.execute(sql)
+    
     get_db().commit()
     return redirect('/')

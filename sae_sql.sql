@@ -387,7 +387,7 @@ create view v_ligne_commande as
 select *
 from ligne_commande lc
 join commande c on lc.commande_id = c.id_commande
-join bdd_r206.declinaison_meuble dm on lc.declinaison_meuble_id = dm.id_declinaison_meuble;
+join declinaison_meuble dm on lc.declinaison_meuble_id = dm.id_declinaison_meuble;
 
 drop view if exists v_ligne_panier;
 create view v_ligne_panier as
@@ -416,3 +416,10 @@ select *
 from historique
 join utilisateur u on u.id_utilisateur = historique.utilisateur_id
 join meuble m on m.id_meuble = historique.meuble_id;
+
+drop view if exists v_note;
+create view v_note as
+select *
+from note n
+join meuble m on m.id_meuble = n.meuble_id
+join utilisateur u on u.id_utilisateur = n.utilisateur_id;
