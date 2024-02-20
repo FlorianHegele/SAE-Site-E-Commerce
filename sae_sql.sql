@@ -339,3 +339,80 @@ INSERT INTO ligne_panier (utilisateur_id,declinaison_meuble_id,date_ajout,quanti
 	 (2,1,'2024-01-02 00:00:00',3),
 	 (2,2,'2024-01-02 00:00:00',3),
 	 (3,1,'2024-01-03 00:00:00',1);
+
+drop view if exists v_commande;
+create view if not exists v_commande as
+select `c`.`id_commande`     AS `id_commande`,
+       `c`.`date_achat`      AS `date_achat`,
+       `c`.`etat_id`         AS `etat_id`,
+       `c`.`utilisateur_id`  AS `utilisateur_id`,
+       `c`.`adresse_id_fact` AS `adresse_id_fact`,
+       `a`.`id_adresse`      AS `id_adresse_fact`,
+       `a`.`nom_adresse`     AS `nom_adresse_fact`,
+       `a`.`rue`             AS `rue_adresse_fact`,
+       `a`.`code_postal`     AS `code_postal_fact`,
+       `a`.`ville`           AS `ville_fact`,
+       `a`.`valide`          AS `valide_fact`,
+       `c`.`adresse_id_livr` AS `adresse_id_livr`,
+       `a2`.`id_adresse`     AS `id_adresse_livr`,
+       `a2`.`nom_adresse`    AS `nom_adresse_livr`,
+       `a2`.`rue`            AS `rue_livr`,
+       `a2`.`code_postal`    AS `code_postal_livr`,
+       `a2`.`ville`          AS `ville_livr`,
+       `a2`.`valide`         AS `valide_livr`,
+       `e`.`id_etat`         AS `id_etat`,
+       `e`.`libelle_etat`    AS `libelle_etat`,
+       `u`.`id_utilisateur`  AS `id_utilisateur`,
+       `u`.`login`           AS `login`,
+       `u`.`email`           AS `email`,
+       `u`.`nom_utilisateur` AS `nom_utilisateur`,
+       `u`.`password`        AS `password`,
+       `u`.`role`            AS `role`,
+       `u`.`est_actif`       AS `est_actif`
+from ((((`commande` `c` join `adresse` `a`
+         on (`c`.`adresse_id_fact` = `a`.`id_adresse`)) join `adresse` `a2`
+        on (`a2`.`id_adresse` = `c`.`adresse_id_livr`)) join `etat` `e`
+       on (`c`.`etat_id` = `e`.`id_etat`)) join `utilisateur` `u`
+      on (`c`.`utilisateur_id` = `u`.`id_utilisateur`));
+
+drop view if exists v_declinaison_meuble;
+create view v_declinaison_meuble as
+select *
+from declinaison_meuble dm
+join meuble m on m.id_meuble = dm.meuble_id
+join type_meuble tm on m.type_meuble_id = tm.id_type_meuble;
+
+drop view if exists v_ligne_commande;
+create view v_ligne_commande as
+select *
+from ligne_commande lc
+join commande c on lc.commande_id = c.id_commande
+join bdd_r206.declinaison_meuble dm on lc.declinaison_meuble_id = dm.id_declinaison_meuble;
+
+drop view if exists v_ligne_panier;
+create view v_ligne_panier as
+select *
+from ligne_panier lp
+join utilisateur u on u.id_utilisateur = lp.utilisateur_id
+join declinaison_meuble dm on dm.id_declinaison_meuble = lp.declinaison_meuble_id;
+
+drop view if exists v_concerne;
+create view v_concerne as
+select *
+from concerne
+join utilisateur u on u.id_utilisateur = concerne.utilisateur_id
+join adresse a on a.id_adresse = concerne.adresse_id;
+
+drop view if exists v_liste_envie;
+create view v_liste_envie as
+select *
+from liste_envie
+join utilisateur u on u.id_utilisateur = liste_envie.utilisateur_id
+join meuble m on liste_envie.meuble_id = m.id_meuble;
+
+drop view if exists v_historique;
+create view v_historique as
+select *
+from historique
+join utilisateur u on u.id_utilisateur = historique.utilisateur_id
+join meuble m on m.id_meuble = historique.meuble_id;
