@@ -1,4 +1,4 @@
-INSERT INTO bdd_r206.meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_meuble,type_meuble_id) VALUES
+INSERT INTO meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_meuble,type_meuble_id) VALUES
 	 ('Etagère déstructuré',1,819.0000,'Une étagère fort sympathique.','1.jpg',1),
 	 ('Table en sheesham',1,419.0000,'C''est une table... et elle est en sheesham...','2.jpg',2),
 	 ('Buffet 2 portes 3 tiroirs',1,799.0000,'Plus de porte que dans une voiture familiale.','3.jpg',3),
@@ -9,7 +9,7 @@ INSERT INTO bdd_r206.meuble (nom_meuble,disponible,prix_meuble,description_meubl
 	 ('Chaise Venus',1,159.0000,'On voulait l''appeler Uranus mais ça sonnait pas aussi sérieux...','16.jpg',6),
 	 ('Chaise en rotin',1,226.0000,'Et pas en pétin, ahahah...','18.jpg',6),
 	 ('Chaise simple',1,56.0000,'Il faut vraiment que j''explique ce que c''est ?','19.jpg',6);
-INSERT INTO bdd_r206.meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_meuble,type_meuble_id) VALUES
+INSERT INTO meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_meuble,type_meuble_id) VALUES
 	 ('Chaise jardin',1,65.0000,'Une chaise mais à mettre dans le jardin... Ou pas, je m''en fiche','23.jpg',6),
 	 ('Table longue',1,895.0000,'Vous pouvez surement vous allongez dessus aussi','29.jpg',2),
 	 ('Table à manger',1,950.0000,'Cette table là, c''est uniquement pour manger !','30.jpg',2),

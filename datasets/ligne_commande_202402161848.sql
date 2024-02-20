@@ -1,4 +1,4 @@
-INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+INSERT INTO ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
 	 (1,1,2,819.0000),
 	 (1,2,1,419.0000),
 	 (2,3,3,799.0000),
@@ -8,8 +8,7 @@ INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_
 	 (4,3,4,799.0000),
 	 (4,4,12,976.0000),
 	 (4,5,6,1427.0000),
-	 (4,6,6,1725.0000);
-INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+	 (4,6,6,1725.0000),
 	 (4,7,1,700.0000),
 	 (4,8,2,345.0000),
 	 (4,9,2,518.0000),
@@ -19,8 +18,7 @@ INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_
 	 (4,13,13,56.0000),
 	 (4,14,12,57.0000),
 	 (4,15,2,58.0000),
-	 (4,16,2,62.0000);
-INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+	 (4,16,2,62.0000),
 	 (4,17,5,65.0000),
 	 (4,18,3,66.0000),
 	 (4,19,25,62.0000),
@@ -30,8 +28,7 @@ INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_
 	 (4,23,7,895.0000),
 	 (4,24,4,950.0000),
 	 (4,25,2,1450.0000),
-	 (4,26,1,425.0000);
-INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+	 (4,26,1,425.0000),
 	 (4,27,5,2250.0000),
 	 (4,28,6,1400.0000),
 	 (4,29,21,750.0000),
@@ -41,8 +38,7 @@ INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_
 	 (4,33,7,72.0000),
 	 (4,34,16,73.0000),
 	 (4,35,23,150.0000),
-	 (4,36,2,145.0000);
-INSERT INTO bdd_r206.ligne_commande (commande_id,declinaison_meuble_id,quantite_lc,prix_lc) VALUES
+	 (4,36,2,145.0000),
 	 (4,38,5,145.0000),
 	 (4,39,6,155.0000),
 	 (5,1,2,819.0000),

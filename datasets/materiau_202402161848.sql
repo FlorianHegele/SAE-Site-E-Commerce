@@ -1,4 +1,4 @@
-INSERT INTO bdd_r206.materiau (libelle_materiau) VALUES
+INSERT INTO materiau (libelle_materiau) VALUES
 	 ('Sheesham massif'),
 	 ('Mélaminé blanc'),
 	 ('Verre'),
@@ -8,8 +8,7 @@ INSERT INTO bdd_r206.materiau (libelle_materiau) VALUES
 	 ('Rouge'),
 	 ('Gris'),
 	 ('Vert'),
-	 ('Blanc');
-INSERT INTO bdd_r206.materiau (libelle_materiau) VALUES
+	 ('Blanc'),
 	 ('Orange'),
 	 ('Noir'),
 	 ('Bleu'),
@@ -19,7 +18,6 @@ INSERT INTO bdd_r206.materiau (libelle_materiau) VALUES
 	 ('Chêne massif'),
 	 ('Noyer massif'),
 	 ('Pin massif'),
-	 ('Eucalyptus');
-INSERT INTO bdd_r206.materiau (libelle_materiau) VALUES
+	 ('Eucalyptus'),
 	 ('Chêne clair'),
 	 ('Chêne foncé');

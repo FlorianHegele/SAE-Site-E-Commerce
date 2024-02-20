@@ -1,4 +1,4 @@
-INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
+INSERT INTO declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
 	 (8,819.0000,'1.jpg',1,1),
 	 (2,419.2500,'2.jpg',2,1),
 	 (3,799.0000,'3.jpg',3,1),
@@ -8,8 +8,7 @@ INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaiso
 	 (13,700.0000,'13.jpg',5,3),
 	 (12,345.0000,'14.jpg',6,3),
 	 (2,518.0000,'15.jpg',7,3),
-	 (2,159.0000,'16.jpg',8,17);
-INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
+	 (2,159.0000,'16.jpg',8,17),
 	 (5,159.5000,'17.jpg',8,18),
 	 (3,226.0000,'18.jpg',9,4),
 	 (25,56.0000,'19.jpg',10,5),
@@ -19,8 +18,7 @@ INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaiso
 	 (7,65.0000,'23.jpg',11,8),
 	 (4,65.2000,'24.jpg',11,9),
 	 (2,64.0000,'25.jpg',11,10),
-	 (1,66.0000,'26.jpg',11,11);
-INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
+	 (1,66.0000,'26.jpg',11,11),
 	 (5,66.0000,'27.jpg',11,12),
 	 (6,65.0000,'28.jpg',11,13),
 	 (21,895.9900,'29.jpg',12,17),
@@ -30,8 +28,7 @@ INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaiso
 	 (7,2250.0000,'33.jpg',16,20),
 	 (16,1400.0000,'34.jpg',17,20),
 	 (23,750.0000,'35.jpg',18,17),
-	 (2,750.0000,'36.jpg',18,17);
-INSERT INTO bdd_r206.declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
+	 (2,750.0000,'36.jpg',18,17),
 	 (0,76.0000,'38.jpg',19,12),
 	 (5,75.0000,'39.jpg',19,11),
 	 (6,76.0000,'41.jpg',19,7),
