@@ -15,7 +15,9 @@ def client_meuble_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''SELECT *, stock_meuble AS stock FROM meuble'''
+    sql = '''SELECT *, stock
+    FROM declinaison_meuble
+    JOIN meuble ON declinaison_meuble.meuble_id = meuble.id_meuble'''
     list_param = []
     condition_and = ""
     if "filter_word" in session or "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
@@ -26,7 +28,7 @@ def client_meuble_show():  # remplace client_index
         list_param.append(recherche)
         condition_and = " AND "
     if 'filter_prix_min' in session or 'filter_prix_max' in session:
-        sql = sql + condition_and + 'prix_meuble BETWEEN %s AND %s'
+        sql = sql + condition_and + 'prix_declinaison BETWEEN %s AND %s'
         list_param.append(session['filter_prix_min'])
         list_param.append(session['filter_prix_max'])
         condition_and = " AND "
@@ -34,7 +36,7 @@ def client_meuble_show():  # remplace client_index
         sql = sql + condition_and + "("
         last_item = session['filter_types'][-1]
         for item in session['filter_types']:
-            sql = sql + "type_id=%s"
+            sql = sql + "type_meuble_id=%s"
             if item != last_item:
                 sql = sql + " OR "
             list_param.append(item)
@@ -51,9 +53,10 @@ def client_meuble_show():  # remplace client_index
     types_meuble = mycursor.fetchall()
 
     sql = '''
-    SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, m.stock_meuble as stock, l.quantite, m.id_meuble
-    FROM meuble as m
-    JOIN ligne_panier AS l ON m.id_meuble = l.meuble_id
+    SELECT m.nom_meuble AS nom, dm.prix_declinaison AS prix, dm.stock as stock, l.quantite_lp AS quantite, m.id_meuble
+    FROM declinaison_meuble as dm
+    JOIN meuble AS m ON dm.meuble_id = m.id_meuble
+    JOIN ligne_panier AS l ON dm.id_declinaison_meuble = l.declinaison_meuble_id
     WHERE l.utilisateur_id = %s
     '''
 
@@ -63,8 +66,10 @@ def client_meuble_show():  # remplace client_index
     prix_total = None
     if len(meubles_panier) >= 1:
         sql = '''
-        SELECT SUM(l.prix * l.quantite) AS prix_total
+        SELECT SUM(dm.prix_declinaison * l.quantite_lp) AS prix_total
         FROM ligne_panier AS l
+        JOIN declinaison_meuble AS dm ON l.declinaison_meuble_id = dm.id_declinaison_meuble
+        JOIN meuble AS m ON dm.meuble_id = m.id_meuble
         WHERE utilisateur_id = %s
         '''
         mycursor.execute(sql, id_client)

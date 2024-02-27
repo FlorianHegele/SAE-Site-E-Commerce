@@ -156,7 +156,7 @@ def valid_edit_meuble():
         image_nom = filename
     sql_update = '''  
         UPDATE meuble 
-        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_id = %s, stock_meuble = %s
+        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s, stock_meuble = %s
         WHERE id_meuble = %s;
     '''
     mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, stock, id_meuble))
