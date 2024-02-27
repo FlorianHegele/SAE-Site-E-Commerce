@@ -93,21 +93,32 @@ def client_commande_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     print("id_client : " + str(id_client))
+    # sql = '''
+    #     SELECT c.id_commande,
+    #         date_achat,
+    #         SUM(lc.quantite_lc) AS nbr_meubles,
+    #         SUM(lc.prix * lc.quantite_lc) AS prix_total,
+    #         etat_id,
+    #         libelle_etat AS libelle
+    #     FROM ligne_commande lc
+    #     JOIN commande c ON lc.commande_id = c.id_commande
+    #     JOIN meuble m ON lc.meuble_id = m.id_meuble
+    #     JOIN etat e ON c.etat_id = e.id_etat
+    #     WHERE c.utilisateur_id = %s
+    #     GROUP BY c.id_commande, c.date_achat, c.etat_id, e.libelle_etat
+    #     ORDER BY etat_id,
+    #         date_achat DESC;
+    # '''
     sql = '''
-        SELECT c.id_commande,
-            date_achat,
-            SUM(lc.quantite_lc) AS nbr_meubles,
-            SUM(lc.prix * lc.quantite_lc) AS prix_total,
-            etat_id,
-            libelle_etat AS libelle
-        FROM ligne_commande lc
-        JOIN commande c ON lc.commande_id = c.id_commande
-        JOIN meuble m ON lc.meuble_id = m.id_meuble
-        JOIN etat e ON c.etat_id = e.id_etat
-        WHERE c.utilisateur_id = %s
-        GROUP BY c.id_commande, c.date_achat, c.etat_id, e.libelle_etat
-        ORDER BY etat_id,
-            date_achat DESC;
+    SELECT * ,
+    date_achat,
+    libelle_etat AS libelle,
+    SUM(quantite_lc) AS nbr_meubles,
+    SUM(prix_lc * quantite_lc) AS prix_total
+    FROM v_ligne_commande
+    JOIN etat ON v_ligne_commande.etat_id = etat.id_etat
+    WHERE utilisateur_id = %s
+    GROUP BY id_commande, date_achat, etat_id, libelle_etat, id_etat
     '''
     mycursor.execute(sql, str(id_client))
     commandes = mycursor.fetchall()

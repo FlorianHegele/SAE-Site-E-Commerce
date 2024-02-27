@@ -516,5 +516,42 @@ join utilisateur u on u.id_utilisateur = n.utilisateur_id;
     '''
     mycursor.execute(sql)
     
+    sql = '''
+create view if not exists v_commande as
+select `c`.`id_commande`     AS `id_commande`,
+       `c`.`date_achat`      AS `date_achat`,
+       `c`.`etat_id`         AS `etat_id`,
+       `c`.`utilisateur_id`  AS `utilisateur_id`,
+       `c`.`adresse_id_fact` AS `adresse_id_fact`,
+       `a`.`id_adresse`      AS `id_adresse_fact`,
+       `a`.`nom_adresse`     AS `nom_adresse_fact`,
+       `a`.`rue`             AS `rue_adresse_fact`,
+       `a`.`code_postal`     AS `code_postal_fact`,
+       `a`.`ville`           AS `ville_fact`,
+       `a`.`valide`          AS `valide_fact`,
+       `c`.`adresse_id_livr` AS `adresse_id_livr`,
+       `a2`.`id_adresse`     AS `id_adresse_livr`,
+       `a2`.`nom_adresse`    AS `nom_adresse_livr`,
+       `a2`.`rue`            AS `rue_livr`,
+       `a2`.`code_postal`    AS `code_postal_livr`,
+       `a2`.`ville`          AS `ville_livr`,
+       `a2`.`valide`         AS `valide_livr`,
+       `e`.`id_etat`         AS `id_etat`,
+       `e`.`libelle_etat`    AS `libelle_etat`,
+       `u`.`id_utilisateur`  AS `id_utilisateur`,
+       `u`.`login`           AS `login`,
+       `u`.`email`           AS `email`,
+       `u`.`nom_utilisateur` AS `nom_utilisateur`,
+       `u`.`password`        AS `password`,
+       `u`.`role`            AS `role`,
+       `u`.`est_actif`       AS `est_actif`
+from ((((`commande` `c` join `adresse` `a`
+         on (`c`.`adresse_id_fact` = `a`.`id_adresse`)) join `adresse` `a2`
+        on (`a2`.`id_adresse` = `c`.`adresse_id_livr`)) join `etat` `e`
+       on (`c`.`etat_id` = `e`.`id_etat`)) join `utilisateur` `u`
+      on (`c`.`utilisateur_id` = `u`.`id_utilisateur`));
+    '''
+    mycursor.execute(sql)
+    
     get_db().commit()
     return redirect('/')
