@@ -26,8 +26,8 @@ def admin_commande_show():
 
     sql = '''
     SELECT commande.id_commande, utilisateur.login, commande.date_achat, 
-    SUM(ligne_commande.quantite) AS nbr_meubles, 
-    SUM(ligne_commande.prix * ligne_commande.quantite) AS prix_total,
+    SUM(ligne_commande.quantite_lc) AS nbr_meubles, 
+    SUM(ligne_commande.prix_lc * ligne_commande.quantite_lc) AS prix_total,
     etat.libelle_etat AS libelle 
     FROM commande
     JOIN utilisateur ON commande.utilisateur_id = utilisateur.id_utilisateur
@@ -41,10 +41,10 @@ def admin_commande_show():
 
     if id_commande is not None:
         sql = '''
-                SELECT meuble.nom_meuble AS nom, ligne_commande.quantite, 
-                (ligne_commande.prix * ligne_commande.quantite) AS prix_ligne, ligne_commande.prix AS prix
+                SELECT meuble.nom_meuble AS nom, ligne_commande.quantite_lc AS quantite, 
+                (ligne_commande.prix_lc * ligne_commande.quantite_lc) AS prix_ligne, ligne_commande.prix_lc AS prix
                 FROM meuble 
-                JOIN ligne_commande ON meuble.id_meuble = ligne_commande.meuble_id
+                JOIN ligne_commande ON meuble.id_meuble = ligne_commande.declinaison_meuble_id
                 WHERE ligne_commande.commande_id = %s
             '''
 

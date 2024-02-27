@@ -17,11 +17,22 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  SELECT *, stock_meuble AS stock FROM meuble
+    sql = '''  SELECT *,stock FROM meuble
+    INNER JOIN declinaison_meuble 
+    WHERE meuble.id_meuble = declinaison_meuble.meuble_id
     '''
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
-    return render_template('admin/meuble/show_meuble.html', meubles=meubles)
+    sql = '''SELECT meuble.id_meuble, COUNT(declinaison_meuble.meuble_id) AS nb_declinaisons
+    FROM meuble 
+    LEFT JOIN declinaison_meuble ON meuble.id_meuble = declinaison_meuble.meuble_id
+    GROUP BY meuble.id_meuble;
+'''
+    mycursor.execute(sql)
+    nb_declinaisons = mycursor.fetchall()
+    print("aa",meubles)
+    print(5,nb_declinaisons)
+    return render_template('admin/meuble/show_meuble.html', meubles=meubles, nb_declinaisons=nb_declinaisons)
 
 
 @admin_meuble.route('/admin/meuble/add', methods=['GET'])
@@ -102,9 +113,10 @@ def edit_meuble():
     id_meuble=request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT *,nom_meuble,image_meuble, prix_meuble AS prix, stock_meuble AS stock 
+    SELECT *,nom_meuble,image_meuble, prix_meuble AS prix, description_meuble AS description ,declinaison_meuble.stock
     FROM meuble 
-    WHERE id_meuble = %s;  
+    JOIN declinaison_meuble
+    WHERE id_meuble = %s AND declinaison_meuble.meuble_id = meuble.id_meuble;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
