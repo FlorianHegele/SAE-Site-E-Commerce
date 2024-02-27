@@ -15,7 +15,10 @@ def client_coordonnee_show():
     id_client = session['id_user']
     utilisateur=[]
 
-    sql = "SELECT * FROM utilisateur WHERE id_utilisateur = %s"
+    sql = '''
+    SELECT login, nom_utilisateur as nom, email
+    FROM utilisateur WHERE id_utilisateur = %s
+    '''
     mycursor.execute(sql, id_client)
     utilisateur = mycursor.fetchone()
     print(utilisateur)
@@ -23,7 +26,7 @@ def client_coordonnee_show():
     sql = '''
     SELECT *, nom_adresse as nom
     FROM adresse
-    JOIN habite ON adresse.id_adresse = habite.adresse_id
+    JOIN concerne ON adresse.id_adresse = concerne.adresse_id
     WHERE utilisateur_id = %s 
     '''
     mycursor.execute(sql, id_client)
@@ -41,7 +44,7 @@ def client_coordonnee_edit():
     id_client = session['id_user']
 
     sql = '''
-    SELECT *
+    SELECT login, nom_utilisateur as nom, email
     FROM utilisateur
     WHERE id_utilisateur = %s
     '''
@@ -64,12 +67,13 @@ def client_coordonnee_edit_valide():
     sql = '''
     SELECT *
     FROM utilisateur
-    WHERE (login = %s OR nom = %s OR email = %s) AND id_utilisateur != %s
+    WHERE (login = %s OR nom_utilisateur = %s OR email = %s) AND id_utilisateur != %s
     '''
-    tuple = (nom,login,email,id_client)
+    tuple = (login,nom,email,id_client)
     mycursor.execute(sql,tuple)
 
     user = mycursor.fetchone()
+    print("user = " + str(user))
     if user:
         flash(u'votre cet Email ou ce Login existe déjà pour un autre utilisateur', 'alert-warning')
         return render_template('client/coordonnee/edit_coordonnee.html'
@@ -78,7 +82,7 @@ def client_coordonnee_edit_valide():
     
     sql = '''
     UPDATE utilisateur
-    SET nom = %s, login = %s, email = %s
+    SET nom_utilisateur = %s, login = %s, email = %s
     WHERE id_utilisateur = %s;
     '''
     tuple = (nom,login,email,id_client)
@@ -94,17 +98,17 @@ def client_coordonnee_delete_adresse():
     id_client = session['id_user']
     id_adresse= request.form.get('id_adresse')
 
+    # sql = '''
+    # DELETE FROM adresse
+    # WHERE id_adresse = %s
+    # '''
+
+    # mycursor.execute(sql,id_adresse)
+    # get_db().commit()
+
     sql = '''
-    DELETE FROM habite
+    DELETE FROM concerne
     WHERE adresse_id = %s
-    '''
-
-    mycursor.execute(sql,id_adresse)
-    get_db().commit()
-
-    sql = '''
-    DELETE FROM adresse
-    WHERE id_adresse = %s
     '''
 
     mycursor.execute(sql,id_adresse)
@@ -118,10 +122,10 @@ def client_coordonnee_add_adresse():
     id_client = session['id_user']
 
     sql = '''
-    SELECT *
+    SELECT nom_utilisateur as nom, login
     FROM adresse
-    JOIN habite ON adresse.id_adresse = habite.adresse_id
-    JOIN utilisateur ON habite.utilisateur_id = utilisateur.id_utilisateur
+    JOIN concerne ON adresse.id_adresse = concerne.adresse_id
+    JOIN utilisateur ON concerne.utilisateur_id = utilisateur.id_utilisateur
     WHERE utilisateur_id = %s
     '''
 
@@ -151,7 +155,7 @@ def client_coordonnee_add_adresse_valide():
 
     
     sql = '''
-    INSERT INTO habite (utilisateur_id,adresse_id)
+    INSERT INTO concerne (utilisateur_id,adresse_id)
     VALUES(%s,(SELECT MAX(id_adresse) FROM adresse));
     '''
 
