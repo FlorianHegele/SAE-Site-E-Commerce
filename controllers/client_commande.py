@@ -128,35 +128,43 @@ def client_commande_show():
     id_commande = request.args.get('id_commande', None)
     if id_commande != None:
         print("id_commande : " + id_commande)
+        # sql = '''
+        #     SELECT lc.quantite_lc,
+        #         lc.prix,
+        #         m.nom_meuble AS nom,
+        #         m.prix_meuble AS prix,
+        #         lc.prix * lc.quantite_lc AS prix_ligne
+        #     FROM ligne_commande lc
+        #         JOIN meuble m ON lc.meuble_id = m.id_meuble
+        #     WHERE lc.commande_id = %s;
+        # '''
         sql = '''
-            SELECT lc.quantite_lc,
-                lc.prix,
-                m.nom_meuble AS nom,
-                m.prix_meuble AS prix,
-                lc.prix * lc.quantite_lc AS prix_ligne
-            FROM ligne_commande lc
-                JOIN meuble m ON lc.meuble_id = m.id_meuble
-            WHERE lc.commande_id = %s;
+        SELECT nom_meuble AS nom,
+            vl.prix_lc AS prix,
+            vl.quantite_lc as quantite,
+            prix_lc * quantite_lc AS prix_ligne
+        FROM v_ligne_commande vl
+        JOIN v_declinaison_meuble vd ON vl.declinaison_meuble_id = vd.id_declinaison_meuble
+        WHERE id_commande = %s
         '''
         mycursor.execute(sql, str(id_commande))
         meubles_commande = mycursor.fetchall()
-
+        print("meubles_commande : " + str(meubles_commande))
         # partie 2 : selection de l'adresse de livraison et de facturation de la commande selectionnée
         sql = '''
-            SELECT a.id_adresse,
-                a.rue,
-                a.code_postal,
-                a.ville,
-                a.pays,
-                a.type_adresse_id,
-                ta.libelle_type_adresse AS libelle
-            FROM adresse a
-                JOIN concerne h ON a.id_adresse = h.adresse_id
-                JOIN type_adresse ta ON a.type_adresse_id = ta.id_type_adresse
-            WHERE h.utilisateur_id = %s;
+        SELECT nom_adresse_livr AS nom_livraison,
+        rue_livr AS rue_livraison,
+        code_postal_livr AS code_postal_livraison,
+        ville_livr AS ville_livraison,
+        nom_adresse_fact AS nom_facturation,
+        rue_adresse_fact AS rue_facturation,
+        code_postal_fact AS code_postal_facturation,
+        ville_fact AS ville_facturation
+        FROM v_commande WHERE id_commande = %s
         '''
-        mycursor.execute(sql, str(id_client))
-        commande_adresses = mycursor.fetchall()
+        mycursor.execute(sql, str(id_commande))
+        commande_adresses = mycursor.fetchone()
+        print("commande_adresses : " + str(commande_adresses))
 
     return render_template('client/commandes/show.html'
                            , commandes=commandes
