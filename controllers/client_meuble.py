@@ -15,9 +15,8 @@ def client_meuble_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''SELECT *, stock
-    FROM declinaison_meuble
-    JOIN meuble ON declinaison_meuble.meuble_id = meuble.id_meuble'''
+    sql = '''SELECT *
+    FROM v_declinaison_meuble'''
     list_param = []
     condition_and = ""
     if "filter_word" in session or "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
@@ -42,9 +41,9 @@ def client_meuble_show():  # remplace client_index
             list_param.append(item)
         sql = sql + ")"
     tuple_sql = tuple(list_param)
-    #print(sql)
+    print(sql)
+    print(tuple_sql)
     mycursor.execute(sql, tuple_sql)
-    #print(tuple_sql)
     meubles = mycursor.fetchall()
 
     # pour le filtre
@@ -53,7 +52,7 @@ def client_meuble_show():  # remplace client_index
     types_meuble = mycursor.fetchall()
 
     sql = '''
-    SELECT m.nom_meuble AS nom, dm.prix_declinaison AS prix, dm.stock as stock, l.quantite_lp AS quantite, m.id_meuble
+    SELECT m.nom_meuble AS nom, dm.prix_declinaison AS prix, dm.stock as stock, l.quantite_lp AS quantite, dm.id_declinaison_meuble
     FROM declinaison_meuble as dm
     JOIN meuble AS m ON dm.meuble_id = m.id_meuble
     JOIN ligne_panier AS l ON dm.id_declinaison_meuble = l.declinaison_meuble_id
