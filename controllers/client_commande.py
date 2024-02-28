@@ -14,6 +14,7 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+
     sql = '''
         SELECT * FROM ligne_panier
         WHERE utilisateur_id = %s;
@@ -30,6 +31,7 @@ def client_commande_valide():
         prix_total = mycursor.fetchone()
     else:
         prix_total = None
+        
     # etape 2 : selection des adresses
     sql = '''
         SELECT * FROM adresse
@@ -38,17 +40,31 @@ def client_commande_valide():
     '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
+    
+    # etape 3 : selection de la dernière adresse de livraison et de facturation
+    sql = '''
+    SELECT adresse_id_livr, adresse_id_fact
+    FROM v_commande
+    WHERE id_commande = (SELECT MAX(id_commande) FROM commande WHERE utilisateur_id = %s)
+    '''
+    mycursor.execute(sql, id_client)
+    id_adresse_fav = mycursor.fetchone()
+    print("id_adresse_fav : " + str(id_adresse_fav))
+
+        
+    
     return render_template('client/boutique/panier_validation_adresses.html'
                            , adresses=adresses
                            , meubles_panier=meubles_panier
                            , prix_total= prix_total
                            , validation=1
-                           #, id_adresse_fav=id_adresse_fav 
+                           , id_adresse_fav=id_adresse_fav 
                            )
 
 
 @client_commande.route('/client/commande/add', methods=['POST'])
 def client_commande_add():
+        
     mycursor = get_db().cursor()
     id_client = session['id_user']
     adresse_id_livr = request.form['id_adresse_livraison']
@@ -58,6 +74,15 @@ def client_commande_add():
     if adresse_id_fact == None or adresse_id_fact == "":
         adresse_id_fact = adresse_id_livr
     print("adresse_id_fact : " + adresse_id_fact)
+    
+    ###
+    # empecher la validation et message flash si l'adresse de livraison et de facturation sont les mêmes
+    ###
+    adresse_identique = request.form.get('adresse_identique')
+    print("adresse_identique : " + str(adresse_identique))
+    if adresse_identique == None and (adresse_id_fact == adresse_id_livr):
+        flash(u'Adresse de livraison et de facturation identiques, veuillez utilisez la checkbox','alert-warning')
+        return redirect('/client/meuble/show')
 
     sql = "SELECT * FROM v_ligne_panier WHERE id_utilisateur=%s"
     mycursor.execute(sql, id_client)
@@ -165,6 +190,7 @@ def client_commande_show():
         mycursor.execute(sql, str(id_commande))
         commande_adresses = mycursor.fetchone()
         print("commande_adresses : " + str(commande_adresses))
+
 
     return render_template('client/commandes/show.html'
                            , commandes=commandes
