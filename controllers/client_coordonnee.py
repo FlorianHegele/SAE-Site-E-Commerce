@@ -145,6 +145,20 @@ def client_coordonnee_add_adresse_valide():
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
 
+    # Ne pas ajouter d'adresse si l'utilisateur en a déjà quatres
+    sql = '''
+    SELECT COUNT(*) as nb_adresses
+    FROM adresse
+    JOIN concerne ON adresse.id_adresse = concerne.adresse_id
+    WHERE utilisateur_id = %s
+    '''
+    mycursor.execute(sql,id_client)
+    nb_adresses = mycursor.fetchone()
+    print(nb_adresses)
+    if nb_adresses['nb_adresses'] >= 4:
+        flash(u'Vous avez déjà quatres adresses', 'alert-warning')
+        return redirect('/client/coordonnee/show')
+    
     sql = '''
     INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
     VALUES(%s,%s,%s,%s,'1');
@@ -161,6 +175,8 @@ def client_coordonnee_add_adresse_valide():
 
     mycursor.execute(sql,id_client)
     get_db().commit()
+    
+    
 
     return redirect('/client/coordonnee/show')
 
