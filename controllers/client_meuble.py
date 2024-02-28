@@ -41,7 +41,6 @@ def client_meuble_show():  # remplace client_index
             list_param.append(item)
         sql = sql + ")"
     tuple_sql = tuple(list_param)
-    print(sql)
     print(tuple_sql)
     mycursor.execute(sql, tuple_sql)
     meubles = mycursor.fetchall()

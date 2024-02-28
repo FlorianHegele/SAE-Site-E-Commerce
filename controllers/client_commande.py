@@ -69,10 +69,15 @@ def client_commande_add():
     id_client = session['id_user']
     adresse_id_livr = request.form['id_adresse_livraison']
     print("adresse_id_livr : " + adresse_id_livr)
-    adresse_id_fact = request.form['id_adresse_facturation']
-    print("adresse_id_fact : " + adresse_id_fact)
-    if adresse_id_fact == None or adresse_id_fact == "":
+
+    ###
+    # Vérifier si l'adresse de livraison est la même que l'adresse de facturation mais que la checkbox n'est pas cochée
+    ###
+    adresse_identique = request.form.get('adresse_identique')
+    if adresse_identique != None:
         adresse_id_fact = adresse_id_livr
+    else:
+        adresse_id_fact = request.form['id_adresse_facturation']
     print("adresse_id_fact : " + adresse_id_fact)
     
     ###
