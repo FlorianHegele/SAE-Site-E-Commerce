@@ -50,7 +50,7 @@ def admin_commande_show():
 
         mycursor.execute(sql, (id_commande,))
         meubles_commande = mycursor.fetchall()
-
+        # (ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation
         sql_commande_details = '''SELECT nom_adresse_fact as nom_facturation,
         rue_adresse_fact as rue_facturation,
         code_postal_fact as code_postal_facturation,
