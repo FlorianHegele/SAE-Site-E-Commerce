@@ -34,9 +34,10 @@ def client_commande_valide():
         
     # etape 2 : selection des adresses
     sql = '''
-        SELECT * FROM adresse
+        SELECT * 
+        FROM adresse
         JOIN concerne ON adresse.id_adresse = concerne.adresse_id
-        WHERE utilisateur_id = %s;
+        WHERE utilisateur_id = %s AND adresse.valide = '1';
     '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
@@ -45,11 +46,25 @@ def client_commande_valide():
     sql = '''
     SELECT adresse_id_livr, adresse_id_fact
     FROM v_commande
-    WHERE id_commande = (SELECT MAX(id_commande) FROM commande WHERE utilisateur_id = %s)
+    WHERE id_commande = (SELECT MAX(id_commande) FROM commande WHERE utilisateur_id = %s) AND valide_livr = '1' AND valide_fact = '1'
     '''
     mycursor.execute(sql, id_client)
     id_adresse_fav = mycursor.fetchone()
     print("id_adresse_fav : " + str(id_adresse_fav))
+    # etape 3-1 : si la dernière adresse de livraison et de facturation n'existe pas, on prend celle étant dans le plus de commandes
+    if id_adresse_fav is None:
+        # Toutes les combines d'adresses de livraison et de facturation sont listés, puis on la combinaison la plus fréquente
+        sql = '''
+        SELECT adresse_id_livr, adresse_id_fact, COUNT(*) AS nb_commandes
+        FROM v_commande
+        WHERE valide_livr = '1' AND valide_fact = '1'
+        GROUP BY adresse_id_livr, adresse_id_fact
+        ORDER BY nb_commandes DESC
+        '''
+        mycursor.execute(sql)
+        id_adresse_fav = mycursor.fetchone()
+        print("id_adresse_fav : " + str(id_adresse_fav))
+   
 
         
     
