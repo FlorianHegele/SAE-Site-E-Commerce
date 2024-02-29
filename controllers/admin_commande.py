@@ -33,7 +33,7 @@ def admin_commande_show():
     JOIN utilisateur ON commande.utilisateur_id = utilisateur.id_utilisateur
     JOIN etat ON commande.etat_id = etat.id_etat
     JOIN ligne_commande ON commande.id_commande = ligne_commande.commande_id
-    GROUP BY commande.id_commande;
+    GROUP BY commande.id_commande, utilisateur.login, commande.date_achat,etat.libelle_etat;
     '''
 
     mycursor.execute(sql)
@@ -51,9 +51,19 @@ def admin_commande_show():
         mycursor.execute(sql, (id_commande,))
         meubles_commande = mycursor.fetchall()
 
-        sql_commande_details = '''SELECT * FROM commande WHERE id_commande = %s'''
+        sql_commande_details = '''SELECT nom_adresse_fact as nom_facturation,
+        rue_adresse_fact as rue_facturation,
+        code_postal_fact as code_postal_facturation,
+        ville_fact as ville_facturation,
+        nom_adresse_livr as nom_livraison,
+        rue_livr as rue_livraison,
+        code_postal_livr as code_postal_livraison,
+        ville_livr as ville_livraison
+        FROM v_commande 
+        WHERE id_commande = %s
+        '''
         mycursor.execute(sql_commande_details, (id_commande,))
-        commande_adresses = mycursor.fetchall()
+        commande_adresses = mycursor.fetchone()
 
     return render_template('admin/commandes/show.html',
                            commandes=commandes,

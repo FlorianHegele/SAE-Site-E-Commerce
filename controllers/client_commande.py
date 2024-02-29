@@ -53,7 +53,7 @@ def client_commande_valide():
     print("id_adresse_fav : " + str(id_adresse_fav))
     # etape 3-1 : si la dernière adresse de livraison et de facturation n'existe pas, on prend celle étant dans le plus de commandes
     if id_adresse_fav is None:
-        # Toutes les combines d'adresses de livraison et de facturation sont listés, puis on la combinaison la plus fréquente
+        # Toutes les combinaisons d'adresses de livraison et de facturation sont listés, puis on la combinaison la plus fréquente
         sql = '''
         SELECT adresse_id_livr, adresse_id_fact, COUNT(*) AS nb_commandes
         FROM v_commande
