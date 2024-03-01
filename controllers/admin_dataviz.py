@@ -25,11 +25,36 @@ def show_type_meuble_stock():
     datas_show=[]
     labels=[]
     values=[]
+    sql = '''
+        SELECT COUNT(DISTINCT commande_id) as nb_commandes,
+        SUM(quantite_lc) as nb_meuble,
+        SUM(quantite_lc * prix_lc) AS total,
+        LEFT(code_postal_fact,2) as dep,
+        SUM(quantite_lc * prix_lc) / SUM(quantite_lc) as prix_moyen_meuble,
+        SUM(quantite_lc) / COUNT(DISTINCT commande_id) as nb_meuble_moyen,
+        SUM(quantite_lc * prix_lc) / COUNT(DISTINCT commande_id) as panier_moyen
+        FROM v_ligne_commande vlc
+        JOIN v_commande vc ON vlc.commande_id = vc.id_commande
+        JOIN utilisateur u ON vlc.utilisateur_id = u.id_utilisateur
+        GROUP BY dep
+        ;
+        '''
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()
+    labels = [str(row['dep']) for row in datas_show]
+    values = [int(row['panier_moyen']) for row in datas_show]
+    values2 = [int(row['total']) for row in datas_show]
+    print("datas_show = " + str(datas_show))
+    print("labels = " + str(labels))
+    print("values = " + str(values))
+    print("values2 = " + str(values2))
+    
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
-                           , values=values)
+                           , values=values
+                           , values2=values2)
 
 
 # sujet 3 : adresses

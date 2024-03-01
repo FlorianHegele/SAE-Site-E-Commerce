@@ -26,22 +26,26 @@
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th>type de meuble</th>
-            <th>(id)</th>
-            <th>nombre de meubles</th>
+            <th>Departement</th>
+            <th>Nombre de Commandes</th>
+            <th>nombre de Meubles</th>
+            <th>Nombre de meubles moyen par commande</th>
+            <th>Prix Moyen Meuble par commande</th>
+            <th>Total des commandes</th>
+            <th>Panier Moyen</th>          
         </tr>
         </thead>
         <tbody>
-        {% if types_meubles_nb | length >= 1 %}
-            {% for ligne in types_meubles_nb %}
+        {% if datas_show | length >= 1 %}
+            {% for ligne in datas_show %}
                 <tr>
-                    <td>{{ ligne.libelle }}</td>
-                    <td>{{ ligne.id_type_meuble }}</td>
-                    <td><span style="color: red">
-                       {% if ligne.nbr_meubles_stock is not none %}  {{ ligne.nbr_meubles }} {% else %}
-                           pas de meuble {% endif %}
-                   </span></td>
-
+                    <td>{{ ligne.dep }}</td>
+                    <td>{{ ligne.nb_commandes }}</td>
+                    <td>{{ ligne.nb_meuble }}</td>
+                    <td>{{ ligne.nb_meuble_moyen }}</td>
+                    <td>{{ ligne.prix_moyen_meuble }}</td>
+                    <td>{{ ligne.total }}</td>
+                    <td>{{ ligne.panier_moyen }}</td>
                 </tr>
             {% endfor %}
         {% else %}
@@ -75,7 +79,7 @@
                 labels: {{ labels | safe }},
                 datasets: [
                     {
-                        label: "Type de meubles (nombre)",
+                        label: "Panier Moyen (€)",
                         data: {{ values | safe }},
                         fill: false,
                         backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
@@ -103,17 +107,37 @@
             data: {
                 labels: {{ labels | safe }},
                 datasets: [{
-                    label: "Type de meubles (nombre)",
+                    label: "Total (€)",
                     backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                         "#faf24c"
                         , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                    data: {{ values | safe }},
+                    data: {{ values2 | safe }},
                 }]
             },
             options: {
                 title: {
                     display: true,
-                    text: 'Type meuble : nombre'
+                    text: 'CA Total par département (€)'
+                }
+            }
+        });
+    </script>
+
+    <canvas id="dimensions" width="800" height="450"></canvas>
+
+    <script>
+        var Chart3 = new Chart(document.getElementById("dimensions"), {
+            type: 'bubble',
+            data: {
+                labels: {{ labels | safe }},
+                datasets: [{
+                    data: {{ values2 | safe }},
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'CA Total par département (€)'
                 }
             }
         });
