@@ -33,12 +33,9 @@
 
     <script>
         
-        console.log(document.getElementById("06").getAttribute("fill"));
-        document.getElementById(92).setAttribute("fill", "#000000");
         {% for element in adresses %}
-            // TODO : 06 should be '06'
-            document.getElementById({{ element['dep'] }}).setAttribute("fill", "#000000");
-            document.getElementById({{ element['dep'] }}).setAttribute("fill-opacity", {{ element['indice'] }});
+            document.getElementById('{{ element['dep'] }}').setAttribute("fill", "#000000");
+            document.getElementById('{{ element['dep'] }}').setAttribute("fill-opacity", {{ element['indice'] }});
         {% endfor %}
     </script>
 
