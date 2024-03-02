@@ -123,23 +123,22 @@
         });
     </script>
 
-    <canvas id="dimensions" width="800" height="450"></canvas>
+    <canvas id="scatter" width="800" height="450"></canvas>
 
     <script>
-        var Chart3 = new Chart(document.getElementById("dimensions"), {
-            type: 'bubble',
+        var Chart3 = new Chart(document.getElementById("scatter"), {
+            type: 'scatter',
             data: {
-                labels: {{ labels | safe }},
+                labels: {{ labels2 | safe }},
                 datasets: [{
-                    data: {{ values2 | safe }},
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'CA Total par département (€)'
+                    label: "Nombre de meubles par rapport au prix par commande",
+                    data: {{ values3 | safe }},
+                    backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                    "#faf24c"
+                    , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
+                    }
+                    ]
                 }
-            }
         });
     </script>
 

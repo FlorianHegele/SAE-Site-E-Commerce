@@ -44,17 +44,46 @@ def show_type_meuble_stock():
     labels = [str(row['dep']) for row in datas_show]
     values = [int(row['panier_moyen']) for row in datas_show]
     values2 = [int(row['total']) for row in datas_show]
+    
+    sql = '''
+    SELECT commande_id,
+    SUM(quantite_lc) as nb_meuble,
+    SUM(quantite_lc * prix_lc) AS total
+    FROM v_ligne_commande vlc
+    JOIN v_commande vc ON vlc.commande_id = vc.id_commande
+    GROUP BY commande_id
+    ;
+    '''
+    mycursor.execute(sql)
+    datas_show2 = mycursor.fetchall()
+    labels2 = [str(row['commande_id']) for row in datas_show2]
+    
+    values3 = ""
+    for row in datas_show2:
+        if values3 == "":
+            values3 = ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
+        else:
+            values3 = values3 + ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
+    values3 = values3[:-1]
+    values3 = "["+values3+"]"
+    
     print("datas_show = " + str(datas_show))
     print("labels = " + str(labels))
     print("values = " + str(values))
     print("values2 = " + str(values2))
-    
+    print("datas_show2 = " + str(datas_show2))
+    print("labels2 = " + str(labels2))
+    print("values3 = " + str(values3))
+   
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
                            , values=values
-                           , values2=values2)
+                           , values2=values2
+                           , datas_show2=datas_show2
+                           , labels2=labels2
+                           , values3=values3)
 
 
 # sujet 3 : adresses
