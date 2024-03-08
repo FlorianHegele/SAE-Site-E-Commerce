@@ -1,0 +1,38 @@
+Pour estimer les efforts nécessaires à la réalisation des produits de travail et des activités du projet e-commerce de Meuuuhble, nous allons nous baser sur les estimations de taille précédentes et sur des données hypothétiques de productivité. Il est important de prendre en compte la charge de travail des différents groupes impliqués, ainsi que les facteurs pouvant influencer positivement ou négativement ces charges.
+
+### Estimation des Efforts
+
+#### Produits de Travail Logiciel et Documents
+
+- **Développement du Site E-commerce** : Estimons une complexité moyenne avec environ 30 000 lignes de code. En se basant sur une productivité hypothétique de 500 lignes de code par jour.homme, cela représenterait 60 jours.homme.
+- **Documentation Technique et Manuels** : Pour la rédaction des documents, en supposant une productivité de 5 pages par jour.homme et un total estimé de 200 pages, cela représenterait 40 jours.homme.
+
+#### Activités de Développement, Vérification et Validation
+
+- **Développement** : Basé sur l'estimation précédente de 60 jours.homme pour le codage.
+- **Vérification et Validation (Tests)** : En prenant 50% du temps de développement, soit 30 jours.homme.
+
+#### Organisation de la Communication
+
+- **Réunions** : Avec une estimation de 30 réunions sur toute la durée du projet, en supposant 0.5 jour.homme par réunion pour la préparation, réalisation et suivi, cela représenterait 15 jours.homme.
+
+#### Implication des Utilisateurs
+
+- **Validation des Livrables et Réunions** : En supposant que les utilisateurs (Meuuuhble) participent à 25% des réunions et à la phase finale de validation, cela pourrait représenter environ 4 jours.homme d'effort supplémentaire pour eux.
+
+### Profils des Ressources
+
+- **Développeurs Web** : Principalement impliqués dans le développement du site et les tests. Basé sur les estimations, cela représenterait environ 90 jours.homme.
+- **Rédacteurs Techniques** : Impliqués dans la rédaction de documents, avec un effort estimé à 40 jours.homme.
+- **Chefs de Projet et Coordinateurs** : Pour la gestion du projet et l'organisation des réunions, estimons un effort supplémentaire de 20 jours.homme pour la coordination globale.
+
+### Total Estimé
+
+En additionnant tous ces efforts, nous obtenons un total estimatif de **150 jours.homme** pour la réalisation du projet. Ce calcul ne prend pas en compte les possibles imprévus ou les ajustements nécessaires en fonction de l'évolution du projet. Il est crucial d'ajouter une marge d'erreur ou un buffer pour ces imprévus.
+
+### Facteurs d'Influence
+
+- **Positifs** : L'utilisation d'outils de développement modernes, une bonne communication entre les équipes, et l'expérience préalable sur des projets similaires peuvent réduire les efforts nécessaires.
+- **Négatifs** : Des changements fréquents dans les exigences, des retards dans la validation des livrables par Meuuuhble, ou des difficultés techniques imprévues peuvent augmenter les efforts nécessaires.
+
+Il est important d'ajuster ces estimations en fonction des données spécifiques de productivité de l'entreprise et des expériences passées sur des projets similaires.

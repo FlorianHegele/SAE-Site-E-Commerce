@@ -1,0 +1,37 @@
+Pour estimer les coûts associés au projet décrit dans le cahier des charges, nous allons aborder les différentes catégories mentionnées, en se basant sur une enveloppe budgétaire de 50 000 euros pour le projet. L'estimation des coûts sera faite en €.
+
+### Main d’œuvre
+
+- **Développeurs Web, Designers, et Testeurs** : Basé sur les estimations précédentes, considérons environ 145 jours.homme (90 jours.homme pour le développement et tests, 40 jours.homme pour la documentation, et 15 jours.homme pour la gestion de projet et communication).
+- **Coût Journalier Moyen** : Supposons un coût journalier moyen de 400 € pour les profils techniques et de gestion de projet.
+- **Coût Total Main d’Œuvre** : 145 jours x 400 € = 58 000 €
+
+### Formation et Support Externe (ST)
+
+- **Formation des Utilisateurs et Administrateurs** : Supposons un besoin de formation pour l'utilisation du site et la gestion des contenus.
+- **Coût de Formation** : Estimation de 5 000 € pour la formation.
+
+### Frais de Déplacement
+
+- En supposant quelques réunions nécessitant des déplacements :
+- **Coût des Déplacements** : Estimation de 1 000 €.
+
+### Achat/Location Ressources Matérielles, Logicielles
+
+- **Hébergement Web, Achat de Certificats SSL, et Autres Logiciels** : En supposant que le prestataire fournisse ces services.
+- **Coût des Ressources Matérielles et Logicielles** : Estimation de 3 000 €.
+
+### Communication
+
+- **Coûts Associés à la Communication du Projet** (par exemple, réunions en ligne, outils de communication) : Estimation de 500 €.
+
+### Estimation Globale des Coûts
+
+- **Main d’œuvre** : 58 000 €
+- **Formation et Support Externe** : 5 000 €
+- **Frais de Déplacement** : 1 000 €
+- **Ressources Matérielles et Logicielles** : 3 000 €
+- **Communication** : 500 €
+- **Total Estimé** : 67 500 €
+
+Cette estimation dépasse l'enveloppe budgétaire initiale de 50 000 €. Il est donc crucial de réévaluer certains aspects du projet pour s'aligner sur le budget, ou de négocier une augmentation du budget si la valeur ajoutée par les dépassements est clairement justifiée.

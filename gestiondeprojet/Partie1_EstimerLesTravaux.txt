@@ -1,0 +1,30 @@
+Pour estimer les travaux en rapport avec le projet décrit dans le cahier des charges, voici une approche structurée basée sur l'énoncé des travaux, en intégrant les aspects de QQOQCP (Quoi, Qui, Où, Quand, Comment, Pourquoi):
+
+### 1. **Quoi** : Définition des Livrables
+- **Planification de Réalisation et Étapes de Validation** : Calendrier détaillé des phases du projet, avec jalons pour la validation par Meuuuhble.
+- **Descriptif des Prestations** : Description des services (conception, développement, intégration, tests, mise en ligne, maintenance).
+- **Arborescence du Site** : Ébauche de l'organisation des informations et pages.
+- **Documentation Technique et Code Source** : Incluant l'architecture du site, les bibliothèques utilisées, manuel d'installation/configuration.
+- **Accès Administrateur et Protocoles de Sécurité** : Identifiants administrateurs, protocoles de sécurité (SSL, pare-feu, anti-DDoS).
+- **Manuel d'Utilisation et Plan de Sauvegarde** : Guide utilisateur pour la gestion quotidienne du site et plan de sauvegarde des données.
+
+### 2. **Qui** : Responsabilités et Équipe
+- **Responsable du Projet chez Meuuuhble** : M. Semih Nable, assurant la communication et coordination.
+- **Équipe Projet chez Meuuuhble** : Composée de responsables informatique, marketing, produit pour valider les aspects techniques, marketing et de produit.
+- **Chef de Projet du Prestataire** : Identification et qualifications du chef de projet désigné par le prestataire.
+
+### 3. **Où** : Cadre de Réalisation
+- Le projet se déroule principalement en ligne, avec des réunions potentiellement dans les locaux de Meuuuhble ou du prestataire selon la proximité géographique.
+
+### 4. **Quand** : Planning
+- **Début et Fin du Projet** : Le projet commence dès la sélection du prestataire (22/03/2024) avec une livraison finale prévue le 01/09/2024.
+- **Étapes Clés** : Soumission des offres (15/03/2024), sélection finale (22/03/2024).
+
+### 5. **Comment** : Méthodologie et Outils
+- Utilisation de méthodologies agiles pour la gestion de projet, communication régulière entre Meuuuhble et le prestataire via des outils collaboratifs.
+- Assurance qualité via des revues régulières et tests.
+
+### 6. **Pourquoi** : Objectifs du Projet
+- Créer un site e-commerce répondant aux besoins spécifiques de Meuuuhble, améliorant leur présence en ligne et augmentant leurs ventes.
+
+Cet énoncé couvre les aspects techniques et de gestion, définit clairement les responsabilités, respecte les normes et contraintes (coûts, délais, qualité), tout en tenant compte des dépendances et répondant aux questions essentielles pour une estimation complète du projet.
