@@ -10,6 +10,7 @@ meuble,
 commande,
 type_meuble,
 materiau,
+couleur,
 etat,
 adresse,
 utilisateur;
@@ -47,6 +48,13 @@ CREATE TABLE materiau(
    PRIMARY KEY(id_materiau)
 );
 
+CREATE TABLE couleur(
+   id_couleur INT AUTO_INCREMENT,
+   libelle_couleur VARCHAR(255),
+   code_couleur VARCHAR(255),
+   PRIMARY KEY(id_couleur)
+);
+
 CREATE TABLE type_meuble(
    id_type_meuble INT AUTO_INCREMENT,
    libelle_type_meuble VARCHAR(255),
@@ -56,7 +64,7 @@ CREATE TABLE type_meuble(
 CREATE TABLE commande(
    id_commande INT AUTO_INCREMENT,
    date_achat DATETIME,
-  adresse_id_livr INT NOT NULL,
+   adresse_id_livr INT NOT NULL,
    etat_id INT NOT NULL,
    utilisateur_id  INT NOT NULL,
    adresse_id_fact  INT NOT NULL,
@@ -82,13 +90,14 @@ CREATE TABLE meuble(
 CREATE TABLE declinaison_meuble(
    id_declinaison_meuble INT AUTO_INCREMENT,
    stock INT,
-   prix_declinaison DECIMAL(19,4),
    image_declinaison VARCHAR(255),
    meuble_id INT NOT NULL,
-   materiau_id  INT NOT NULL,
+   materiau_id  INT,
+   couleur_id  INT,
    PRIMARY KEY(id_declinaison_meuble),
    FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
-   FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau)
+   FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
+   FOREIGN KEY(couleur_id) REFERENCES couleur(id_couleur)
 );
 
 CREATE TABLE concerne(
@@ -179,17 +188,6 @@ INSERT INTO materiau (libelle_materiau) VALUES
 	 ('Mélaminé blanc'),
 	 ('Verre'),
 	 ('Rotin'),
-	 ('Violet'),
-	 ('Rose'),
-	 ('Rouge'),
-	 ('Gris'),
-	 ('Vert'),
-	 ('Blanc'),
-	 ('Orange'),
-	 ('Noir'),
-	 ('Bleu'),
-	 ('Bleu foncé'),
-	 ('Bleu clair'),
 	 ('Hêtre massif'),
 	 ('Chêne massif'),
 	 ('Noyer massif'),
@@ -197,6 +195,19 @@ INSERT INTO materiau (libelle_materiau) VALUES
 	 ('Eucalyptus'),
 	 ('Chêne clair'),
 	 ('Chêne foncé');
+
+INSERT INTO couleur (libelle_couleur, code_couleur) VALUES
+    ('Violet', '#800080'),
+    ('Rose', '#FFC0CB'),
+    ('Rouge', '#FF0000'),
+    ('Gris', '#808080'),
+    ('Vert', '#00FF00'),
+    ('Blanc', '#000000'),
+    ('Orange', '#FFA500'),
+    ('Noir', '#000000'),
+    ('Bleu', '#0000FF'),
+    ('Bleu foncé', '#00008B'),
+    ('Bleu clair', '#ADD8E6');
 
 INSERT INTO type_meuble (libelle_type_meuble) VALUES
 	 ('Étagère'),
@@ -236,47 +247,47 @@ INSERT INTO meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_m
 	 ('Pouf plastique',1,75.0000,'Et non une femme de petite vertue ayant fait de la chirurgie esthétique','38.jpg',7),
 	 ('Pouf Velour',1,150.0000,'C''est tout doux !','43.jpg',7);
 
-INSERT INTO declinaison_meuble (stock,prix_declinaison,image_declinaison,meuble_id,materiau_id) VALUES
-	 (8,819.0000,'1.jpg',1,1),
-	 (2,419.2500,'2.jpg',2,1),
-	 (3,799.0000,'3.jpg',3,1),
-	 (12,976.5000,'4.jpg',4,2),
-	 (1,1427.0000,'7.jpg',4,16),
-	 (6,1725.0000,'10.jpg',4,17),
-	 (13,700.0000,'13.jpg',5,3),
-	 (12,345.0000,'14.jpg',6,3),
-	 (2,518.0000,'15.jpg',7,3),
-	 (2,159.0000,'16.jpg',8,17),
-	 (5,159.5000,'17.jpg',8,18),
-	 (3,226.0000,'18.jpg',9,4),
-	 (25,56.0000,'19.jpg',10,5),
-	 (16,56.0000,'20.jpg',10,6),
-	 (11,57.0000,'21.jpg',10,8),
-	 (7,56.9900,'22.jpg',10,9),
-	 (7,65.0000,'23.jpg',11,8),
-	 (4,65.2000,'24.jpg',11,9),
-	 (2,64.0000,'25.jpg',11,10),
-	 (1,66.0000,'26.jpg',11,11),
-	 (5,66.0000,'27.jpg',11,12),
-	 (6,65.0000,'28.jpg',11,13),
-	 (21,895.9900,'29.jpg',12,17),
-	 (2,950.0000,'30.jpg',13,17),
-	 (5,1450.2500,'31.jpg',14,19),
-	 (6,425.0000,'32.jpg',15,19),
-	 (7,2250.0000,'33.jpg',16,20),
-	 (16,1400.0000,'34.jpg',17,20),
-	 (23,750.0000,'35.jpg',18,17),
-	 (2,750.0000,'36.jpg',18,17),
-	 (0,76.0000,'38.jpg',19,12),
-	 (5,75.0000,'39.jpg',19,11),
-	 (6,76.0000,'41.jpg',19,7),
-	 (0,75.0000,'42.jpg',19,9),
-	 (12,151.0000,'43.jpg',20,10),
-	 (11,150.2500,'44.jpg',20,9),
-	 (8,152.9900,'45.jpg',20,14),
-	 (9,152.9900,'46.jpg',20,15),
-	 (19,152.9900,'47.jpg',20,8),
-	 (27,152.9900,'48.jpg',20,6);
+INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,couleur_id) VALUES
+	 (8,'1.jpg',1,1,NULL),
+	 (2,'2.jpg',2,1,NULL),
+	 (3,'3.jpg',3,1,NULL),
+	 (12,'4.jpg',4,2,NULL),
+	 (1,'7.jpg',4,5,NULL),
+	 (6,'10.jpg',4,6,NULL),
+	 (13,'13.jpg',5,3,NULL),
+	 (12,'14.jpg',6,3,NULL),
+	 (2,'15.jpg',7,3,NULL),
+	 (2,'16.jpg',8,6,NULL),
+	 (5,'17.jpg',8,7,NULL),
+	 (3,'18.jpg',9,4,NULL),
+	 (25,'19.jpg',10,NULL,1),
+	 (16,'20.jpg',10,NULL,2),
+	 (11,'21.jpg',10,NULL,4),
+	 (7,'22.jpg',10,NULL,5),
+	 (7,'23.jpg',11,NULL,4),
+	 (4,'24.jpg',11,NULL,5),
+	 (2,'25.jpg',11,NULL,6),
+	 (1,'26.jpg',11,NULL,7),
+	 (5,'27.jpg',11,NULL,8),
+	 (6,'28.jpg',11,NULL,9),
+	 (21,'29.jpg',12,6,NULL),
+	 (2,'30.jpg',13,6,NULL),
+	 (5,'31.jpg',14,8,NULL),
+	 (6,'32.jpg',15,8,NULL),
+	 (7,'33.jpg',16,9,NULL),
+	 (16,'34.jpg',17,9,NULL),
+	 (23,'35.jpg',18,6,NULL),
+	 (2,'36.jpg',18,6,NULL),
+	 (0,'38.jpg',19,NULL,8),
+	 (5,'39.jpg',19,NULL,7),
+	 (6,'41.jpg',19,NULL,3),
+	 (0,'42.jpg',19,NULL,5),
+	 (12,'43.jpg',20,NULL,6),
+	 (11,'44.jpg',20,NULL,5),
+	 (8,'45.jpg',20,NULL,10),
+	 (9,'46.jpg',20,NULL,11),
+	 (19,'47.jpg',20,NULL,4),
+	 (27,'48.jpg',20,NULL,1);
 
 INSERT INTO concerne (utilisateur_id,adresse_id) VALUES
 	 (1,1),
@@ -341,7 +352,7 @@ INSERT INTO ligne_panier (utilisateur_id,declinaison_meuble_id,date_ajout,quanti
 	 (3,1,'2024-01-03 00:00:00',1);
 
 drop view if exists v_commande;
-create view if not exists v_commande as
+create view v_commande as
 select `c`.`id_commande`     AS `id_commande`,
        `c`.`date_achat`      AS `date_achat`,
        `c`.`etat_id`         AS `etat_id`,
@@ -377,10 +388,15 @@ from ((((`commande` `c` join `adresse` `a`
 
 drop view if exists v_declinaison_meuble;
 create view v_declinaison_meuble as
-select *
+select id_declinaison_meuble, stock, image_declinaison, id_meuble, nom_meuble, disponible,
+       prix_meuble, description_meuble, image_meuble, id_type_meuble, libelle_type_meuble,
+       COALESCE(id_materiau, 0) AS id_materiau, libelle_materiau,
+       COALESCE(id_couleur, 0) AS id_couleur, libelle_couleur, code_couleur
 from declinaison_meuble dm
 join meuble m on m.id_meuble = dm.meuble_id
-join type_meuble tm on m.type_meuble_id = tm.id_type_meuble;
+join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
+left join materiau ma on ma.id_materiau = dm.materiau_id
+left join couleur c on c.id_couleur = dm.couleur_id;
 
 drop view if exists v_ligne_commande;
 create view v_ligne_commande as

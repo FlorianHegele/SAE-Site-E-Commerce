@@ -15,8 +15,10 @@ def client_meuble_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
 
-    sql = '''SELECT *
-    FROM v_declinaison_meuble'''
+    sql = '''SELECT id_meuble, nom_meuble, image_meuble, prix_meuble,
+    SUM(stock) as stock, COUNT(id_declinaison_meuble) as nb_declinaison
+    FROM v_declinaison_meuble
+    '''
     list_param = []
     condition_and = ""
     if "filter_word" in session or "filter_prix_min" in session or "filter_prix_max" in session or "filter_types" in session:
@@ -40,6 +42,7 @@ def client_meuble_show():  # remplace client_index
                 sql = sql + " OR "
             list_param.append(item)
         sql = sql + ")"
+    sql += " GROUP BY id_meuble"
     tuple_sql = tuple(list_param)
     print(sql)
     print(tuple_sql)
@@ -52,10 +55,13 @@ def client_meuble_show():  # remplace client_index
     types_meuble = mycursor.fetchall()
 
     sql = '''
-    SELECT m.nom_meuble AS nom, dm.prix_declinaison AS prix, dm.stock as stock, l.quantite_lp AS quantite, dm.id_declinaison_meuble
+    SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, dm.stock as stock, l.quantite_lp AS quantite, dm.id_declinaison_meuble,
+    ma.libelle_materiau, COALESCE(ma.id_materiau, 0) AS id_materiau, COALESCE(c.id_couleur, 0) AS id_couleur, c.code_couleur, c.libelle_couleur
     FROM declinaison_meuble as dm
     JOIN meuble AS m ON dm.meuble_id = m.id_meuble
     JOIN ligne_panier AS l ON dm.id_declinaison_meuble = l.declinaison_meuble_id
+    LEFT JOIN materiau AS ma ON dm.materiau_id = ma.id_materiau
+    LEFT JOIN couleur AS c ON dm.couleur_id = c.id_couleur
     WHERE l.utilisateur_id = %s
     '''
 
@@ -65,7 +71,7 @@ def client_meuble_show():  # remplace client_index
     prix_total = None
     if len(meubles_panier) >= 1:
         sql = '''
-        SELECT SUM(dm.prix_declinaison * l.quantite_lp) AS prix_total
+        SELECT SUM(m.prix_meuble * l.quantite_lp) AS prix_total
         FROM ligne_panier AS l
         JOIN declinaison_meuble AS dm ON l.declinaison_meuble_id = dm.id_declinaison_meuble
         JOIN meuble AS m ON dm.meuble_id = m.id_meuble
@@ -73,9 +79,6 @@ def client_meuble_show():  # remplace client_index
         '''
         mycursor.execute(sql, id_client)
         prix_total = mycursor.fetchone()['prix_total']
-
-    # TODO : FAUT FAIRE LA
-    print(meubles_panier)
 
     return render_template('client/boutique/panier_meuble.html'
                            , meubles=meubles
