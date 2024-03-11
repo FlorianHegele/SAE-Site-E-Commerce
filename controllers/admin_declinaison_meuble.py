@@ -13,16 +13,33 @@ admin_declinaison_meuble = Blueprint('admin_declinaison_meuble', __name__,
 def add_declinaison_meuble():
     id_meuble=request.args.get('id_meuble')
     mycursor = get_db().cursor()
-    meuble=[]
-    couleurs=None
-    tailles=None
-    d_taille_uniq=None
+
+    sql = """
+        SELECT * FROM v_declinaison_meuble
+        WHERE id_meuble = %s
+    """
+    mycursor.execute(sql, id_meuble)
+    meuble = mycursor.fetchall()
+
+    sql = """
+        SELECT id_couleur, libelle_couleur AS libelle FROM couleur
+    """
+    mycursor.execute(sql)
+    couleurs = mycursor.fetchall()
+
+    sql = """
+            SELECT id_materiau, libelle_materiau AS libelle FROM materiau
+        """
+    mycursor.execute(sql)
+    materiaux = mycursor.fetchall()
+
+    d_materiau_uniq=None
     d_couleur_uniq=None
     return render_template('admin/meuble/add_declinaison_meuble.html'
                            , meuble=meuble
                            , couleurs=couleurs
-                           , tailles=tailles
-                           , d_taille_uniq=d_taille_uniq
+                           , materiaux=materiaux
+                           , d_materiau_uniq=d_materiau_uniq
                            , d_couleur_uniq=d_couleur_uniq
                            )
 

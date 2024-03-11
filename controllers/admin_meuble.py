@@ -18,15 +18,17 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 def show_meuble():
     mycursor = get_db().cursor()
     sql = '''
-        SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id, id_meuble, prix_meuble, image_meuble, SUM(stock) AS stock,
+        SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id,
+        id_meuble, prix_meuble, image_meuble, SUM(stock) AS stock,
         (
             SELECT COUNT(vde.id_meuble)
             FROM v_declinaison_meuble AS vde
-            WHERE vde.id_meuble = vd.id_meuble
+            WHERE vde.id_meuble = vm.id_meuble
             GROUP BY vde.id_meuble
         ) AS nb_declinaisons
-        FROM v_declinaison_meuble AS vd
-        GROUP BY id_meuble
+        FROM v_meuble AS vm
+        GROUP BY id_meuble, nom_meuble
+        ORDER BY nom_meuble
     '''
 
     mycursor.execute(sql)
@@ -38,10 +40,28 @@ def show_meuble():
 def add_meuble():
     mycursor = get_db().cursor()
 
+    sql = """
+        SELECT id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble
+    """
+    mycursor.execute(sql)
+    type_meuble = mycursor.fetchall()
+
+    sql = """
+        SELECT id_couleur, libelle_couleur AS libelle FROM couleur
+    """
+    mycursor.execute(sql)
+    couleurs = mycursor.fetchall()
+
+    sql = """
+        SELECT id_materiau, libelle_materiau AS libelle FROM materiau
+    """
+    mycursor.execute(sql)
+    materiaux = mycursor.fetchall()
+
     return render_template('admin/meuble/add_meuble.html'
-                           # ,types_meuble=type_meuble,
-                           # ,couleurs=colors
-                           # ,tailles=tailles
+                           ,types_meuble=type_meuble
+                           ,couleurs=couleurs
+                           ,materiaux=materiaux
                            )
 
 
@@ -62,9 +82,12 @@ def valid_add_meuble():
         print("erreur")
         filename = None
 
-    sql = '''  requête admin_meuble_2 '''
+    sql = '''
+        INSERT INTO meuble(nom_meuble, disponible, prix_meuble, description_meuble, image_meuble, type_meuble_id)
+        VALUES (%s, 1, %s, %s, %s, %s)
+     '''
 
-    tuple_add = (nom, filename, prix, type_meuble_id, description)
+    tuple_add = (nom, prix, description, filename, type_meuble_id)
     print(tuple_add)
     mycursor.execute(sql, tuple_add)
     get_db().commit()
@@ -112,16 +135,15 @@ def edit_meuble():
     id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT id_meuble, type_meuble_id, nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
-    FROM meuble 
-    JOIN declinaison_meuble
-    WHERE id_meuble = %s AND declinaison_meuble.meuble_id = meuble.id_meuble;  
+    SELECT id_meuble, id_type_meuble, nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
+    FROM v_meuble
+    WHERE id_meuble = %s;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
 
     sql = '''
-        SELECT *, id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
+        SELECT id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
     '''
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()

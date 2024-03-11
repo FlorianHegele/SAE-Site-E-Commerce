@@ -45,7 +45,7 @@ types_meuble : tableau de dictionnaires
                     <select name="type_meuble_id" class="form-select">
                         {% for type in types_meuble %}
                             <option value="{{ type.id_type_meuble }}"
-                                    {% if type.id_type_meuble == meuble.type_meuble_id %}
+                                    {% if type.id_type_meuble == meuble.id_type_meuble %}
                                     selected {% endif %}> {{ type.libelle }}</option>
                         {% endfor %}
                     </select>

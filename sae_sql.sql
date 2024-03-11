@@ -393,8 +393,20 @@ select id_declinaison_meuble, stock, image_declinaison, id_meuble, nom_meuble, d
        COALESCE(id_materiau, 0) AS id_materiau, libelle_materiau,
        COALESCE(id_couleur, 0) AS id_couleur, libelle_couleur, code_couleur
 from declinaison_meuble dm
-join meuble m on m.id_meuble = dm.meuble_id
-join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
+left join meuble m on m.id_meuble = dm.meuble_id
+left join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
+left join materiau ma on ma.id_materiau = dm.materiau_id
+left join couleur c on c.id_couleur = dm.couleur_id;
+
+drop view if exists v_meuble;
+create view v_meuble as
+select id_declinaison_meuble, stock, image_declinaison, id_meuble, nom_meuble, disponible,
+       prix_meuble, description_meuble, image_meuble, id_type_meuble, libelle_type_meuble,
+       COALESCE(id_materiau, 0) AS id_materiau, libelle_materiau,
+       COALESCE(id_couleur, 0) AS id_couleur, libelle_couleur, code_couleur
+from meuble m
+left join declinaison_meuble dm on m.id_meuble = dm.meuble_id
+left join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
 left join materiau ma on ma.id_materiau = dm.materiau_id
 left join couleur c on c.id_couleur = dm.couleur_id;
 
