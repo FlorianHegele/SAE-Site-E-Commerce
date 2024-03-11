@@ -192,10 +192,10 @@ def valid_edit_meuble():
 
     sql_update = '''  
         UPDATE meuble 
-        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s
+        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s, description_meuble = %s
         WHERE id_meuble = %s;
     '''
-    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, id_meuble))
+    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, description, id_meuble))
     get_db().commit()
     if image_nom is None:
         image_nom = ''
