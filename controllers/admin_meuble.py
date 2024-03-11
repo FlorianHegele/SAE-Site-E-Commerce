@@ -6,7 +6,7 @@ from random import random
 
 from flask import Blueprint
 from flask import request, render_template, redirect, flash
-#from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
 
@@ -17,22 +17,21 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  SELECT *,stock FROM meuble
-    INNER JOIN declinaison_meuble 
-    WHERE meuble.id_meuble = declinaison_meuble.meuble_id
+    sql = '''
+        SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id, id_meuble, prix_meuble, image_meuble, SUM(stock) AS stock,
+        (
+            SELECT COUNT(vde.id_meuble)
+            FROM v_declinaison_meuble AS vde
+            WHERE vde.id_meuble = vd.id_meuble
+            GROUP BY vde.id_meuble
+        ) AS nb_declinaisons
+        FROM v_declinaison_meuble AS vd
+        GROUP BY id_meuble
     '''
+
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
-    sql = '''SELECT meuble.id_meuble, COUNT(declinaison_meuble.meuble_id) AS nb_declinaisons
-    FROM meuble 
-    LEFT JOIN declinaison_meuble ON meuble.id_meuble = declinaison_meuble.meuble_id
-    GROUP BY meuble.id_meuble;
-'''
-    mycursor.execute(sql)
-    nb_declinaisons = mycursor.fetchall()
-    print("aa",meubles)
-    print(5,nb_declinaisons)
-    return render_template('admin/meuble/show_meuble.html', meubles=meubles, nb_declinaisons=nb_declinaisons)
+    return render_template('admin/meuble/show_meuble.html', meubles=meubles)
 
 
 @admin_meuble.route('/admin/meuble/add', methods=['GET'])
@@ -40,10 +39,10 @@ def add_meuble():
     mycursor = get_db().cursor()
 
     return render_template('admin/meuble/add_meuble.html'
-                           #,types_meuble=type_meuble,
-                           #,couleurs=colors
-                           #,tailles=tailles
-                            )
+                           # ,types_meuble=type_meuble,
+                           # ,couleurs=colors
+                           # ,tailles=tailles
+                           )
 
 
 @admin_meuble.route('/admin/meuble/add', methods=['POST'])
@@ -57,11 +56,11 @@ def valid_add_meuble():
     image = request.files.get('image', '')
 
     if image:
-        filename = 'img_upload'+ str(int(2147483647 * random())) + '.png'
+        filename = 'img_upload' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
     else:
         print("erreur")
-        filename=None
+        filename = None
 
     sql = '''  requête admin_meuble_2 '''
 
@@ -80,13 +79,13 @@ def valid_add_meuble():
 
 @admin_meuble.route('/admin/meuble/delete', methods=['GET'])
 def delete_meuble():
-    id_meuble=request.args.get('id_meuble')
+    id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = ''' requête admin_meuble_3 '''
     mycursor.execute(sql, id_meuble)
     nb_declinaison = mycursor.fetchone()
     if nb_declinaison['nb_declinaison'] > 0:
-        message= u'il y a des declinaisons dans cet meuble : vous ne pouvez pas le supprimer'
+        message = u'il y a des declinaisons dans cet meuble : vous ne pouvez pas le supprimer'
         flash(message, 'alert-warning')
     else:
         sql = ''' requête admin_meuble_4 '''
@@ -110,34 +109,35 @@ def delete_meuble():
 
 @admin_meuble.route('/admin/meuble/edit', methods=['GET'])
 def edit_meuble():
-    id_meuble=request.args.get('id_meuble')
+    id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT *,nom_meuble,image_meuble, prix_meuble AS prix, description_meuble AS description ,declinaison_meuble.stock
+    SELECT nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
     FROM meuble 
     JOIN declinaison_meuble
     WHERE id_meuble = %s AND declinaison_meuble.meuble_id = meuble.id_meuble;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
-    print(meuble)
+
     sql = '''
-    SELECT *, id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
+        SELECT *, id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
     '''
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()
     print(types_meuble)
 
-    # sql = '''
-    # requête admin_meuble_6
-    # '''
-    # mycursor.execute(sql, id_meuble)
-    # declinaisons_meuble = mycursor.fetchall()
+    sql = '''
+        SELECT * FROM v_declinaison_meuble
+        WHERE id_meuble = %s
+    '''
+    mycursor.execute(sql, id_meuble)
+    declinaisons_meuble = mycursor.fetchall()
 
     return render_template('admin/meuble/edit_meuble.html'
-                           ,meuble=meuble
-                           ,types_meuble=types_meuble
-                         #  ,declinaisons_meuble=declinaisons_meuble
+                           , meuble=meuble
+                           , types_meuble=types_meuble
+                           , declinaisons_meuble=declinaisons_meuble
                            )
 
 
@@ -183,7 +183,7 @@ def valid_edit_meuble():
 @admin_meuble.route('/admin/meuble/avis/<int:id>', methods=['GET'])
 def admin_avis(id):
     mycursor = get_db().cursor()
-    meuble=[]
+    meuble = []
     commentaires = {}
     return render_template('admin/meuble/show_avis.html'
                            , meuble=meuble
