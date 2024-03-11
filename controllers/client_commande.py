@@ -111,13 +111,8 @@ def client_commande_show():
     #         date_achat DESC;
     # '''
     sql = '''
-    SELECT
-    id_commande,
-    etat_id,
-    date_achat,
-    libelle_etat AS libelle,
-    SUM(quantite_lc) AS nbr_meubles,
-    SUM(prix_lc * quantite_lc) AS prix_total
+    SELECT id_commande, etat_id, date_achat, libelle_etat AS libelle,
+    SUM(quantite_lc) AS nbr_meubles, SUM(prix_lc * quantite_lc) AS prix_total
     FROM v_ligne_commande
     JOIN etat ON v_ligne_commande.etat_id = etat.id_etat
     WHERE utilisateur_id = %s
