@@ -29,7 +29,7 @@ def client_meuble_show():  # remplace client_index
         list_param.append(recherche)
         condition_and = " AND "
     if 'filter_prix_min' in session or 'filter_prix_max' in session:
-        sql = sql + condition_and + 'prix_declinaison BETWEEN %s AND %s'
+        sql = sql + condition_and + 'prix_meuble BETWEEN %s AND %s'
         list_param.append(session['filter_prix_min'])
         list_param.append(session['filter_prix_max'])
         condition_and = " AND "
@@ -37,7 +37,7 @@ def client_meuble_show():  # remplace client_index
         sql = sql + condition_and + "("
         last_item = session['filter_types'][-1]
         for item in session['filter_types']:
-            sql = sql + "type_meuble_id=%s"
+            sql = sql + "id_type_meuble=%s"
             if item != last_item:
                 sql = sql + " OR "
             list_param.append(item)
