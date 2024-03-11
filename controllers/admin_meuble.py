@@ -112,7 +112,7 @@ def edit_meuble():
     id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
+    SELECT id_meuble, type_meuble_id, nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
     FROM meuble 
     JOIN declinaison_meuble
     WHERE id_meuble = %s AND declinaison_meuble.meuble_id = meuble.id_meuble;  
@@ -150,7 +150,7 @@ def valid_edit_meuble():
     type_meuble_id = request.form.get('type_meuble_id', '')
     prix = request.form.get('prix', '')
     description = request.form.get('description')
-    stock = request.form.get('stock')
+
     sql_image = '''
         SELECT image_meuble
         FROM meuble 
@@ -160,22 +160,24 @@ def valid_edit_meuble():
     image_nom = mycursor.fetchone()
     if image_nom:
         image_nom = image_nom['image_meuble']
+
     if image:
         if image_nom and os.path.exists(os.path.join(os.getcwd() + "/static/images/", image_nom)):
             os.remove(os.path.join(os.getcwd() + "/static/images/", image_nom))
         filename = 'img_upload_' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
         image_nom = filename
+
     sql_update = '''  
         UPDATE meuble 
-        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s, stock_meuble = %s
+        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s
         WHERE id_meuble = %s;
     '''
-    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, stock, id_meuble))
+    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, id_meuble))
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'Meuble modifié - Nom: ' + nom + ' - Type de meuble: ' + type_meuble_id + ' - Prix: ' + prix + ' - Image: ' + image_nom + ' - Description: ' + description + ' - Stock: ' + stock
+    message = u'Meuble modifié - Nom: ' + nom + ' - Type de meuble: ' + type_meuble_id + ' - Prix: ' + prix + ' - Image: ' + image_nom + ' - Description: ' + description
     flash(message, 'alert-success')
     return redirect('/admin/meuble/show')
 
