@@ -25,15 +25,12 @@ def admin_commande_show():
     meubles_commande = None
 
     sql = '''
-    SELECT commande.id_commande, utilisateur.login, commande.date_achat, 
-    SUM(ligne_commande.quantite_lc) AS nbr_meubles, 
-    SUM(ligne_commande.prix_lc * ligne_commande.quantite_lc) AS prix_total,
-    etat.libelle_etat AS libelle 
-    FROM commande
-    JOIN utilisateur ON commande.utilisateur_id = utilisateur.id_utilisateur
-    JOIN etat ON commande.etat_id = etat.id_etat
-    JOIN ligne_commande ON commande.id_commande = ligne_commande.commande_id
-    GROUP BY commande.id_commande;
+    SELECT id_commande, etat_id, login, date_achat, libelle_etat AS libelle,
+    SUM(quantite_lc) AS nbr_meubles, SUM(prix_lc * quantite_lc) AS prix_total
+    FROM v_ligne_commande
+    JOIN etat ON v_ligne_commande.etat_id = etat.id_etat
+    JOIN utilisateur ON utilisateur_id = utilisateur.id_utilisateur
+    GROUP BY id_commande
     '''
 
     mycursor.execute(sql)
@@ -41,12 +38,21 @@ def admin_commande_show():
 
     if id_commande is not None:
         sql = '''
-                SELECT meuble.nom_meuble AS nom, ligne_commande.quantite_lc AS quantite, 
-                (ligne_commande.prix_lc * ligne_commande.quantite_lc) AS prix_ligne, ligne_commande.prix_lc AS prix
-                FROM meuble 
-                JOIN ligne_commande ON meuble.id_meuble = ligne_commande.declinaison_meuble_id
-                WHERE ligne_commande.commande_id = %s
-            '''
+            SELECT vd.nom_meuble AS nom,
+            vl.prix_lc AS prix,
+            vl.quantite_lc as quantite,
+            prix_lc * quantite_lc AS prix_ligne,
+            (
+                SELECT COUNT(vde.id_meuble)
+                FROM v_declinaison_meuble AS vde
+                WHERE vde.id_meuble = vd.id_meuble
+                GROUP BY vde.id_meuble
+            ) AS nb_declinaisons,
+            vd.id_couleur, vd.libelle_couleur, vd.id_materiau, vd.libelle_materiau
+            FROM v_ligne_commande vl
+            JOIN v_declinaison_meuble vd ON vl.declinaison_meuble_id = vd.id_declinaison_meuble
+            WHERE id_commande = %s
+        '''
 
         mycursor.execute(sql, (id_commande,))
         meubles_commande = mycursor.fetchall()
