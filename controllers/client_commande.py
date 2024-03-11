@@ -21,9 +21,10 @@ def client_commande_valide():
     meubles_panier = []
     if len(meubles_panier) >= 1:
         sql = '''
-            SELECT SUM(prix_declinaison * quantite_lp) AS prix_total
+            SELECT SUM(prix_meuble * quantite_lp) AS prix_total
             FROM ligne_panier
             JOIN declinaison_meuble ON ligne_panier.declinaison_meuble_id = declinaison_meuble.id_declinaison_meuble
+            JOIN meuble ON declinaison_meuble.meuble_id = meuble.id_meuble
             WHERE utilisateur_id = %s;
         '''
         mycursor.execute(sql, id_client)
@@ -78,7 +79,7 @@ def client_commande_add():
         mycursor.execute(sql, (item['utilisateur_id'], item['declinaison_meuble_id']))
 
         sql = "INSERT INTO ligne_commande (commande_id, declinaison_meuble_id, prix_lc, quantite_lc) VALUES (%s, %s, %s, %s)"
-        tuple_insert = (commande_id['last_insert_id'], item['declinaison_meuble_id'], item['prix_declinaison'], item['quantite_lp'])
+        tuple_insert = (commande_id['last_insert_id'], item['declinaison_meuble_id'], item['prix_meuble'], item['quantite_lp'])
         mycursor.execute(sql, tuple_insert)
 
     get_db().commit()
@@ -110,7 +111,9 @@ def client_commande_show():
     #         date_achat DESC;
     # '''
     sql = '''
-    SELECT * ,
+    SELECT
+    id_commande,
+    etat_id,
     date_achat,
     libelle_etat AS libelle,
     SUM(quantite_lc) AS nbr_meubles,
@@ -139,10 +142,17 @@ def client_commande_show():
         #     WHERE lc.commande_id = %s;
         # '''
         sql = '''
-        SELECT nom_meuble AS nom,
+        SELECT vd.nom_meuble AS nom,
             vl.prix_lc AS prix,
             vl.quantite_lc as quantite,
-            prix_lc * quantite_lc AS prix_ligne
+            prix_lc * quantite_lc AS prix_ligne,
+            (
+                SELECT COUNT(vde.id_meuble)
+                FROM v_declinaison_meuble AS vde
+                WHERE vde.id_meuble = vd.id_meuble
+                GROUP BY vde.id_meuble
+            ) AS nb_declinaisons,
+            vd.id_couleur, vd.libelle_couleur, vd.id_materiau, vd.libelle_materiau
         FROM v_ligne_commande vl
         JOIN v_declinaison_meuble vd ON vl.declinaison_meuble_id = vd.id_declinaison_meuble
         WHERE id_commande = %s

@@ -19,13 +19,13 @@
                             {% if ligne.nb_declinaisons is defined and ligne.nb_declinaisons > 1 %}
                                 <span style="color:rgba(255,197,197,0.6);"> ( {{ ligne.nb_declinaisons }} declinaisons )</span>
                                 <span style="color:#6dcea2">
-                                    {% if ligne.couleur_id != 1 %}
+                                    {% if ligne.id_couleur > 0 %}
                                         {{ ligne.libelle_couleur }}
                                     {% endif %}
                                     </span>
                                 <span style="color:#d941c2">
-                                    {% if ligne.taille_id != 1 %}
-                                        {{ ligne.libelle_taille }}
+                                    {% if ligne.id_materiau > 0 %}
+                                        {{ ligne.libelle_materiau }}
                                     {% endif %}
                                     </span>
                             {% endif %}
@@ -99,7 +99,6 @@
                     </table>
                 </div>
             </div> <!-- end card-body-->
-
         </div>
     </div>
 

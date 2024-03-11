@@ -498,7 +498,8 @@ create view v_ligne_panier as
 select *
 from ligne_panier lp
 join utilisateur u on u.id_utilisateur = lp.utilisateur_id
-join declinaison_meuble dm on dm.id_declinaison_meuble = lp.declinaison_meuble_id;
+join declinaison_meuble dm on dm.id_declinaison_meuble = lp.declinaison_meuble_id
+join meuble m on m.id_meuble = dm.meuble_id;
     '''
     mycursor.execute(sql)
 
