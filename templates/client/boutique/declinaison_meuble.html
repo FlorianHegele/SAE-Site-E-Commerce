@@ -29,11 +29,11 @@
             <ul>
                 {% for item_declinaison in declinaisons %}
                     <li>
-                        {% if item_declinaison.id_couleur is defined and  item_declinaison.id_couleur > 0 %}
+                        {% if item_declinaison.id_couleur is defined and  item_declinaison.id_couleur > 1 %}
                             couleur :
                             <stong style="color:{{ item_declinaison.code_couleur }}">{{ item_declinaison.libelle_couleur }}</stong>
                         {% endif %}
-                        {% if item_declinaison.id_materiau is defined and  item_declinaison.id_materiau > 0 %}
+                        {% if item_declinaison.id_materiau is defined and  item_declinaison.id_materiau > 1 %}
                             - materiau : <span> {{ item_declinaison.libelle_materiau }}</span>
                         {% endif %}
                         {% if item_declinaison.stock is defined and item_declinaison.stock != None %}

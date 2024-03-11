@@ -134,8 +134,8 @@ CREATE TABLE declinaison_meuble(
    stock INT,
    image_declinaison VARCHAR(255),
    meuble_id INT NOT NULL,
-   materiau_id  INT,
-   couleur_id  INT,
+   materiau_id  INT NOT NULL,
+   couleur_id  INT NOT NULL,
    PRIMARY KEY(id_declinaison_meuble),
    FOREIGN KEY(meuble_id) REFERENCES meuble(id_meuble),
    FOREIGN KEY(materiau_id) REFERENCES materiau(id_materiau),
@@ -264,6 +264,7 @@ INSERT INTO etat (libelle_etat) VALUES
 
     sql = ''' 
 INSERT INTO materiau (libelle_materiau) VALUES
+	 ('Materiau unique'),
 	 ('Sheesham massif'),
 	 ('Mélaminé blanc'),
 	 ('Verre'),
@@ -280,6 +281,7 @@ INSERT INTO materiau (libelle_materiau) VALUES
 
     sql = ''' 
 INSERT INTO couleur (libelle_couleur, code_couleur) VALUES
+    ('Couleur unique', '#000000'),
     ('Violet', '#800080'),
     ('Rose', '#FFC0CB'),
     ('Rouge', '#FF0000'),
@@ -343,46 +345,46 @@ INSERT INTO meuble (nom_meuble,disponible,prix_meuble,description_meuble,image_m
 
     sql = '''
 INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,couleur_id) VALUES
-	 (8,'1.jpg',1,1,NULL),
-	 (2,'2.jpg',2,1,NULL),
-	 (3,'3.jpg',3,1,NULL),
-	 (12,'4.jpg',4,2,NULL),
-	 (1,'7.jpg',4,5,NULL),
-	 (6,'10.jpg',4,6,NULL),
-	 (13,'13.jpg',5,3,NULL),
-	 (12,'14.jpg',6,3,NULL),
-	 (2,'15.jpg',7,3,NULL),
-	 (2,'16.jpg',8,6,NULL),
-	 (5,'17.jpg',8,7,NULL),
-	 (3,'18.jpg',9,4,NULL),
-	 (25,'19.jpg',10,NULL,1),
-	 (16,'20.jpg',10,NULL,2),
-	 (11,'21.jpg',10,NULL,4),
-	 (7,'22.jpg',10,NULL,5),
-	 (7,'23.jpg',11,NULL,4),
-	 (4,'24.jpg',11,NULL,5),
-	 (2,'25.jpg',11,NULL,6),
-	 (1,'26.jpg',11,NULL,7),
-	 (5,'27.jpg',11,NULL,8),
-	 (6,'28.jpg',11,NULL,9),
-	 (21,'29.jpg',12,6,NULL),
-	 (2,'30.jpg',13,6,NULL),
-	 (5,'31.jpg',14,8,NULL),
-	 (6,'32.jpg',15,8,NULL),
-	 (7,'33.jpg',16,9,NULL),
-	 (16,'34.jpg',17,9,NULL),
-	 (23,'35.jpg',18,6,NULL),
-	 (2,'36.jpg',18,6,NULL),
-	 (0,'38.jpg',19,NULL,8),
-	 (5,'39.jpg',19,NULL,7),
-	 (6,'41.jpg',19,NULL,3),
-	 (0,'42.jpg',19,NULL,5),
-	 (12,'43.jpg',20,NULL,6),
-	 (11,'44.jpg',20,NULL,5),
-	 (8,'45.jpg',20,NULL,10),
-	 (9,'46.jpg',20,NULL,11),
-	 (19,'47.jpg',20,NULL,4),
-	 (27,'48.jpg',20,NULL,1);
+	 (8,'1.jpg',1,1,1),
+	 (2,'2.jpg',2,1,1),
+	 (3,'3.jpg',3,1,1),
+	 (12,'4.jpg',4,2,1),
+	 (1,'7.jpg',4,5,1),
+	 (6,'10.jpg',4,6,1),
+	 (13,'13.jpg',5,3,1),
+	 (12,'14.jpg',6,3,1),
+	 (2,'15.jpg',7,3,1),
+	 (2,'16.jpg',8,6,1),
+	 (5,'17.jpg',8,7,1),
+	 (3,'18.jpg',9,4,1),
+	 (25,'19.jpg',10,1,1),
+	 (16,'20.jpg',10,1,2),
+	 (11,'21.jpg',10,1,4),
+	 (7,'22.jpg',10,1,5),
+	 (7,'23.jpg',11,1,4),
+	 (4,'24.jpg',11,1,5),
+	 (2,'25.jpg',11,1,6),
+	 (1,'26.jpg',11,1,7),
+	 (5,'27.jpg',11,1,8),
+	 (6,'28.jpg',11,1,9),
+	 (21,'29.jpg',12,6,1),
+	 (2,'30.jpg',13,6,1),
+	 (5,'31.jpg',14,8,1),
+	 (6,'32.jpg',15,8,1),
+	 (7,'33.jpg',16,9,1),
+	 (16,'34.jpg',17,9,1),
+	 (23,'35.jpg',18,6,1),
+	 (2,'36.jpg',18,6,1),
+	 (0,'38.jpg',19,1,8),
+	 (5,'39.jpg',19,1,7),
+	 (6,'41.jpg',19,1,3),
+	 (0,'42.jpg',19,1,5),
+	 (12,'43.jpg',20,1,6),
+	 (11,'44.jpg',20,1,5),
+	 (8,'45.jpg',20,1,10),
+	 (9,'46.jpg',20,1,11),
+	 (19,'47.jpg',20,1,4),
+	 (27,'48.jpg',20,1,1);
     '''
     mycursor.execute(sql)
     
@@ -462,6 +464,7 @@ INSERT INTO ligne_panier (utilisateur_id,declinaison_meuble_id,date_ajout,quanti
 drop view if exists v_commande,
 v_concerne,
 v_declinaison_meuble,
+v_meuble,
 v_historique,
 v_ligne_commande,
 v_ligne_panier,
@@ -474,14 +477,26 @@ v_note;
 create view v_declinaison_meuble as
 select id_declinaison_meuble, stock, image_declinaison, id_meuble, nom_meuble, disponible,
        prix_meuble, description_meuble, image_meuble, id_type_meuble, libelle_type_meuble,
-       COALESCE(id_materiau, 0) AS id_materiau, libelle_materiau,
-       COALESCE(id_couleur, 0) AS id_couleur, libelle_couleur, code_couleur
+       id_materiau, libelle_materiau, id_couleur, libelle_couleur, code_couleur
 from declinaison_meuble dm
-join meuble m on m.id_meuble = dm.meuble_id
-join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
+left join meuble m on m.id_meuble = dm.meuble_id
+left join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
 left join materiau ma on ma.id_materiau = dm.materiau_id
 left join couleur c on c.id_couleur = dm.couleur_id;
     '''
+    mycursor.execute(sql)
+
+    sql = '''
+create view v_meuble as
+select id_declinaison_meuble, stock, image_declinaison, id_meuble, nom_meuble, disponible,
+       prix_meuble, description_meuble, image_meuble, id_type_meuble, libelle_type_meuble,
+       id_materiau, libelle_materiau, id_couleur, libelle_couleur, code_couleur
+from meuble m
+left join declinaison_meuble dm on m.id_meuble = dm.meuble_id
+left join type_meuble tm on m.type_meuble_id = tm.id_type_meuble
+left join materiau ma on ma.id_materiau = dm.materiau_id
+left join couleur c on c.id_couleur = dm.couleur_id;
+        '''
     mycursor.execute(sql)
     
     sql = '''

@@ -86,20 +86,8 @@ types_meuble : tableau de dictionnaires
                     {% else %}
                         {% for declinaison_meuble in declinaisons_meuble %}
                             <tr>
-                                <td>
-                                    {% if declinaison_meuble.libelle_materiau != None %}
-                                        {{ declinaison_meuble.libelle_materiau }}
-                                    {% else %}
-                                        materiau par défaut
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if declinaison_meuble.libelle_couleur != None %}
-                                        {{ declinaison_meuble.libelle_couleur }}
-                                    {% else %}
-                                        couleur par défaut
-                                    {% endif %}
-                                </td>
+                                <td>{{ declinaison_meuble.libelle_materiau }}</td>
+                                <td>{{ declinaison_meuble.libelle_couleur }}</td>
                                 <td>{{ declinaison_meuble.stock }}</td>
                                 <td style="display: flex">
                                     <a class="img-fluid"
@@ -119,7 +107,6 @@ types_meuble : tableau de dictionnaires
                         {% endfor %}
                     {% endif %}
                 </table>
-
             </div>
 
         </div>

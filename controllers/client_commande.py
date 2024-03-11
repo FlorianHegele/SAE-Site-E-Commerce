@@ -141,12 +141,12 @@ def client_commande_show():
             vl.prix_lc AS prix,
             vl.quantite_lc as quantite,
             prix_lc * quantite_lc AS prix_ligne,
-            (
+            IFNULL((
                 SELECT COUNT(vde.id_meuble)
                 FROM v_declinaison_meuble AS vde
                 WHERE vde.id_meuble = vd.id_meuble
                 GROUP BY vde.id_meuble
-            ) AS nb_declinaisons,
+            ), 0) AS nb_declinaisons,
             vd.id_couleur, vd.libelle_couleur, vd.id_materiau, vd.libelle_materiau
         FROM v_ligne_commande vl
         JOIN v_declinaison_meuble vd ON vl.declinaison_meuble_id = vd.id_declinaison_meuble

@@ -57,12 +57,12 @@ def client_meuble_show():  # remplace client_index
     sql = '''
     SELECT m.nom_meuble AS nom, m.prix_meuble AS prix, dm.stock as stock, l.quantite_lp AS quantite, dm.id_declinaison_meuble,
     ma.libelle_materiau, COALESCE(ma.id_materiau, 0) AS id_materiau, COALESCE(c.id_couleur, 0) AS id_couleur, c.code_couleur, c.libelle_couleur,
-    (
+    IFNULL((
         SELECT COUNT(vde.id_meuble)
         FROM v_declinaison_meuble AS vde
         WHERE vde.id_meuble = m.id_meuble
         GROUP BY vde.id_meuble
-    ) AS nb_declinaisons
+    ), 0) AS nb_declinaisons
     FROM declinaison_meuble as dm
     JOIN meuble AS m ON dm.meuble_id = m.id_meuble
     JOIN ligne_panier AS l ON dm.id_declinaison_meuble = l.declinaison_meuble_id

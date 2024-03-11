@@ -13,10 +13,10 @@
                 <tr>
                     <td>{{ item_panier.nom }}
                         {% if item_panier.nb_declinaisons is defined and item_panier.nb_declinaisons > 1 %}
-                            {% if item_panier.id_couleur is defined and item_panier.id_couleur != None and item_panier.id_couleur > 0 %}
+                            {% if item_panier.id_couleur is defined and item_panier.id_couleur != None and item_panier.id_couleur > 1 %}
                                 <small style="color: #6dcea2">({{ item_panier.libelle_couleur }})</small>
                             {% endif %}
-                            {% if item_panier.id_materiau is defined and item_panier.id_materiau != None and item_panier.id_materiau > 0 %}
+                            {% if item_panier.id_materiau is defined and item_panier.id_materiau != None and item_panier.id_materiau > 1 %}
                                 <small style="color: #d941c2">({{ item_panier.libelle_materiau }})</small>
                             {% endif %}
                         {% endif %}
