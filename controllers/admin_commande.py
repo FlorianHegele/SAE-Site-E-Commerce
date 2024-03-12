@@ -43,7 +43,7 @@ def admin_commande_show():
             vl.quantite_lc as quantite,
             prix_lc * quantite_lc AS prix_ligne,
             IFNULL((
-                SELECT COUNT(vde.id_meuble)
+                SELECT COUNT(vde.id_declinaison_meuble)
                 FROM v_declinaison_meuble AS vde
                 WHERE vde.id_meuble = vd.id_meuble
                 GROUP BY vde.id_meuble

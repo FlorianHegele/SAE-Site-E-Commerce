@@ -11,7 +11,7 @@ from flask import request, render_template, redirect, flash
 from connexion_db import get_db
 
 admin_meuble = Blueprint('admin_meuble', __name__,
-                          template_folder='templates')
+                         template_folder='templates')
 
 
 @admin_meuble.route('/admin/meuble/show')
@@ -20,7 +20,7 @@ def show_meuble():
     sql = '''
         SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id,
         id_meuble, prix_meuble, image_meuble, IFNULL(SUM(stock), 0) AS stock,
-        IFNULL(COUNT(id_meuble), 0) AS nb_declinaisons, IFNULL(MIN(stock), 0) AS min_stock
+        IFNULL(COUNT(id_declinaison_meuble), 0) AS nb_declinaisons, IFNULL(MIN(stock), 0) AS min_stock
         FROM v_meuble AS vm
         GROUP BY id_meuble, nom_meuble
         ORDER BY nom_meuble
@@ -54,9 +54,9 @@ def add_meuble():
     materiaux = mycursor.fetchall()
 
     return render_template('admin/meuble/add_meuble.html'
-                           ,types_meuble=type_meuble
-                           ,couleurs=couleurs
-                           ,materiaux=materiaux
+                           , types_meuble=type_meuble
+                           , couleurs=couleurs
+                           , materiaux=materiaux
                            )
 
 
@@ -99,20 +99,25 @@ def valid_add_meuble():
 def delete_meuble():
     id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
-    sql = ''' requête admin_meuble_3 '''
+    sql = '''
+        SELECT IFNULL(COUNT(id_declinaison_meuble), 0) AS nb_declinaison
+        FROM v_declinaison_meuble
+        WHERE id_meuble = %s
+        GROUP BY id_meuble
+    '''
     mycursor.execute(sql, id_meuble)
     nb_declinaison = mycursor.fetchone()
-    if nb_declinaison['nb_declinaison'] > 0:
+
+    if nb_declinaison is not None and nb_declinaison['nb_declinaison'] > 0:
         message = u'il y a des declinaisons dans cet meuble : vous ne pouvez pas le supprimer'
         flash(message, 'alert-warning')
     else:
-        sql = ''' requête admin_meuble_4 '''
+        sql = '''SELECT * FROM meuble WHERE id_meuble = %s'''
         mycursor.execute(sql, id_meuble)
         meuble = mycursor.fetchone()
-        print(meuble)
-        image = meuble['image']
+        image = meuble['image_meuble']
 
-        sql = ''' requête admin_meuble_5  '''
+        sql = '''DELETE FROM meuble WHERE id_meuble = %s'''
         mycursor.execute(sql, id_meuble)
         get_db().commit()
         if image != None:

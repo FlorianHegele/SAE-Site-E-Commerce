@@ -196,8 +196,31 @@ def valid_edit_declinaison_meuble():
 
 @admin_declinaison_meuble.route('/admin/declinaison_meuble/delete', methods=['GET'])
 def admin_delete_declinaison_meuble():
-    id_declinaison_meuble = request.args.get('id_declinaison_meuble','')
-    id_meuble = request.args.get('id_meuble','')
+    id_declinaison_meuble = request.args.get('id_declinaison_meuble')
+    id_meuble = request.args.get('id_meuble')
+    mycursor = get_db().cursor()
 
-    flash(u'declinaison supprimée, id_declinaison_meuble : ' + str(id_declinaison_meuble),  'alert-success')
+    sql = """
+        SELECT * FROM v_ligne_commande
+        WHERE id_declinaison_meuble = %s
+    """
+    mycursor.execute(sql, id_declinaison_meuble)
+    commandes = mycursor.fetchall()
+
+    sql = """
+            SELECT * FROM v_ligne_panier
+            WHERE id_declinaison_meuble = %s
+        """
+    mycursor.execute(sql, id_declinaison_meuble)
+    paniers = mycursor.fetchall()
+
+    if paniers is not None and len(paniers) > 0:
+        flash("il y a des exemplaires dans des paniers : vous ne pouvez pas le supprimer", 'alert-warning')
+    elif commandes is not None and len(commandes) > 0:
+        flash(u"il y a des exemplaires dans des commandes : vous ne pouvez pas le supprimer", 'alert-warning')
+    else:
+        sql = """DELETE FROM declinaison_meuble WHERE id_declinaison_meuble=%s"""
+        mycursor.execute(sql, id_declinaison_meuble)
+        get_db().commit()
+        flash(u'declinaison supprimée, id_declinaison_meuble : ' + str(id_declinaison_meuble),  'alert-success')
     return redirect('/admin/meuble/edit?id_meuble=' + str(id_meuble))
