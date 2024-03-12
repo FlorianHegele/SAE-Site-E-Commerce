@@ -19,13 +19,8 @@ def show_meuble():
     mycursor = get_db().cursor()
     sql = '''
         SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id,
-        id_meuble, prix_meuble, image_meuble, SUM(stock) AS stock,
-        IFNULL((
-            SELECT COUNT(vde.id_meuble)
-            FROM v_declinaison_meuble AS vde
-            WHERE vde.id_meuble = vm.id_meuble
-            GROUP BY vde.id_meuble
-        ), 0) AS nb_declinaisons
+        id_meuble, prix_meuble, image_meuble, IFNULL(SUM(stock), 0) AS stock,
+        IFNULL(COUNT(id_meuble), 0) AS nb_declinaisons, IFNULL(MIN(stock), 0) AS min_stock
         FROM v_meuble AS vm
         GROUP BY id_meuble, nom_meuble
         ORDER BY nom_meuble

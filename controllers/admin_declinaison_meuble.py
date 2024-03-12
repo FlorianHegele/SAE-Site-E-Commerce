@@ -45,7 +45,7 @@ def add_declinaison_meuble():
 
     d_materiau_uniq = False
     d_couleur_uniq = False
-    if len(first_meuble_data) > 0:
+    if first_meuble_data["id_couleur"] is not None:
         couleurs = couleurs[1:]
         materiaux = materiaux[1:]
 
@@ -138,7 +138,7 @@ def edit_declinaison_meuble():
 
     d_materiau_uniq = False
     d_couleur_uniq = False
-    if len(first_meuble_data) > 0:
+    if first_meuble_data["id_couleur"] is not None:
         couleurs = couleurs[1:]
         materiaux = materiaux[1:]
 
