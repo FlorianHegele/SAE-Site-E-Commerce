@@ -6,44 +6,58 @@ from random import random
 
 from flask import Blueprint
 from flask import request, render_template, redirect, flash
-#from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 from connexion_db import get_db
 
 admin_meuble = Blueprint('admin_meuble', __name__,
-                          template_folder='templates')
+                         template_folder='templates')
 
 
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  SELECT *,stock FROM meuble
-    INNER JOIN declinaison_meuble 
-    WHERE meuble.id_meuble = declinaison_meuble.meuble_id
+    sql = '''
+        SELECT nom_meuble, libelle_type_meuble, id_type_meuble AS type_id,
+        id_meuble, prix_meuble, image_meuble, IFNULL(SUM(stock), 0) AS stock,
+        IFNULL(COUNT(id_declinaison_meuble), 0) AS nb_declinaisons, IFNULL(MIN(stock), 0) AS min_stock
+        FROM v_meuble AS vm
+        GROUP BY id_meuble, nom_meuble
+        ORDER BY nom_meuble
     '''
+
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
-    sql = '''SELECT meuble.id_meuble, COUNT(declinaison_meuble.meuble_id) AS nb_declinaisons
-    FROM meuble 
-    LEFT JOIN declinaison_meuble ON meuble.id_meuble = declinaison_meuble.meuble_id
-    GROUP BY meuble.id_meuble;
-'''
-    mycursor.execute(sql)
-    nb_declinaisons = mycursor.fetchall()
-    print("aa",meubles)
-    print(5,nb_declinaisons)
-    return render_template('admin/meuble/show_meuble.html', meubles=meubles, nb_declinaisons=nb_declinaisons)
+    return render_template('admin/meuble/show_meuble.html', meubles=meubles)
 
 
 @admin_meuble.route('/admin/meuble/add', methods=['GET'])
 def add_meuble():
     mycursor = get_db().cursor()
 
+    sql = """
+        SELECT id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble
+    """
+    mycursor.execute(sql)
+    type_meuble = mycursor.fetchall()
+
+    sql = """
+        SELECT id_couleur, libelle_couleur AS libelle FROM couleur
+    """
+    mycursor.execute(sql)
+    couleurs = mycursor.fetchall()
+
+    sql = """
+        SELECT id_materiau, libelle_materiau AS libelle FROM materiau
+    """
+    mycursor.execute(sql)
+    materiaux = mycursor.fetchall()
+
     return render_template('admin/meuble/add_meuble.html'
-                           #,types_meuble=type_meuble,
-                           #,couleurs=colors
-                           #,tailles=tailles
-                            )
+                           , types_meuble=type_meuble
+                           , couleurs=couleurs
+                           , materiaux=materiaux
+                           )
 
 
 @admin_meuble.route('/admin/meuble/add', methods=['POST'])
@@ -57,15 +71,18 @@ def valid_add_meuble():
     image = request.files.get('image', '')
 
     if image:
-        filename = 'img_upload'+ str(int(2147483647 * random())) + '.png'
+        filename = 'img_upload' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
     else:
         print("erreur")
-        filename=None
+        filename = None
 
-    sql = '''  requête admin_meuble_2 '''
+    sql = '''
+        INSERT INTO meuble(nom_meuble, disponible, prix_meuble, description_meuble, image_meuble, type_meuble_id)
+        VALUES (%s, 1, %s, %s, %s, %s)
+     '''
 
-    tuple_add = (nom, filename, prix, type_meuble_id, description)
+    tuple_add = (nom, prix, description, filename, type_meuble_id)
     print(tuple_add)
     mycursor.execute(sql, tuple_add)
     get_db().commit()
@@ -80,22 +97,27 @@ def valid_add_meuble():
 
 @admin_meuble.route('/admin/meuble/delete', methods=['GET'])
 def delete_meuble():
-    id_meuble=request.args.get('id_meuble')
+    id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
-    sql = ''' requête admin_meuble_3 '''
+    sql = '''
+        SELECT IFNULL(COUNT(id_declinaison_meuble), 0) AS nb_declinaison
+        FROM v_declinaison_meuble
+        WHERE id_meuble = %s
+        GROUP BY id_meuble
+    '''
     mycursor.execute(sql, id_meuble)
     nb_declinaison = mycursor.fetchone()
-    if nb_declinaison['nb_declinaison'] > 0:
-        message= u'il y a des declinaisons dans cet meuble : vous ne pouvez pas le supprimer'
+
+    if nb_declinaison is not None and nb_declinaison['nb_declinaison'] > 0:
+        message = u'il y a des declinaisons dans cet meuble : vous ne pouvez pas le supprimer'
         flash(message, 'alert-warning')
     else:
-        sql = ''' requête admin_meuble_4 '''
+        sql = '''SELECT * FROM meuble WHERE id_meuble = %s'''
         mycursor.execute(sql, id_meuble)
         meuble = mycursor.fetchone()
-        print(meuble)
-        image = meuble['image']
+        image = meuble['image_meuble']
 
-        sql = ''' requête admin_meuble_5  '''
+        sql = '''DELETE FROM meuble WHERE id_meuble = %s'''
         mycursor.execute(sql, id_meuble)
         get_db().commit()
         if image != None:
@@ -110,34 +132,34 @@ def delete_meuble():
 
 @admin_meuble.route('/admin/meuble/edit', methods=['GET'])
 def edit_meuble():
-    id_meuble=request.args.get('id_meuble')
+    id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
     sql = '''
-    SELECT *,nom_meuble,image_meuble, prix_meuble AS prix, description_meuble AS description ,declinaison_meuble.stock
-    FROM meuble 
-    JOIN declinaison_meuble
-    WHERE id_meuble = %s AND declinaison_meuble.meuble_id = meuble.id_meuble;  
+    SELECT id_meuble, id_type_meuble, nom_meuble, image_meuble, prix_meuble AS prix, description_meuble AS description
+    FROM v_meuble
+    WHERE id_meuble = %s;  
     '''
     mycursor.execute(sql, id_meuble)
     meuble = mycursor.fetchone()
-    print(meuble)
+
     sql = '''
-    SELECT *, id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
+        SELECT id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble;  
     '''
     mycursor.execute(sql)
     types_meuble = mycursor.fetchall()
     print(types_meuble)
 
-    # sql = '''
-    # requête admin_meuble_6
-    # '''
-    # mycursor.execute(sql, id_meuble)
-    # declinaisons_meuble = mycursor.fetchall()
+    sql = '''
+        SELECT * FROM v_declinaison_meuble
+        WHERE id_meuble = %s
+    '''
+    mycursor.execute(sql, id_meuble)
+    declinaisons_meuble = mycursor.fetchall()
 
     return render_template('admin/meuble/edit_meuble.html'
-                           ,meuble=meuble
-                           ,types_meuble=types_meuble
-                         #  ,declinaisons_meuble=declinaisons_meuble
+                           , meuble=meuble
+                           , types_meuble=types_meuble
+                           , declinaisons_meuble=declinaisons_meuble
                            )
 
 
@@ -150,7 +172,7 @@ def valid_edit_meuble():
     type_meuble_id = request.form.get('type_meuble_id', '')
     prix = request.form.get('prix', '')
     description = request.form.get('description')
-    stock = request.form.get('stock')
+
     sql_image = '''
         SELECT image_meuble
         FROM meuble 
@@ -160,22 +182,24 @@ def valid_edit_meuble():
     image_nom = mycursor.fetchone()
     if image_nom:
         image_nom = image_nom['image_meuble']
+
     if image:
         if image_nom and os.path.exists(os.path.join(os.getcwd() + "/static/images/", image_nom)):
             os.remove(os.path.join(os.getcwd() + "/static/images/", image_nom))
         filename = 'img_upload_' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
         image_nom = filename
+
     sql_update = '''  
         UPDATE meuble 
-        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s, stock_meuble = %s
+        SET nom_meuble = %s, image_meuble = %s, prix_meuble = %s, type_meuble_id = %s, description_meuble = %s
         WHERE id_meuble = %s;
     '''
-    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, stock, id_meuble))
+    mycursor.execute(sql_update, (nom, image_nom, prix, type_meuble_id, description, id_meuble))
     get_db().commit()
     if image_nom is None:
         image_nom = ''
-    message = u'Meuble modifié - Nom: ' + nom + ' - Type de meuble: ' + type_meuble_id + ' - Prix: ' + prix + ' - Image: ' + image_nom + ' - Description: ' + description + ' - Stock: ' + stock
+    message = u'Meuble modifié - Nom: ' + nom + ' - Type de meuble: ' + type_meuble_id + ' - Prix: ' + prix + ' - Image: ' + image_nom + ' - Description: ' + description
     flash(message, 'alert-success')
     return redirect('/admin/meuble/show')
 
@@ -183,7 +207,7 @@ def valid_edit_meuble():
 @admin_meuble.route('/admin/meuble/avis/<int:id>', methods=['GET'])
 def admin_avis(id):
     mycursor = get_db().cursor()
-    meuble=[]
+    meuble = []
     commentaires = {}
     return render_template('admin/meuble/show_avis.html'
                            , meuble=meuble

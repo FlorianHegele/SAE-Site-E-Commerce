@@ -11,10 +11,18 @@ admin_type_meuble = Blueprint('admin_type_meuble', __name__,
 @admin_type_meuble.route('/admin/type-meuble/show')
 def show_type_meuble():
     mycursor = get_db().cursor()
-    # sql = '''         '''
-    # mycursor.execute(sql)
-    # types_meuble = mycursor.fetchall()
-    types_meuble=[]
+    sql = '''
+        SELECT id_type_meuble, libelle_type_meuble AS libelle, 
+        (
+            SELECT IFNULL(COUNT(*), 0) 
+            FROM v_meuble 
+            WHERE v_meuble.id_type_meuble = type_meuble.id_type_meuble
+        ) AS nbr_meubles
+        FROM type_meuble
+    '''
+    mycursor.execute(sql)
+    types_meuble = mycursor.fetchall()
+
     return render_template('admin/type_meuble/show_type_meuble.html', types_meuble=types_meuble)
 
 @admin_type_meuble.route('/admin/type-meuble/add', methods=['GET'])
@@ -24,29 +32,49 @@ def add_type_meuble():
 @admin_type_meuble.route('/admin/type-meuble/add', methods=['POST'])
 def valid_add_type_meuble():
     libelle = request.form.get('libelle', '')
-    tuple_insert = (libelle,)
     mycursor = get_db().cursor()
-    sql = '''         '''
-    mycursor.execute(sql, tuple_insert)
-    get_db().commit()
-    message = u'type ajouté , libellé :'+libelle
-    flash(message, 'alert-success')
-    return redirect('/admin/type-meuble/show') #url_for('show_type_meuble')
+    sql = '''
+        SELECT * FROM type_meuble WHERE libelle_type_meuble = %s
+    '''
+    mycursor.execute(sql, libelle)
+    if len(mycursor.fetchall()) == 0:
+        sql = '''
+            INSERT INTO type_meuble(libelle_type_meuble) VALUE (%s)
+        '''
+        mycursor.execute(sql, libelle)
+        get_db().commit()
+        flash(u'type ajouté , libellé :'+libelle, 'alert-success')
+    else:
+        flash(u'libelle déjà existant', 'alert-success')
+
+    return redirect('/admin/type-meuble/show')
 
 @admin_type_meuble.route('/admin/type-meuble/delete', methods=['GET'])
 def delete_type_meuble():
-    id_type_meuble = request.args.get('id_type_meuble', '')
+    id_type_meuble = request.args.get('id_type_meuble')
     mycursor = get_db().cursor()
 
-    flash(u'suppression type meuble , id : ' + id_type_meuble, 'alert-success')
+    sql = """
+        SELECT * FROM v_meuble
+        WHERE id_type_meuble = %s
+    """
+    mycursor.execute(sql, id_type_meuble)
+    meubles = len(mycursor.fetchall())
+    if meubles == 0:
+        sql = """DELETE FROM type_meuble WHERE id_type_meuble = %s"""
+        mycursor.execute(sql, id_type_meuble)
+        get_db().commit()
+        flash('suppression type meuble , id : ' + id_type_meuble, 'alert-success')
+    else:
+        flash(f"suppression type article impossible, il faut supprimer : {meubles} meuble(s) de ce type")
     return redirect('/admin/type-meuble/show')
 
 @admin_type_meuble.route('/admin/type-meuble/edit', methods=['GET'])
 def edit_type_meuble():
-    id_type_meuble = request.args.get('id_type_meuble', '')
+    id_type_meuble = request.args.get('id_type_meuble')
     mycursor = get_db().cursor()
-    sql = '''   '''
-    mycursor.execute(sql, (id_type_meuble,))
+    sql = '''SELECT id_type_meuble, libelle_type_meuble AS libelle FROM type_meuble WHERE id_type_meuble = %s'''
+    mycursor.execute(sql, id_type_meuble)
     type_meuble = mycursor.fetchone()
     return render_template('admin/type_meuble/edit_type_meuble.html', type_meuble=type_meuble)
 
@@ -56,10 +84,17 @@ def valid_edit_type_meuble():
     id_type_meuble = request.form.get('id_type_meuble', '')
     tuple_update = (libelle, id_type_meuble)
     mycursor = get_db().cursor()
-    sql = '''   '''
-    mycursor.execute(sql, tuple_update)
-    get_db().commit()
-    flash(u'type meuble modifié, id: ' + id_type_meuble + " libelle : " + libelle, 'alert-success')
+    sql = '''SELECT * FROM type_meuble WHERE libelle_type_meuble = %s'''
+    mycursor.execute(sql, libelle)
+
+    if len(mycursor.fetchall()) == 0:
+        sql = '''UPDATE type_meuble SET libelle_type_meuble = %s WHERE id_type_meuble =%s'''
+        mycursor.execute(sql, tuple_update)
+        get_db().commit()
+        flash(u'type meuble modifié, id: ' + id_type_meuble + " libelle : " + libelle, 'alert-success')
+    else:
+        flash("libelle déjà existant", 'alert-warning')
+
     return redirect('/admin/type-meuble/show')
 
 

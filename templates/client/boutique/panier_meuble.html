@@ -23,15 +23,15 @@
         {% for meuble in meubles %}
         <div class="card col-4 mt-4 p-1">
             <div class="card-body border-dark rounded p-1">
-                <a href="/client/meuble/details?id_declinaison_meuble={{ meuble.id_declinaison_meuble }}">
+                <a href="/client/meuble/details?id_meuble={{ meuble.id_meuble }}">
                     <h3 class="card-title">
                         <span style="color: #0b2e13">{{ meuble.nom_meuble }}</span><br>
-                        {{ meuble.prix_declinaison }}
+                        {{ meuble.prix_meuble }}
                         €
                     </h3>
                     {% if meuble.image_declinaison is not none %}
                     <img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
-                        src="{{ url_for('static', filename = 'images/') }}{{ meuble.image_declinaison }}"
+                        src="{{ url_for('static', filename = 'images/') }}{{ meuble.image_meuble }}"
                         alt="image  de {{ meuble.nom_meuble }}">
                     {% else %}<img class="card-img-top rounded mx-auto d-block" style="width:100px;height:100px"
                         src="{{ url_for('static', filename='images/no_photo.jpeg') }}"
@@ -44,12 +44,12 @@
                     {% if meuble.stock is defined and meuble.stock != None %}
                     {# #} {% if meuble.stock > 0 %}
                     <form action="/client/panier/add" method="post" class="col-5">
-                        <input type="hidden" name="id_declinaison_meuble" value="{{ meuble.id_declinaison_meuble }}">
+                        <input type="hidden" name="id_meuble" value="{{ meuble.id_meuble }}">
                         <div class="input-group">
                             <button class="btn  btn-success" id="button-addon1">
                                 <i class="fas fa-shopping-cart">Ajouter</i>
                             </button>
-                            <input type="number" id="input-{{ meuble.id_declinaison_meuble }}" step="1" min="0"
+                            <input type="number" id="input-{{ meuble.id_meuble }}" step="1" min="0"
                                 max="{{ meuble.stock }}" class="form-control" value="1" name="quantite"
                                 aria-describedby="button-addon1">
                         </div>
@@ -59,10 +59,10 @@
                     <div class="col-2 align-content-end">
                         {% if meuble.liste_envie is defined %}
                         {% if meuble.liste_envie== 1 %}
-                        <a href="/client/envie/add?id_declinaison_meuble={{ meuble.id_declinaison_meuble }}"
+                        <a href="/client/envie/add?id_meuble={{ meuble.id_meuble }}"
                             style="text-decoration: none">💛</a>
                         {% else %}
-                        <a href="/client/envie/add?id_declinaison_meuble={{ meuble.id_declinaison_meuble }}"
+                        <a href="/client/envie/add?id_meuble={{ meuble.id_meuble }}"
                             style="text-decoration: none">🤍</a>
                         {% endif %}
                         {% endif %}

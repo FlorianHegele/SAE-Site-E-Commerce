@@ -32,16 +32,16 @@
                         </select>
                     </label>
                 {% endif %}
-                {% if  d_taille_uniq is defined and  d_taille_uniq==1 %}
+                {% if  d_materiau_uniq is defined and  d_materiau_uniq==1 %}
                     <div>!</div>
-                    <div><strong>Une taille unique est définie </strong></div>
-                    <input type="hidden" name="taille" value="1">
+                    <div><strong>Un materiau unique est définie </strong></div>
+                    <input type="hidden" name="materiau" value="1">
                 {% else %}
-                    <label for="taille">Taille :
-                        <select id="taille" name="taille" required class="form-select">
-                            <option value="">Sélectionner une taille</option>
-                            {% for taille in tailles %}
-                                <option value="{{ taille.id_taille }}"> {{ taille.libelle }}</option>
+                    <label for="materiau">Materiau :
+                        <select id="materiau" name="materiau" required class="form-select">
+                            <option value="">Sélectionner un materiau</option>
+                            {% for materiau in materiaux %}
+                                <option value="{{ materiau.id_materiau }}"> {{ materiau.libelle }}</option>
                             {% endfor %}
                         </select>
                     </label>
