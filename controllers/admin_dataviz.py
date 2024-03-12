@@ -12,24 +12,46 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 def show_type_meuble_stock():
     mycursor = get_db().cursor()
     sql = '''
-    
-           '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_meubles']) for row in datas_show]
+        SELECT IFNULL(COUNT(id_materiau), 0) AS nbr_meubles, libelle_materiau AS libelle
+        FROM v_declinaison_meuble
+        GROUP BY id_materiau
+    '''
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()[1:]
+    labels = [str(row['libelle']) for row in datas_show]
+    values = [int(row['nbr_meubles']) for row in datas_show]
 
-    # sql = '''
-    #         
-    #        '''
-    datas_show=[]
-    labels=[]
-    values=[]
+    sql = '''
+            SELECT IFNULL(COUNT(id_couleur), 0) AS nbr_meubles, libelle_couleur AS libelle
+            FROM v_declinaison_meuble
+            GROUP BY id_couleur
+        '''
+    mycursor.execute(sql)
+    datas_show1 = mycursor.fetchall()[1:]
+    labels1 = [str(row['libelle']) for row in datas_show1]
+    values1 = [int(row['nbr_meubles']) for row in datas_show1]
+
+    sql = '''
+            SELECT IFNULL(COUNT(id_declinaison_meuble), 0) AS nbr_meubles, id_type_meuble, libelle_type_meuble AS libelle
+            FROM v_meuble
+            GROUP BY id_type_meuble
+        '''
+    mycursor.execute(sql)
+    types_meubles_nb = mycursor.fetchall()[1:]
+
+    sql = '''
+        SELECT COUNT(*) AS nbr_meubles FROM declinaison_meuble
+    '''
+    mycursor.execute(sql)
+    nbr_meubles = mycursor.fetchone()["nbr_meubles"]
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
-                           , datas_show=datas_show
+                           , nbr_meubles=nbr_meubles
+                           , types_meubles_nb=types_meubles_nb
                            , labels=labels
-                           , values=values)
+                           , values=values
+                           , labels1=labels1
+                           , values1=values1)
 
 
 # sujet 3 : adresses

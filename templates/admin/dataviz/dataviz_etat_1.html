@@ -20,8 +20,7 @@
 {% block body %}
     <br>
 
-    <h2> nombre de meubles :
-    {#    <span style="color: red;">{{ cout_total.nbr_meubles }}</span></h2>#}
+    <h2> nombre de meubles : <span style="color: red;">{{ nbr_meubles }}</span></h2>
 
     <table class="table">
         <thead class="thead-dark">
@@ -38,7 +37,7 @@
                     <td>{{ ligne.libelle }}</td>
                     <td>{{ ligne.id_type_meuble }}</td>
                     <td><span style="color: red">
-                       {% if ligne.nbr_meubles_stock is not none %}  {{ ligne.nbr_meubles }} {% else %}
+                       {% if ligne.nbr_meubles is not none %}  {{ ligne.nbr_meubles }} {% else %}
                            pas de meuble {% endif %}
                    </span></td>
 
@@ -53,14 +52,6 @@
     {#    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>#}
 
     <h2>visualisation de données : graph.js</h2>
-    <h3>Documentation</h3>
-    <br>
-    <a href="https://tobiasahlin.com/blog/chartjs-charts-to-get-you-started/" target="_blank"> tuto partie1 graph.js</a>
-    <br>
-    <a href="https://tobiasahlin.com/blog/introduction-to-chartjs" target="_blank"> tuto partie2 graph.js</a>&nbsp;
-    <br>
-    <a href="https://www.youtube.com/watch?v=E2hytuQvLlE" target="_blank"> vidéo : flask + graph.js</a>&nbsp;
-    <br>
 
     {# https://jinja.palletsprojects.com/en/3.0.x/templates/#html-escaping #}
     <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
@@ -72,11 +63,11 @@
         var Chart1 = new Chart(ctx1, {
             type: "bar",
             data: {
-                labels: {{ labels | safe }},
+                labels: {{ labels1 | safe }},
                 datasets: [
                     {
-                        label: "Type de meubles (nombre)",
-                        data: {{ values | safe }},
+                        label: "Couleur de meubles (nombre)",
+                        data: {{ values1 | safe }},
                         fill: false,
                         backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                             "#faf24c"
@@ -103,7 +94,7 @@
             data: {
                 labels: {{ labels | safe }},
                 datasets: [{
-                    label: "Type de meubles (nombre)",
+                    label: "Materiau de meubles (nombre)",
                     backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                         "#faf24c"
                         , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
@@ -113,15 +104,10 @@
             options: {
                 title: {
                     display: true,
-                    text: 'Type meuble : nombre'
+                    text: 'Materiau meuble : nombre'
                 }
             }
         });
     </script>
 
-    <a href="https://www.youtube.com/watch?v=TcwYXIIM-fs" target="_blank">dataviz, c'est quoi en 1 mn ? (juste la
-        première minute)</a>
-    <br>
-    <a href="https://www.youtube.com/watch?v=bZDnSUjfMt8" target="_blank">dataviz, c'est quoi ? (juste la première
-        minute)</a>
 {% endblock %}
