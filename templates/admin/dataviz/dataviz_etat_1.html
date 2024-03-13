@@ -25,18 +25,14 @@
     <table class="table">
         <thead class="thead-dark">
         <tr>
-            <th>Departement</th>
-            <th>Nombre de Commandes</th>
-            <th>nombre de Meubles</th>
-            <th>Nombre de meubles moyen par commande</th>
-            <th>Prix Moyen Meuble par commande</th>
-            <th>Total des commandes</th>
-            <th>Panier Moyen</th>          
+            <th>type de meuble</th>
+            <th>(id)</th>
+            <th>nombre de meubles</th>
         </tr>
         </thead>
         <tbody>
-        {% if datas_show | length >= 1 %}
-            {% for ligne in datas_show %}
+        {% if types_meubles_nb | length >= 1 %}
+            {% for ligne in types_meubles_nb %}
                 <tr>
                     <td>{{ ligne.libelle }}</td>
                     <td>{{ ligne.id_type_meuble }}</td>
@@ -44,6 +40,7 @@
                        {% if ligne.nbr_meubles is not none %}  {{ ligne.nbr_meubles }} {% else %}
                            pas de meuble {% endif %}
                    </span></td>
+
                 </tr>
             {% endfor %}
         {% else %}
@@ -86,39 +83,11 @@
         });
     </script>
 
-    <div style="width: 900px; height: 500px; border: #0a53be 1px solid;">
-        <canvas id="Chart2"></canvas>
-    </div>
-    graphique 2
-    <script>
-        var ctx1 = document.getElementById("Chart2").getContext("2d");
-        var Chart1 = new Chart(ctx1, {
-            type: "bar",
-            data: {
-                labels: {{ labels2 | safe }},
-                datasets: [
-                    {
-                        label: "Panier Moyen (€)",
-                        data: {{ values2 | safe }},
-                        fill: false,
-                        backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
-                            "#faf24c"
-                            , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                        borderColor: "rgb(75,192,192)",
-                        lineTension: 0.1
-                    }
-                ]
-            },
-            option: {
-                responsive: false
-            }
-        });
-    </script>
-
 
     <h2>demo graphique à secteurs : "camenberd" ,"donut" ( "pie-chart" "doughtnut")</h2>
 
     <canvas id="pie-chart" width="800" height="450"></canvas>
+
     <script>
         var Chart2 = new Chart(document.getElementById("pie-chart"), {
             type: 'pie',
@@ -129,7 +98,7 @@
                     backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                         "#faf24c"
                         , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                    data: {{ values2 | safe }},
+                    data: {{ values | safe }},
                 }]
             },
             options: {
@@ -140,46 +109,5 @@
             }
         });
     </script>
-    
-    <canvas id="pie-chart2" width="800" height="450"></canvas>
-    <script>
-        var Chart2 = new Chart(document.getElementById("pie-chart2"), {
-            type: 'pie',
-            data: {
-                labels: {{ labels3 | safe }},
-                datasets: [{
-                    label: "Total (€)",
-                    backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
-                        "#faf24c"
-                        , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                    data: {{ values2 | safe }},
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'CA Total par département (€)'
-                }
-            }
-        });
-    </script>
 
-    <canvas id="scatter" width="800" height="450"></canvas>
-
-    <script>
-        var Chart3 = new Chart(document.getElementById("scatter"), {
-            type: 'scatter',
-            data: {
-                labels: {{ labels4 | safe }},
-                datasets: [{
-                    label: "Nombre de meubles par rapport au prix par commande",
-                    data: {{ values4 | safe }},
-                    backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
-                    "#faf24c"
-                    , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                    }
-                    ]
-                }
-        });
-    </script>
 {% endblock %}

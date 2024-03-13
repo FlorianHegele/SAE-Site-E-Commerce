@@ -44,6 +44,7 @@ def client_meuble_show():  # remplace client_index
         sql = sql + ")"
     sql += " GROUP BY id_meuble"
     tuple_sql = tuple(list_param)
+    print(sql)
     print(tuple_sql)
     mycursor.execute(sql, tuple_sql)
     meubles = mycursor.fetchall()
