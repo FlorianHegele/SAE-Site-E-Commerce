@@ -14,6 +14,7 @@ client_commande = Blueprint('client_commande', __name__,
 def client_commande_valide():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+
     sql = '''
         SELECT * FROM ligne_panier
         WHERE utilisateur_id = %s;
@@ -31,34 +32,78 @@ def client_commande_valide():
         prix_total = mycursor.fetchone()
     else:
         prix_total = None
+        
     # etape 2 : selection des adresses
     sql = '''
-        SELECT * FROM adresse
+        SELECT * 
+        FROM adresse
         JOIN concerne ON adresse.id_adresse = concerne.adresse_id
-        WHERE utilisateur_id = %s;
+        WHERE utilisateur_id = %s AND adresse.valide = '1';
     '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
+    
+    # etape 3 : selection de la dernière adresse de livraison et de facturation
+    sql = '''
+    SELECT adresse_id_livr, adresse_id_fact
+    FROM v_commande
+    WHERE id_commande = (SELECT MAX(id_commande) FROM commande WHERE utilisateur_id = %s) AND valide_livr = '1' AND valide_fact = '1'
+    '''
+    mycursor.execute(sql, id_client)
+    id_adresse_fav = mycursor.fetchone()
+    print("id_adresse_fav : " + str(id_adresse_fav))
+    # etape 3-1 : si la dernière adresse de livraison et de facturation n'existe pas, on prend celle étant dans le plus de commandes
+    if id_adresse_fav is None:
+        # Toutes les combinaisons d'adresses de livraison et de facturation sont listés, puis on la combinaison la plus fréquente
+        sql = '''
+        SELECT adresse_id_livr, adresse_id_fact, COUNT(*) AS nb_commandes
+        FROM v_commande
+        WHERE valide_livr = '1' AND valide_fact = '1'
+        GROUP BY adresse_id_livr, adresse_id_fact
+        ORDER BY nb_commandes DESC
+        '''
+        mycursor.execute(sql)
+        id_adresse_fav = mycursor.fetchone()
+        print("id_adresse_fav : " + str(id_adresse_fav))
+   
+
+        
+    
     return render_template('client/boutique/panier_validation_adresses.html'
                            , adresses=adresses
                            , meubles_panier=meubles_panier
                            , prix_total= prix_total
                            , validation=1
-                           #, id_adresse_fav=id_adresse_fav 
+                           , id_adresse_fav=id_adresse_fav 
                            )
 
 
 @client_commande.route('/client/commande/add', methods=['POST'])
 def client_commande_add():
+        
     mycursor = get_db().cursor()
     id_client = session['id_user']
     adresse_id_livr = request.form['id_adresse_livraison']
     print("adresse_id_livr : " + adresse_id_livr)
-    adresse_id_fact = request.form['id_adresse_facturation']
-    print("adresse_id_fact : " + adresse_id_fact)
-    if adresse_id_fact == None or adresse_id_fact == "":
+
+    ###
+    # Vérifier si l'adresse de livraison est la même que l'adresse de facturation mais que la checkbox n'est pas cochée
+    ###
+    adresse_identique = request.form.get('adresse_identique')
+    if adresse_identique != None:
         adresse_id_fact = adresse_id_livr
+    else:
+        adresse_id_fact = request.form['id_adresse_facturation']
     print("adresse_id_fact : " + adresse_id_fact)
+    
+    ###
+    # empecher la validation et message flash si l'adresse de livraison et de facturation sont les mêmes
+    ###
+    adresse_identique = request.form.get('adresse_identique')
+    print("adresse_identique : " + str(adresse_identique))
+    if adresse_identique == None and (adresse_id_fact == adresse_id_livr):
+        flash(u'Adresse de livraison et de facturation identiques, veuillez utilisez la checkbox','alert-warning')
+        return redirect('/client/meuble/show')
 
     sql = "SELECT * FROM v_ligne_panier WHERE id_utilisateur=%s"
     mycursor.execute(sql, id_client)
@@ -170,6 +215,7 @@ def client_commande_show():
         mycursor.execute(sql, str(id_commande))
         commande_adresses = mycursor.fetchone()
         print("commande_adresses : " + str(commande_adresses))
+
 
     return render_template('client/commandes/show.html'
                            , commandes=commandes

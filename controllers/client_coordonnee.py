@@ -14,6 +14,7 @@ def client_coordonnee_show():
     mycursor = get_db().cursor()
     id_client = session['id_user']
     utilisateur=[]
+    nb_adresses = 0
 
     sql = '''
     SELECT login, nom_utilisateur as nom, email
@@ -31,11 +32,23 @@ def client_coordonnee_show():
     '''
     mycursor.execute(sql, id_client)
     adresses = mycursor.fetchall()
+    
+    # Compter le nombre d'adresses de l'utilisateur
+    sql = '''
+    SELECT COUNT(*) as nb_adresses
+    FROM adresse
+    JOIN concerne ON adresse.id_adresse = concerne.adresse_id
+    WHERE utilisateur_id = %s and valide = '1'
+    '''
+    mycursor.execute(sql, id_client)
+    nb_adresses = mycursor.fetchone() # Récupérer le nombre d'adresses sous forme de dictionnaire
+    nb_adresses = nb_adresses['nb_adresses'] # Récupérer la valeur du nombre d'adresses dans le dictionnaire pour récupérer un int
+    print(nb_adresses)
 
     return render_template('client/coordonnee/show_coordonnee.html'
                            , utilisateur=utilisateur
                            , adresses=adresses
-                         #  , nb_adresses=nb_adresses
+                           , nb_adresses=nb_adresses
                            )
 
 @client_coordonnee.route('/client/coordonnee/edit', methods=['GET'])
@@ -98,19 +111,43 @@ def client_coordonnee_delete_adresse():
     id_client = session['id_user']
     id_adresse= request.form.get('id_adresse')
 
-    # sql = '''
-    # DELETE FROM adresse
-    # WHERE id_adresse = %s
-    # '''
-
-    # mycursor.execute(sql,id_adresse)
-    # get_db().commit()
-
+    # Vérifier si l'adresse est actuellement dans une commande
+    sql = '''
+    SELECT *
+    FROM commande
+    WHERE adresse_id_livr = %s OR adresse_id_fact = %s
+    '''
+    tuple = (id_adresse,id_adresse)
+    mycursor.execute(sql,tuple)
+    adresse_block = mycursor.fetchone()
+    print("adresse_block = " + str(adresse_block))
+    
+    # Si l'adresse est actuellement dans une commande, on la désactive
+    if adresse_block:
+        flash(u'Cette adresse est actuellement dans une commande','alert-warning')
+        
+        sql = '''
+        UPDATE adresse
+        SET valide = '0'
+        WHERE id_adresse = %s
+        '''
+        mycursor.execute(sql,id_adresse)
+        get_db().commit()
+    
+        return redirect('/client/coordonnee/show')
+ 
+    # Sinon on la supprime dans concerne en premier pour pouvoir la supprimer dans adresse   
     sql = '''
     DELETE FROM concerne
     WHERE adresse_id = %s
     '''
+    mycursor.execute(sql,id_adresse)
+    get_db().commit()
 
+    sql = '''
+    DELETE FROM adresse
+    WHERE id_adresse = %s
+    '''
     mycursor.execute(sql,id_adresse)
     get_db().commit()
 
@@ -145,6 +182,20 @@ def client_coordonnee_add_adresse_valide():
     code_postal = request.form.get('code_postal')
     ville = request.form.get('ville')
 
+    # Ne pas ajouter d'adresse si l'utilisateur en a déjà quatres
+    sql = '''
+    SELECT COUNT(*) as nb_adresses
+    FROM adresse
+    JOIN concerne ON adresse.id_adresse = concerne.adresse_id
+    WHERE utilisateur_id = %s and valide = '1'
+    '''
+    mycursor.execute(sql,id_client)
+    nb_adresses = mycursor.fetchone()
+    print(nb_adresses)
+    if nb_adresses['nb_adresses'] >= 4:
+        flash(u'Vous avez déjà quatres adresses', 'alert-warning')
+        return redirect('/client/coordonnee/show')
+    
     sql = '''
     INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
     VALUES(%s,%s,%s,%s,'1');
@@ -161,6 +212,8 @@ def client_coordonnee_add_adresse_valide():
 
     mycursor.execute(sql,id_client)
     get_db().commit()
+    
+    
 
     return redirect('/client/coordonnee/show')
 
@@ -170,14 +223,53 @@ def client_coordonnee_edit_adresse():
     id_client = session['id_user']
     id_adresse = request.args.get('id_adresse')
 
+    # Vérifier si l'adresse est actuellement dans une commande
     sql = '''
-    SELECT nom_adresse AS nom,code_postal,ville,rue, id_adresse
+    SELECT *
+    FROM commande
+    WHERE adresse_id_livr = %s OR adresse_id_fact = %s
+    '''
+    tuple = (id_adresse,id_adresse)
+    mycursor.execute(sql,tuple)
+    adresse_block = mycursor.fetchone()
+    print("adresse_block = " + str(adresse_block))
+    if adresse_block:
+        flash(u'Cette adresse est actuellement dans une commande','alert-warning')
+        # Créer un doublon de l'adresse qui a été bloquée pour pouvoir la modifier
+        # En sélectionnant l'adresse précédente pour en récupérer les informations
+        sql = '''
+        INSERT INTO adresse(nom_adresse,code_postal,ville,rue,valide)
+        SELECT nom_adresse,code_postal,ville,rue,valide
+        FROM adresse
+        WHERE id_adresse = %s
+        '''
+        mycursor.execute(sql,id_adresse)
+        sql = '''
+        INSERT INTO concerne (utilisateur_id,adresse_id)
+        VALUES(%s,(SELECT MAX(id_adresse) FROM adresse));
+        '''
+        mycursor.execute(sql,id_client)
+        get_db().commit()
+        # Rendre l'adresse précédente non-valide
+        sql = '''
+        UPDATE adresse
+        SET valide = '0'
+        WHERE id_adresse = %s
+        '''
+        mycursor.execute(sql,id_adresse)
+        get_db().commit()
+        
+        return redirect('/client/coordonnee/show')
+    
+    # Afficher l'adresse à modifier
+    sql = '''
+    SELECT nom_adresse AS nom,code_postal,ville,rue,id_adresse
     FROM adresse
     WHERE id_adresse = %s
     '''
     mycursor.execute(sql,id_adresse)
     adresse = mycursor.fetchone()
-
+    
     sql = '''
     SELECT *
     FROM utilisateur

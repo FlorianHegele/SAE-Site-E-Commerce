@@ -56,10 +56,20 @@ def admin_commande_show():
 
         mycursor.execute(sql, (id_commande,))
         meubles_commande = mycursor.fetchall()
-
-        sql_commande_details = '''SELECT * FROM commande WHERE id_commande = %s'''
+        # (ADMIN) si l’administrateur consulte une commande il peut voir l’adresse d’expédition et l’adresse de facturation
+        sql_commande_details = '''SELECT nom_adresse_fact as nom_facturation,
+        rue_adresse_fact as rue_facturation,
+        code_postal_fact as code_postal_facturation,
+        ville_fact as ville_facturation,
+        nom_adresse_livr as nom_livraison,
+        rue_livr as rue_livraison,
+        code_postal_livr as code_postal_livraison,
+        ville_livr as ville_livraison
+        FROM v_commande 
+        WHERE id_commande = %s
+        '''
         mycursor.execute(sql_commande_details, (id_commande,))
-        commande_adresses = mycursor.fetchall()
+        commande_adresses = mycursor.fetchone()
 
     return render_template('admin/commandes/show.html',
                            commandes=commandes,
