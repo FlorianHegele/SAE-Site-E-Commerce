@@ -16,7 +16,7 @@
                         {% for adresse  in adresses %}
 
                             <option value="{{ adresse.id_adresse }}"
-                                    {% if id_adresse_fav != 0 and id_adresse_fav['adresse_id_livr'] == adresse.id_adresse %}
+                                    {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
                                     selected
                                     {% endif %}
 
@@ -40,7 +40,7 @@
                         <option value="">Sélectionner l'adresse de livraison</option>
                         {% for adresse  in adresses %}
                             <option value="{{ adresse.id_adresse }}"
-                                    {% if id_adresse_fav != 0 and id_adresse_fav['adresse_id_fact'] == adresse.id_adresse %}
+                                    {% if id_adresse_fav != 0 and id_adresse_fav == adresse.id_adresse %}
                                     selected
                                     {% endif %}
                             >{{ adresse.nom }} ({{ adresse.code_postal }})
