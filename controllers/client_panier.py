@@ -15,65 +15,75 @@ client_panier = Blueprint('client_panier', __name__,
 def client_panier_add():
     mycursor = get_db().cursor()
     id_client = session['id_user']
+    id_meuble = request.form.get('id_meuble')
     id_declinaison_meuble = request.form.get('id_declinaison_meuble')
     quantite = int(request.form.get('quantite'))
-    # ---------
-    # id_declinaison_meuble=request.form.get('id_declinaison_meuble',None)
-    # id_declinaison_meuble = 1
 
-    sql = """
-        SELECT stock as quantite FROM declinaison_meuble
-        where id_declinaison_meuble = %s
-    """
-    mycursor.execute(sql, id_declinaison_meuble)
-
-    # check si la quantite est bonne
-    if quantite >= 1 or quantite <= mycursor.fetchone()['quantite']:
-        sql = """
-            SELECT * FROM ligne_panier
-            WHERE utilisateur_id = %s AND declinaison_meuble_id = %s
-        """
-
-        mycursor.execute(sql, (id_client, id_declinaison_meuble))
-        ligne_panier = mycursor.fetchone()
-
-        if ligne_panier is not None:
-            sql = """
-                UPDATE ligne_panier SET quantite_lp = quantite_lp + %s
-                WHERE declinaison_meuble_id = %s AND utilisateur_id = %s
-            """
-            mycursor.execute(sql, (quantite, id_declinaison_meuble, id_client))
-        else:
-            sql = """
-                INSERT INTO ligne_panier (declinaison_meuble_id, utilisateur_id, quantite_lp, date_ajout) 
-                VALUES (%s, %s, %s, CURRENT_DATE)
-            """
-
-            mycursor.execute(sql, (id_declinaison_meuble, id_client, quantite))
-
-        sql = """
-            UPDATE declinaison_meuble SET stock = stock - %s WHERE id_declinaison_meuble = %s
-        """
-
-        mycursor.execute(sql, (quantite, id_declinaison_meuble))
+    if id_declinaison_meuble is None:
+        sql = '''
+            SELECT * 
+            FROM v_declinaison_meuble
+            WHERE id_meuble = %s
+        '''
+        mycursor.execute(sql, id_meuble)
     else:
-        print("fraude dans la quantité demandé")
-    # ajout dans le panier d'une déclinaison d'un meuble (si 1 declinaison : immédiat sinon => vu pour faire un choix
-    # sql = '''    '''
-    # mycursor.execute(sql, (id_declinaison_meuble))
-    # declinaisons = mycursor.fetchall()
-    # if len(declinaisons) == 1:
-    #     id_declinaison_meuble = declinaisons[0]['id_declinaison_meuble']
-    # elif len(declinaisons) == 0:
-    #     abort("pb nb de declinaison")
-    # else:
-    #     sql = '''   '''
-    #     mycursor.execute(sql, (id_declinaison_meuble))
-    #     meuble = mycursor.fetchone()
-    #     return render_template('client/boutique/declinaison_meuble.html'
-    #                                , declinaisons=declinaisons
-    #                                , quantite=quantite
-    #                                , meuble=meuble)
+        sql = '''
+            SELECT * FROM declinaison_meuble
+            WHERE id_declinaison_meuble = %s
+        '''
+        mycursor.execute(sql, id_declinaison_meuble)
+    declinaisons = mycursor.fetchall()
+
+    if len(declinaisons) == 1:
+        declinaison = declinaisons[0]
+        id_declinaison_meuble = declinaison['id_declinaison_meuble']
+        stock_declinaison_meuble = declinaison['stock']
+
+        # check si la quantite est bonne
+        if 1 <= quantite <= stock_declinaison_meuble:
+            sql = """
+                    SELECT * FROM ligne_panier
+                    WHERE utilisateur_id = %s AND declinaison_meuble_id = %s
+                """
+
+            mycursor.execute(sql, (id_client, id_declinaison_meuble))
+            ligne_panier = mycursor.fetchone()
+
+            if ligne_panier is not None:
+                sql = """
+                        UPDATE ligne_panier SET quantite_lp = quantite_lp + %s
+                        WHERE declinaison_meuble_id = %s AND utilisateur_id = %s
+                    """
+                mycursor.execute(sql, (quantite, id_declinaison_meuble, id_client))
+            else:
+                sql = """
+                        INSERT INTO ligne_panier (declinaison_meuble_id, utilisateur_id, quantite_lp, date_ajout) 
+                        VALUES (%s, %s, %s, CURRENT_DATE)
+                    """
+
+                mycursor.execute(sql, (id_declinaison_meuble, id_client, quantite))
+
+            sql = """
+                    UPDATE declinaison_meuble SET stock = stock - %s WHERE id_declinaison_meuble = %s
+                """
+
+            mycursor.execute(sql, (quantite, id_declinaison_meuble))
+
+    elif len(declinaisons) == 0:
+        abort("pb nb de declinaison")
+    else:
+        sql = '''
+            SELECT id_meuble, nom_meuble, disponible, prix_meuble AS prix,
+            description_meuble AS description, image_meuble AS image_meuble 
+            FROM meuble 
+            WHERE id_meuble = %s
+         '''
+        mycursor.execute(sql, (id_meuble))
+        meuble = mycursor.fetchone()
+        return render_template('client/boutique/declinaison_meuble.html'
+                                    , declinaisons=declinaisons
+                                    , quantite=quantite
+                                    , meuble=meuble)
     # ajout dans le panier d'un meuble
     get_db().commit()
     return redirect('/client/meuble/show')
@@ -85,13 +95,9 @@ def client_panier_delete():
     id_client = session['id_user']
     id_declinaison_meuble = request.form.get('id_declinaison_meuble', '')
 
-    # ---------
-    # partie 2 : on supprime une déclinaison de meuble
-    # id_declinaison_meuble = request.form.get('id_declinaison_meuble', None)
-
     sql = '''
-    SELECT * FROM ligne_panier
-    WHERE declinaison_meuble_id = %s AND utilisateur_id = %s
+        SELECT * FROM ligne_panier
+        WHERE declinaison_meuble_id = %s AND utilisateur_id = %s
     '''
     mycursor.execute(sql, (id_declinaison_meuble, id_client))
     meuble_panier = mycursor.fetchone()

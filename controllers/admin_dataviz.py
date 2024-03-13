@@ -12,19 +12,28 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 def show_type_meuble_stock():
     mycursor = get_db().cursor()
     sql = '''
-    
-           '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_meubles']) for row in datas_show]
+        SELECT IFNULL(COUNT(id_materiau), 0) AS nbr_meubles, libelle_materiau AS libelle
+        FROM v_declinaison_meuble
+        GROUP BY id_materiau
+    '''
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()[1:]
+    labels = [str(row['libelle']) for row in datas_show]
+    values = [int(row['nbr_meubles']) for row in datas_show]
 
-    # sql = '''
-    #         
-    #        '''
-    datas_show=[]
-    labels=[]
-    values=[]
+    sql = '''
+            SELECT IFNULL(COUNT(id_couleur), 0) AS nbr_meubles, libelle_couleur AS libelle
+            FROM v_declinaison_meuble
+            GROUP BY id_couleur
+        '''
+    mycursor.execute(sql)
+    datas_show1 = mycursor.fetchall()[1:]
+    labels1 = [str(row['libelle']) for row in datas_show1]
+    values1 = [int(row['nbr_meubles']) for row in datas_show1]
+   
+    datas_show2=[]
+    labels2=[]
+    values2=[]
     sql = '''
         SELECT COUNT(DISTINCT commande_id) as nb_commandes,
         SUM(quantite_lc) as nb_meuble,
@@ -40,10 +49,10 @@ def show_type_meuble_stock():
         ;
         '''
     mycursor.execute(sql)
-    datas_show = mycursor.fetchall()
-    labels = [str(row['dep']) for row in datas_show]
-    values = [int(row['panier_moyen']) for row in datas_show]
-    values2 = [int(row['total']) for row in datas_show]
+    datas_show2 = mycursor.fetchall()
+    labels2 = [str(row['dep']) for row in datas_show2]
+    values2 = [int(row['panier_moyen']) for row in datas_show2]
+    values2 = [int(row['total']) for row in datas_show2]
     
     sql = '''
     SELECT commande_id,
@@ -55,39 +64,48 @@ def show_type_meuble_stock():
     ;
     '''
     mycursor.execute(sql)
-    datas_show2 = mycursor.fetchall()
-    labels2 = [str(row['commande_id']) for row in datas_show2]
+    datas_show3 = mycursor.fetchall()
+    labels3 = [str(row['commande_id']) for row in datas_show3]
     
-    values3 = ""
-    for row in datas_show2:
-        if values3 == "":
-            values3 = ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
+    values4 = ""
+    for row in datas_show3:
+        if values4 == "":
+            values4 = ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
         else:
-            values3 = values3 + ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
-    values3 = values3[:-1]
-    values3 = "["+values3+"]"
-    
-    print("datas_show = " + str(datas_show))
-    print("labels = " + str(labels))
-    print("values = " + str(values))
-    print("values2 = " + str(values2))
-    print("datas_show2 = " + str(datas_show2))
-    print("labels2 = " + str(labels2))
-    print("values3 = " + str(values3))
-   
+            values4 = values4 + ("{x: "+str(row['total']+1)+", y: "+str(row['nb_meuble'])+"},")
+    values4 = values4[:-1]
+    values4 = "["+values4+"]"
+       
+    sql = '''
+            SELECT IFNULL(COUNT(id_declinaison_meuble), 0) AS nbr_meubles, id_type_meuble, libelle_type_meuble AS libelle
+            FROM v_meuble
+            GROUP BY id_type_meuble
+        '''
+    mycursor.execute(sql)
+    types_meubles_nb = mycursor.fetchall()[1:]
+
+    sql = '''
+        SELECT COUNT(*) AS nbr_meubles FROM declinaison_meuble
+    '''
+    mycursor.execute(sql)
+    nbr_meubles = mycursor.fetchone()["nbr_meubles"]
 
     return render_template('admin/dataviz/dataviz_etat_1.html'
-                           , datas_show=datas_show
+                           , nbr_meubles=nbr_meubles
+                           , types_meubles_nb=types_meubles_nb
                            , labels=labels
                            , values=values
                            , values2=values2
-                           , datas_show2=datas_show2
+                           , datas_show3=datas_show3
                            , labels2=labels2
-                           , values3=values3)
+                           , values3=values3
+                           , labels3=labels3
+                           , values4=values4
+                           , labels1=labels1
+                           , values1=values1)
 
 
 # sujet 3 : adresses
-
 
 @admin_dataviz.route('/admin/dataviz/etat2')
 def show_dataviz_map():

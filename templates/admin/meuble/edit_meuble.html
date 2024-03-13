@@ -45,7 +45,7 @@ types_meuble : tableau de dictionnaires
                     <select name="type_meuble_id" class="form-select">
                         {% for type in types_meuble %}
                             <option value="{{ type.id_type_meuble }}"
-                                    {% if type.id_type_meuble == meuble.type_meuble_id %}
+                                    {% if type.id_type_meuble == meuble.id_type_meuble %}
                                     selected {% endif %}> {{ type.libelle }}</option>
                         {% endfor %}
                     </select>
@@ -53,10 +53,6 @@ types_meuble : tableau de dictionnaires
                 <label for="description">Description :
                     <input name="description" type="text" value="{{ meuble.description }}" class="form-control">
                 </label>
-                <label for="stock">Stock :
-                    <input name="stock" type="number" value="{{ meuble.stock }}" class="form-control">
-                </label>
-
                 <button class="btn btn-primary mt-2">
                     Modifier
                 </button>
@@ -75,10 +71,10 @@ types_meuble : tableau de dictionnaires
                 </div>
                 <table class="table table-hover table-responsive">
 
-                    <th style="width: 300px">taille</th>
+                    <th style="width: 300px">materiau</th>
                     <th style="width: 300px">couleur</th>
                     <th style="width: 300px">stock</th>
-                    <th style="width: 300px">opérations</th>* FROM
+                    <th style="width: 300px">opérations</th>
 
                     {% if declinaisons_meuble | length == 0 %}
                         <tr>
@@ -90,16 +86,12 @@ types_meuble : tableau de dictionnaires
                     {% else %}
                         {% for declinaison_meuble in declinaisons_meuble %}
                             <tr>
-                                <td>
-                                    {{ declinaison_meuble.libelle_taille }}
-                                </td>
-                                <td>
-                                    {{ declinaison_meuble.libelle_couleur }}
-                                </td>
+                                <td>{{ declinaison_meuble.libelle_materiau }}</td>
+                                <td>{{ declinaison_meuble.libelle_couleur }}</td>
                                 <td>{{ declinaison_meuble.stock }}</td>
                                 <td style="display: flex">
                                     <a class="img-fluid"
-                                       href="/admin/declinaison_meuble/delete?id_declinaison_meuble={{ declinaison_meuble.id_declinaison_meuble }}&amp;id_meuble={{ declinaison_meuble.meuble_id }}">
+                                       href="/admin/declinaison_meuble/delete?id_declinaison_meuble={{ declinaison_meuble.id_declinaison_meuble }}&amp;id_meuble={{ declinaison_meuble.id_meuble }}">
                                         <button class="btn btn-primary mx-1">
                                             supprimer
                                         </button>
@@ -115,7 +107,6 @@ types_meuble : tableau de dictionnaires
                         {% endfor %}
                     {% endif %}
                 </table>
-
             </div>
 
         </div>
