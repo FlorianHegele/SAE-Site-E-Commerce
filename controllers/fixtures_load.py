@@ -384,7 +384,7 @@ INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,co
 	 (8,'45.jpg',20,1,10),
 	 (9,'46.jpg',20,1,11),
 	 (19,'47.jpg',20,1,4),
-	 (27,'48.jpg',20,1,1);
+	 (27,'48.jpg',20,1,11);
     '''
     mycursor.execute(sql)
     
