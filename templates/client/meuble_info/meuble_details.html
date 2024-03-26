@@ -112,7 +112,7 @@
                                   id="input_commentaire" placeholder="Votre commentaire"></textarea>
                     </div>
                     <input type="hidden" name="action" value="add_commentaire">
-                    <input type="hidden" name="id_meuble" value="{{ meuble.id_meuble }}">
+                    <input type="hidden" name="id_meuble" value="{{ commandes_meubles.declinaison_meuble_id}}"> #TODO
                     <form action="/client/comment/add" style="display: inline-block;" method="post">
                         <button class="btn btn-primary mt-2"> Ajouter un commentaire</button>
                     </form>
@@ -153,7 +153,7 @@
                                 {% if commentaire.id_utilisateur == session['id_user'] %}
                                     <form action="/client/commentaire/delete" style="display: inline-block;"
                                           method="post">
-                                        <input type="hidden" name="id_meuble" value="{{ commentaire.id_meuble }}">
+                                        <input type="hidden" name="id_meuble" value="{{ commentaire.meuble_id}}">
                                         <input type="hidden" name="id_utilisateur"
                                                value="{{ commentaire.id_utilisateur }}">
                                         <input type="hidden" name="date_publication"

@@ -9,7 +9,6 @@ if [ ! -f "$file_path" ]; then
     touch "$file_path"
 
     # Ajouter le contenu au fichier
-    # shellcheck disable=SC2129
     echo "HOST=\"localhost\"" >> "$file_path"
     echo "LOGIN=\"login\"" >> "$file_path"
     echo "PASSWORD=\"password\"" >> "$file_path"
@@ -18,5 +17,4 @@ if [ ! -f "$file_path" ]; then
     echo "Le fichier $file_path a été créé avec succès."
 fi
 
-
-flask --debug  --app app  run   --host 0.0.0.0
+flask --debug --app app run --host 0.0.0.0

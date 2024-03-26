@@ -14,7 +14,6 @@ client_meuble = Blueprint('client_meuble', __name__,
 def client_meuble_show():  # remplace client_index
     mycursor = get_db().cursor()
     id_client = session['id_user']
-
     sql = '''SELECT *
     FROM v_declinaison_meuble'''
     list_param = []
@@ -45,6 +44,7 @@ def client_meuble_show():  # remplace client_index
     print(tuple_sql)
     mycursor.execute(sql, tuple_sql)
     meubles = mycursor.fetchall()
+    print("SSSS",meubles)
 
     # pour le filtre
     sql = '''SELECT * FROM type_meuble'''

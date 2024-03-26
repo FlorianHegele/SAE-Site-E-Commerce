@@ -376,11 +376,15 @@ from ((((`commande` `c` join `adresse` `a`
       on (`c`.`utilisateur_id` = `u`.`id_utilisateur`));
 
 drop view if exists v_declinaison_meuble;
-create view v_declinaison_meuble as
-select *
-from declinaison_meuble dm
-join meuble m on m.id_meuble = dm.meuble_id
-join type_meuble tm on m.type_meuble_id = tm.id_type_meuble;
+CREATE VIEW v_declinaison_meuble AS
+SELECT dm.*, m.*, tm.*, n.note, AVG(n.note) AS moy_notes, COUNT(n.note) AS nb_notes
+FROM declinaison_meuble dm
+JOIN meuble m ON m.id_meuble = dm.meuble_id
+JOIN type_meuble tm ON m.type_meuble_id = tm.id_type_meuble
+LEFT JOIN note n ON n.meuble_id = dm.meuble_id
+GROUP BY dm.meuble_id;
+
+
 
 drop view if exists v_ligne_commande;
 create view v_ligne_commande as
