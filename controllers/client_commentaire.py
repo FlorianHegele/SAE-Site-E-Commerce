@@ -39,7 +39,8 @@ def client_meuble_details():
     sql = '''SELECT commentaire.*, commentaire.utilisateur_id AS id_utilisateur, utilisateur.nom_utilisateur AS nom
 FROM commentaire
 INNER JOIN utilisateur ON commentaire.utilisateur_id = utilisateur.id_utilisateur
-WHERE commentaire.meuble_id = %s;
+WHERE commentaire.meuble_id = %s
+ORDER BY commentaire.date_publication;
 '''
     mycursor.execute(sql, (id_meuble,))
     commentaires = mycursor.fetchall()
@@ -51,6 +52,8 @@ WHERE commentaire.meuble_id = %s;
     sql = '''SELECT note FROM note WHERE meuble_id = %s AND utilisateur_id = %s'''
     mycursor.execute(sql, (id_meuble, id_client))
     note = mycursor.fetchone()
+    if note !=None :
+        note = note.get('note')
     sql = '''SELECT COUNT(*) AS nb_commentaires FROM commentaire WHERE meuble_id = %s'''
     mycursor.execute(sql, (id_meuble,))
     nb_commentaires = mycursor.fetchone()['nb_commentaires']
@@ -142,7 +145,7 @@ def client_note_edit():
     '''
     mycursor.execute(sql, tuple_update)
     get_db().commit()
-    return redirect('/client/meuble/details?id_meuble=' + id_meuble)
+    return redirect('/client/meuble/details?id_declinaison_meuble=' + id_meuble)
 
 
 @client_commentaire.route('/client/note/delete', methods=['POST'])
@@ -151,8 +154,9 @@ def client_note_delete():
     id_client = session['id_user']
     id_meuble = request.form.get('id_meuble', None)
     tuple_delete = (id_client, id_meuble)
-    print(tuple_delete)
-    sql = '''  '''
+    sql = ''' 
+    DELETE FROM note
+    WHERE utilisateur_id = %s AND meuble_id = %s'''
     mycursor.execute(sql, tuple_delete)
     get_db().commit()
-    return redirect('/client/meuble/details?id_meuble='+id_meuble)
+    return redirect('/client/meuble/details?id_declinaison_meuble=' + id_meuble)
