@@ -17,12 +17,18 @@ admin_meuble = Blueprint('admin_meuble', __name__,
 @admin_meuble.route('/admin/meuble/show')
 def show_meuble():
     mycursor = get_db().cursor()
-    sql = '''  SELECT *,stock FROM meuble
-    INNER JOIN declinaison_meuble 
-    WHERE meuble.id_meuble = declinaison_meuble.meuble_id
+    sql = '''  SELECT *, stock, 
+    (SELECT COUNT(*) FROM commentaire WHERE meuble.id_meuble = commentaire.meuble_id AND valider = 0) AS nb_commentaires_nouveaux,
+    libelle_type_meuble AS type_meuble
+FROM meuble
+INNER JOIN declinaison_meuble 
+ON meuble.id_meuble = declinaison_meuble.meuble_id
+INNER JOIN type_meuble ON meuble.type_meuble_id = type_meuble.id_type_meuble;
+
     '''
     mycursor.execute(sql)
     meubles = mycursor.fetchall()
+
     sql = '''SELECT meuble.id_meuble, COUNT(declinaison_meuble.meuble_id) AS nb_declinaisons
     FROM meuble 
     LEFT JOIN declinaison_meuble ON meuble.id_meuble = declinaison_meuble.meuble_id
