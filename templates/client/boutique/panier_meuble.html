@@ -83,14 +83,14 @@
                 {% endif %}
                 {% if meuble.nb_notes is defined %}
                 {% if meuble.nb_notes > 0 %}
-                <a href="/client/meuble/details?id_meuble={{ meuble.id_meuble }}">
+                <a href="/client/meuble/details?id_declinaison_meuble={{ meuble.id_meuble }}">
                     <span style="color: #3A7734"> note : {{ "{:,.1f}".format(meuble.moy_notes) }}({{ meuble.nb_notes }})</span>
                 </a>
                 {% endif %}
                 {% endif %}
                 {% if meuble.nb_avis is defined %}
                 {% if meuble.nb_avis > 0 %}
-                <a href="/client/meuble/details?id_meuble={{ meuble.id_meuble }}">
+                <a href="/client/meuble/details?id_declinaison_meuble={{ meuble.id_meuble }}">
                     <span style="color: #3A7734">({{ meuble.nb_avis }} avis)</span>
                 </a>
                 {% endif %}
