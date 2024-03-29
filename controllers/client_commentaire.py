@@ -40,7 +40,7 @@ def client_meuble_details():
 FROM commentaire
 INNER JOIN utilisateur ON commentaire.utilisateur_id = utilisateur.id_utilisateur
 WHERE commentaire.meuble_id = %s
-ORDER BY commentaire.date_publication,commentaire.utilisateur_id DESC;;
+ORDER BY commentaire.date_publication;
 '''
     mycursor.execute(sql, (id_meuble,))
     commentaires = mycursor.fetchall()
@@ -92,7 +92,7 @@ def client_comment_add():
     tuple_insert = (commentaire, id_client, id_meuble)
     print(tuple_insert,"ok")
     sql = ''' INSERT INTO commentaire (commentaire,utilisateur_id, meuble_id, date_publication, valider) 
-VALUES (%s, %s, %s, NOW(),0);
+VALUES (%s, %s, %s, NOW(),1);
    '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
