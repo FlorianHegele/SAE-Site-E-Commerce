@@ -12,9 +12,6 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 def show_type_meuble_stock():
     mycursor = get_db().cursor()
     sql = '''
-        SELECT * 
-        FROM commentaire
-        
     
            '''
     # mycursor.execute(sql)
