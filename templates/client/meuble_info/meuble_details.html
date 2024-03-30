@@ -112,7 +112,7 @@
                                   id="input_commentaire" placeholder="Votre commentaire"></textarea>
                     </div>
                     <input type="hidden" name="action" value="add_commentaire">
-                    <input type="hidden" name="id_meuble" value="{{ commandes_meubles.declinaison_meuble_id}}"> #TODO
+                    <input type="hidden" name="id_meuble" value="{{ commandes_meubles.declinaison_meuble_id}}">
                     <form action="/client/comment/add" style="display: inline-block;" method="post">
                         <button class="btn btn-primary mt-2"> Ajouter un commentaire</button>
                     </form>
@@ -141,7 +141,13 @@
 
                     {% for commentaire in commentaires %}
                         <tr>
-                            <td>{{ commentaire.nom }}({{ commentaire.id_utilisateur }})</td>
+                            <td>
+                                {% if commentaire.valider == 1 %}
+                                    <span style="background-color: yellow;">{{ commentaire.nom_utilisateur }}({{ commentaire.id_utilisateur }})</span>
+                                {% else %}
+                                    {{ commentaire.nom_utilisateur }}({{ commentaire.id_utilisateur }})
+                                {% endif %}
+                            </td>
                             <td>{% if commentaire.utilisateur_id == 1 %}
                                 <span style="color: red">(réponse de l'administrateur du site (webmaster) ) :</span>
                             {% endif %}

@@ -9,29 +9,39 @@ admin_commentaire = Blueprint('admin_commentaire', __name__,
                         template_folder='templates')
 
 
+
+
 @admin_commentaire.route('/admin/meuble/commentaires', methods=['GET'])
 def admin_meuble_details():
+    id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
-    id_meuble =  request.args.get('id_meuble', None)
-    sql = '''    requête admin_type_meuble_1    '''
-    commentaires = {}
-    sql = '''   requête admin_type_meuble_1_bis   '''
-    meuble = []
+    sql = '''   SELECT v.id_meuble, u.id_utilisateur, c.date_publication, c.commentaire, c.valider, u.nom_utilisateur, c.valider
+FROM meuble v
+JOIN commentaire c ON v.id_meuble = c.meuble_id
+JOIN utilisateur u ON c.utilisateur_id = u.id_utilisateur
+WHERE v.id_meuble = %s
+ORDER BY c.date_publication, c.utilisateur_id DESC;
+
+    '''
+    mycursor.execute(sql, id_meuble)
+
+    commentaires = mycursor.fetchall()
+    print("test3", (commentaires))
+
+
+
+    sql = '''   SELECT *
+FROM meuble
+WHERE id_meuble=%s;  '''
+    mycursor.execute(sql, id_meuble)
+
+    meuble = mycursor.fetchone()
+    print("test meuble", meuble)
     return render_template('admin/meuble/show_meuble_commentaires.html'
                            , commentaires=commentaires
                            , meuble=meuble
                            )
 
-@admin_commentaire.route('/admin/meuble/commentaires/delete', methods=['POST'])
-def admin_comment_delete():
-    mycursor = get_db().cursor()
-    id_utilisateur = request.form.get('id_utilisateur', None)
-    id_meuble = request.form.get('id_meuble', None)
-    date_publication = request.form.get('date_publication', None)
-    sql = '''    requête admin_type_meuble_2   '''
-    tuple_delete=(id_utilisateur,id_meuble,date_publication)
-    get_db().commit()
-    return redirect('/admin/meuble/commentaires?id_meuble='+id_meuble)
 
 
 @admin_commentaire.route('/admin/meuble/commentaires/repondre', methods=['POST','GET'])
@@ -47,7 +57,16 @@ def admin_comment_add():
     id_meuble = request.form.get('id_meuble', None)
     date_publication = request.form.get('date_publication', None)
     commentaire = request.form.get('commentaire', None)
-    sql = '''    requête admin_type_meuble_3   '''
+
+    tuple_insert = (id_utilisateur, id_meuble, date_publication, commentaire)
+    print(tuple_insert)
+
+    sql = '''    INSERT INTO commentaire (utilisateur_id, meuble_id, date_publication, commentaire,valider) 
+VALUES (%s, %s, %s, %s,1)
+  ON DUPLICATE KEY UPDATE commentaire = VALUES(commentaire);  '''
+    mycursor.execute(sql, tuple_insert)
+    commentaires = mycursor.fetchone()
+    print(commentaire)
     get_db().commit()
     return redirect('/admin/meuble/commentaires?id_meuble='+id_meuble)
 
@@ -55,7 +74,30 @@ def admin_comment_add():
 @admin_commentaire.route('/admin/meuble/commentaires/valider', methods=['POST','GET'])
 def admin_comment_valider():
     id_meuble = request.args.get('id_meuble', None)
+
     mycursor = get_db().cursor()
-    sql = '''   requête admin_type_meuble_4   '''
+    sql = '''   UPDATE commentaire
+SET valider = 1
+WHERE meuble_id = %s;
+   '''
+    mycursor.execute(sql, (id_meuble))
+
     get_db().commit()
+    return redirect('/admin/meuble/commentaires?id_meuble='+id_meuble)
+
+
+@admin_commentaire.route('/admin/meuble/commentaires/delete', methods=['POST'])
+def admin_comment_delete():
+    mycursor = get_db().cursor()
+    id_meuble = request.form.get('id_meuble', None)
+    id_utilisateur = request.form.get('id_utilisateur', None)
+    date_publication = request.form.get('date_publication', None)
+
+    if id_meuble != None:
+        print(id_meuble, "test1")
+        sql = '''    DELETE FROM commentaire WHERE utilisateur_id = %s AND meuble_id = %s AND date_publication = %s   '''
+        mycursor.execute(sql, (id_utilisateur, id_meuble, date_publication))
+        get_db().commit()
+    print(id_meuble,id_utilisateur,date_publication, "tesss")
+
     return redirect('/admin/meuble/commentaires?id_meuble='+id_meuble)

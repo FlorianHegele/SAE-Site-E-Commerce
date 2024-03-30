@@ -36,11 +36,11 @@ def client_meuble_details():
     mycursor.execute(sql, (id_meuble,))
     meuble = mycursor.fetchone()
     print("AAA", meuble,"AAAAAApps",id_meuble)
-    sql = '''SELECT commentaire.*, commentaire.utilisateur_id AS id_utilisateur, utilisateur.nom_utilisateur AS nom
+    sql = '''SELECT commentaire.*, commentaire.utilisateur_id AS id_utilisateur, utilisateur.nom_utilisateur 
 FROM commentaire
 INNER JOIN utilisateur ON commentaire.utilisateur_id = utilisateur.id_utilisateur
 WHERE commentaire.meuble_id = %s
-ORDER BY commentaire.date_publication;
+ORDER BY commentaire.date_publication, commentaire.utilisateur_id DESC;
 '''
     mycursor.execute(sql, (id_meuble,))
     commentaires = mycursor.fetchall()
@@ -54,9 +54,12 @@ ORDER BY commentaire.date_publication;
     note = mycursor.fetchone()
     if note !=None :
         note = note.get('note')
-    sql = '''SELECT COUNT(*) AS nb_commentaires FROM commentaire WHERE meuble_id = %s'''
-    mycursor.execute(sql, (id_meuble,))
-    nb_commentaires = mycursor.fetchone()['nb_commentaires']
+    sql = '''SELECT
+    (SELECT COUNT(*) FROM commentaire WHERE meuble_id = %s) AS nb_commentaires_total ,
+    (SELECT COUNT(*) FROM commentaire WHERE utilisateur_id = %s AND meuble_id=%s) AS nb_commentaires_utilisateur;
+'''
+    mycursor.execute(sql, (id_meuble,id_client,id_meuble))
+    nb_commentaires = mycursor.fetchone()
     print(1,commentaires)
     print(2,commandes_meubles)
     print(3,note)
@@ -92,7 +95,7 @@ def client_comment_add():
     tuple_insert = (commentaire, id_client, id_meuble)
     print(tuple_insert,"ok")
     sql = ''' INSERT INTO commentaire (commentaire,utilisateur_id, meuble_id, date_publication, valider) 
-VALUES (%s, %s, %s, NOW(),1);
+VALUES (%s, %s, %s, NOW(),0);
    '''
     mycursor.execute(sql, tuple_insert)
     get_db().commit()
