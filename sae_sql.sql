@@ -262,7 +262,7 @@ INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,co
 	 (2,'16.jpg',8,6,1),
 	 (5,'17.jpg',8,7,1),
 	 (3,'18.jpg',9,4,1),
-	 (25,'19.jpg',10,1,1),
+	 (25,'19.jpg',10,1,3),
 	 (16,'20.jpg',10,1,2),
 	 (11,'21.jpg',10,1,4),
 	 (7,'22.jpg',10,1,5),
@@ -279,7 +279,7 @@ INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,co
 	 (7,'33.jpg',16,9,1),
 	 (16,'34.jpg',17,9,1),
 	 (23,'35.jpg',18,6,1),
-	 (2,'36.jpg',18,6,1),
+	 (2,'36.jpg',18,5,1),
 	 (0,'38.jpg',19,1,8),
 	 (5,'39.jpg',19,1,7),
 	 (6,'41.jpg',19,1,3),
@@ -289,7 +289,7 @@ INSERT INTO declinaison_meuble (stock,image_declinaison,meuble_id,materiau_id,co
 	 (8,'45.jpg',20,1,10),
 	 (9,'46.jpg',20,1,11),
 	 (19,'47.jpg',20,1,4),
-	 (27,'48.jpg',20,1,11);
+	 (27,'48.jpg',20,1,9);
 
 INSERT INTO concerne (utilisateur_id,adresse_id) VALUES
 	 (1,1),

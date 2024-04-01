@@ -74,7 +74,7 @@ def valid_add_meuble():
         filename = 'img_upload' + str(int(2147483647 * random())) + '.png'
         image.save(os.path.join('static/images/', filename))
     else:
-        filename = 'None.jpeg'
+        filename = None
 
     sql = '''
         INSERT INTO meuble(nom_meuble, disponible, prix_meuble, description_meuble, image_meuble, type_meuble_id)
