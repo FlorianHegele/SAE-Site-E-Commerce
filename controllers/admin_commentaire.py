@@ -15,11 +15,11 @@ admin_commentaire = Blueprint('admin_commentaire', __name__,
 def admin_meuble_details():
     id_meuble = request.args.get('id_meuble')
     mycursor = get_db().cursor()
-    sql = '''   SELECT v.id_meuble, u.id_utilisateur, c.date_publication, c.commentaire, c.valider, u.nom_utilisateur, c.valider
-FROM meuble v
-JOIN commentaire c ON v.id_meuble = c.meuble_id
+    sql = '''   SELECT m.id_meuble, u.id_utilisateur, c.date_publication, c.commentaire, c.valider, u.nom_utilisateur, c.valider
+FROM meuble m
+JOIN commentaire c ON m.id_meuble = c.meuble_id
 JOIN utilisateur u ON c.utilisateur_id = u.id_utilisateur
-WHERE v.id_meuble = %s
+WHERE m.id_meuble = %s
 ORDER BY c.date_publication, c.utilisateur_id DESC;
 
     '''

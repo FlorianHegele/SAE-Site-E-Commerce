@@ -75,8 +75,8 @@
                 labels: {{ labels | safe }},
                 datasets: [
                     {
-                        label: "Type de meubles (nombre)",
-                        data: {{ values | safe }},
+                        label: "Note pour ce meuble",
+                        data: {{ comments | safe }},
                         fill: false,
                         backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
                             "#faf24c"
@@ -93,35 +93,50 @@
     </script>
 
 
-    <h2>demo graphique à secteurs : "camenberd" ,"donut" ( "pie-chart" "doughtnut")</h2>
+    <h2>demo graphique à secteurs : Nombre de commentaire par meuble / Nombre de note par meuble</h2>
 
     <canvas id="pie-chart" width="800" height="450"></canvas>
 
     <script>
-        var Chart2 = new Chart(document.getElementById("pie-chart"), {
-            type: 'pie',
-            data: {
-                labels: {{ labels | safe }},
-                datasets: [{
-                    label: "Type de meubles (nombre)",
-                    backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
-                        "#faf24c"
-                        , "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
-                    data: {{ values | safe }},
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Type meuble : nombre'
-                }
+    var Chart2 = new Chart(document.getElementById("pie-chart"), {
+        type: 'pie',
+        data: {
+            labels: {{ labels | safe }},
+            datasets: [{
+                label: "Nombre de commentaires par meuble",
+                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                    "#faf24c", "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
+                data: {{ comments | safe }},
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Nombre de commentaires par meuble'
             }
-        });
+        }
+    });
     </script>
 
-    <a href="https://www.youtube.com/watch?v=TcwYXIIM-fs" target="_blank">dataviz, c'est quoi en 1 mn ? (juste la
-        première minute)</a>
-    <br>
-    <a href="https://www.youtube.com/watch?v=bZDnSUjfMt8" target="_blank">dataviz, c'est quoi ? (juste la première
-        minute)</a>
+    <canvas id="pie-chart1" width="800" height="450"></canvas>
+    <script>
+    var pieChartNotes = new Chart(document.getElementById("pie-chart1"), {
+        type: 'pie',
+        data: {
+            labels: {{ labels | safe }},
+            datasets: [{
+                label: "Nombre de notes par meuble",
+                backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850",
+                    "#faf24c", "#6a6ce7", "#55f68f", "#D0c309", "#c45000"],
+                data: {{ notes | safe }},
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Nombre de notes par meuble'
+            }
+        }
+    });
+    </script>
 {% endblock %}

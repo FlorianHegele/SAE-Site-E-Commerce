@@ -378,7 +378,8 @@ from ((((`commande` `c` join `adresse` `a`
 drop view if exists v_declinaison_meuble;
 CREATE VIEW v_declinaison_meuble AS
 SELECT dm.*, m.*, tm.*, n.note, AVG(n.note) AS moy_notes, COUNT(n.note) AS nb_notes,
-       (SELECT COUNT(*) FROM commentaire c WHERE c.meuble_id = dm.meuble_id) AS nb_avis
+       (SELECT COUNT(*) FROM commentaire c WHERE c.meuble_id = dm.meuble_id) AS nb_avis,
+       (SELECT COUNT(commentaire.valider) FROM commentaire WHERE commentaire.meuble_id = dm.meuble_id) AS nb_commentaires_nouveaux
 FROM declinaison_meuble dm
 JOIN meuble m ON m.id_meuble = dm.meuble_id
 JOIN type_meuble tm ON m.type_meuble_id = tm.id_type_meuble
@@ -428,3 +429,4 @@ select *
 from note n
 join meuble m on m.id_meuble = n.meuble_id
 join utilisateur u on u.id_utilisateur = n.utilisateur_id;
+

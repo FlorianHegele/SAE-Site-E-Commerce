@@ -12,24 +12,33 @@ admin_dataviz = Blueprint('admin_dataviz', __name__,
 def show_type_meuble_stock():
     mycursor = get_db().cursor()
     sql = '''
-    
+SELECT dm.*, m.*, tm.*, n.note, AVG(n.note) AS moy_notes, COUNT(n.note) AS nb_notes,m.nom_meuble AS libelle,
+       (SELECT COUNT(*) FROM commentaire c WHERE c.meuble_id = dm.meuble_id) AS nb_avis,
+       (SELECT COUNT(commentaire.valider) FROM commentaire WHERE commentaire.meuble_id = dm.meuble_id) AS nb_commentaires_nouveaux,
+       (SELECT COUNT(DISTINCT c.utilisateur_id) FROM commentaire c WHERE c.meuble_id = dm.meuble_id) AS nb_commentaires,
+       (SELECT IFNULL(AVG(n.note),0) FROM note n WHERE n.meuble_id = dm.meuble_id) AS moyenne_notes,
+       (SELECT COUNT(m.id_meuble) FROM meuble m WHERE m.id_meuble = dm.meuble_id) AS nbr_meubles
+FROM declinaison_meuble dm
+JOIN meuble m ON m.id_meuble = dm.meuble_id
+JOIN type_meuble tm ON m.type_meuble_id = tm.id_type_meuble
+LEFT JOIN note n ON n.meuble_id = dm.meuble_id
+GROUP BY dm.meuble_id;
+
            '''
-    # mycursor.execute(sql)
-    # datas_show = mycursor.fetchall()
-    # labels = [str(row['libelle']) for row in datas_show]
-    # values = [int(row['nbr_meubles']) for row in datas_show]
-
-    # sql = '''
-    #         
-    #        '''
-    datas_show=[]
-    labels=[]
-    values=[]
-
+    mycursor.execute(sql)
+    datas_show = mycursor.fetchall()
+    labels = [str(row['libelle']) for row in datas_show]
+    values = [int(row['moyenne_notes']) for row in datas_show]
+    notes = [int(row['nb_notes']) for row in datas_show]
+    comments = [int(row['nb_commentaires']) for row in datas_show]
+    meubles = [int(row['nbr_meubles']) for row in datas_show]
     return render_template('admin/dataviz/dataviz_etat_1.html'
                            , datas_show=datas_show
                            , labels=labels
-                           , values=values)
+                           , values=values
+                           , notes = notes
+                           , comments = comments
+                           , meubles = meubles)
 
 
 # sujet 3 : adresses
